@@ -1,0 +1,97 @@
+Options:
+  title:
+    vote: true
+  gui: false
+  updater: true
+  votes:
+    daily:
+      enabled: false
+      hours: 12
+    offline: false
+    permissions: false
+    lucky: false
+    cumulative: false
+  # File, MySQL, SQLite
+  database: File
+  voteparty: false
+  reminder: false
+  sound: false
+
+Rewards:
+
+  Services: # By service name
+    # default is used if a service name is not listed here. If default is missing, no service will be selected.
+    default:
+      commands:
+        - 'eco give %player% 400'
+        - 'broadcast %player% voted for the server!'
+    # If Minecraft-MP is the service name. This is case insensitive.
+    Minecraft-MP:
+      commands:
+        - 'eco give %player% 600'
+        - 'broadcast %player% voted for the server in Minecraft-MP!'
+
+  # How many times a player voted in a day
+  Daily:
+    '10':
+      commands:
+        - 'eco give %player% 1000'
+        - 'broadcast %player% voted in 10 sites and get 1000$'
+
+  # How many times a player voted in the server, in total.
+  Cumulative:
+    '10':
+      commands:
+        - broadcast %player% Voted 10 times
+
+  # Lucky vote % (0-100)
+  Lucky:
+    '10':
+      commands:
+        - eco give %player% 1000
+        - broadcast %player% was lucky and get 1000$
+
+  # Permission based rewards (eg: voterewards.rewards.starter , voterewards.rewards.vip )
+  Permission:
+    starter:
+      commands:
+        - 'give %player% minecraft:nether_star 50'
+        - 'eco give %player% 5000'
+    vip:
+      commands:
+        - 'eco give %player% 10000'
+        - 'give %player% minecraft:nether_star 100'
+
+VoteParty:
+  votes: 2
+  participate: true
+  sound: false
+  message: true
+  cooldown:
+    enabled: true
+    seconds: 5
+  crate:
+    enabled: true
+    sound: false
+    item: PISTON
+    name: '&cVoteParty Crate'
+    lores:
+      - '&cPlace me'
+  random rewards: true
+  rewards:
+    - 'eco give %player% 6547'
+    - 'give %player% minecraft:nether_star 31'
+
+Sounds:
+  Crate: CHEST_OPEN
+  VotePartyStart: ENDERDRAGON_DEATH
+  Vote: NOTE_PIANO
+
+MySQL:
+  IP: localhost
+  Port: 3306
+  Database: VoteRewards
+  User: root
+  Password: ''
+SQLite:
+  fileName: voterewards
