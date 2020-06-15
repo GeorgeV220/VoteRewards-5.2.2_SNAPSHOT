@@ -32,7 +32,7 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: net.md-5:bungeecord-chat:1.12-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: me.clip:placeholderapi:2.10.5" level="project" />
     <orderEntry type="module-library">
-      <library name="Maven: be.maximvdw:placeholderapi:3.3.3-Beta">
+      <library name="Maven: be.maximvdw:placeholderapi:3.3.4-Beta">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/libs/MVdWPlaceholderAPI.jar!/" />
         </CLASSES>
@@ -40,5 +40,22 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module-library">
+      <library name="Maven: me.robin:leaderheads:3.3.4-Beta">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/libs/LeaderHeadsAPI.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.vexsoftware:nuvotifier-bukkit:2.6.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.vexsoftware:nuvotifier-common:2.6.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: io.netty:netty-handler:4.1.32.Final" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: io.netty:netty-buffer:4.1.32.Final" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: io.netty:netty-common:4.1.32.Final" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: io.netty:netty-transport:4.1.32.Final" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: io.netty:netty-resolver:4.1.32.Final" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: io.netty:netty-codec:4.1.32.Final" level="project" />
   </component>
 </module>

@@ -1,4 +1,12 @@
 Options:
+  commands:
+    rewards: true
+    vote: true
+    votetop: true
+    voterewards: true
+    votes: true
+    fakevote: true
+    voteparty: true
   title:
     vote: true
   gui: false

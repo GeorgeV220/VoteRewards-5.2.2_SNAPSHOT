@@ -1,8 +1,7 @@
 package com.georgev22.voterewards.playerdata;
 
-import org.bukkit.configuration.file.FileConfiguration;
-
 import com.georgev22.voterewards.configmanager.FileManager;
+import org.bukkit.configuration.file.FileConfiguration;
 
 public enum VoteOptions {
 
@@ -28,6 +27,20 @@ public enum VoteOptions {
 
     SOUND("sound"),
 
+    COMMAND_REWARDS("commands.rewards"),
+
+    COMMAND_FAKEVOTE("commands.fakevote"),
+
+    COMMAND_VOTEPARTY("commands.voteparty"),
+
+    COMMAND_VOTES("commands.votes"),
+
+    COMMAND_VOTE("commands.vote"),
+
+    COMMAND_VOTETOP("commands.votetop"),
+
+    COMMAND_VOTEREWARDS("commands.voterewards"),
+
     ;
 
     private final String pathName;
@@ -38,7 +51,7 @@ public enum VoteOptions {
 
     public boolean isEnabled() {
         final FileConfiguration file = FileManager.getInstance().getConfig().getFileConfiguration();
-        return file.getBoolean("Options." + this.pathName, false);
+        return file.getBoolean("Options." + this.pathName, true);
     }
 
 }

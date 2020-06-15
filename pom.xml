@@ -6,7 +6,7 @@
 
     <groupId>com.georgev22</groupId>
     <artifactId>VoteRewards</artifactId>
-    <version>3.3.3-Beta</version>
+    <version>3.3.4-Beta</version>
     <packaging>jar</packaging>
 
     <name>VoteRewards</name>
@@ -66,6 +66,10 @@
             <id>sonatype</id>
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
+        <repository>
+            <id>bintray-repo</id>
+            <url>https://dl.bintray.com/ichbinjoe/public/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -87,6 +91,19 @@
             <version>${project.version}</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/libs/MVdWPlaceholderAPI.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>me.robin</groupId>
+            <artifactId>leaderheads</artifactId>
+            <version>${project.version}</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/LeaderHeadsAPI.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.vexsoftware</groupId>
+            <artifactId>nuvotifier-bukkit</artifactId>
+            <version>2.6.0</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

@@ -9,13 +9,23 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.entity.Player;
 
-public class FakeVote implements CommandExecutor {
+import java.util.Arrays;
 
-	@SuppressWarnings("deprecation")
-	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String s, String[] args) {
+public class FakeVote extends BukkitCommand {
+
+
+	public FakeVote() {
+		super("fakevote");
+		this.description = "FakeVote command";
+		this.usageMessage = "/fakevote";
+		this.setPermission("voterewards.fakevote");
+		this.setAliases(Arrays.asList("vrfake", "vrfakevote", "vfake", "vfakevote"));
+	}
+
+	public boolean execute(final CommandSender sender, final String label, final String[] args) {
 		if (!(sender instanceof Player)) {
 			MessagesUtil.ONLY_PLAYER_COMMAND.msg(sender);
 			return true;

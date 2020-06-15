@@ -9,13 +9,13 @@ import java.util.Arrays;
 
 public class LeaderHeads extends OnlineDataCollector {
 
-	public LeaderHeads() {
-		super("votetop", "VoteRewards", BoardType.DEFAULT, "&3Vote Top", "votetops",
-				Arrays.asList(null, null, "&e{amount} Votes", null));
-	}
+    public LeaderHeads() {
+        super("votetop", "VoteRewards", BoardType.DEFAULT, "&3Vote Top", "votetops",
+                Arrays.asList(null, null, "&e{amount} Votes", null));
+    }
 
-	@Override
-	public Double getScore(Player player) {
-		return (double) UserVoteData.getUser(player.getUniqueId()).getVotes();
-	}
+    @Override
+    public Double getScore(Player player) {
+        return (double) UserVoteData.getUser(player.getUniqueId()).getVotes();
+    }
 }

@@ -1,7 +1,7 @@
 name: VoteRewards
-version: ${version}
+version: 3.3.4-Beta
 main: com.georgev22.voterewards.VoteRewardPlugin
-api-version: "1.13"
+api-version: 1.13
 prefix: VoteRewards
 author: GeorgeV22
 contributors:
@@ -15,48 +15,3 @@ softdepend:
   - PlaceholderAPI
   - LeaderHeads
   - MVdWPlaceholderAPI
-commands:
-  voterewards:
-    description: Default command
-    aliases:
-      - vr
-      - votereward
-      - voter
-      - vrewards
-  fakevote:
-    description: FakeVote command
-    aliases:
-      - vrfake
-      - vrfakevote
-      - vfake
-      - vrfake
-      - vfakevote
-  vote:
-    description: Vote Command
-    aliases:
-      - vrv
-      - vrvote
-      - vvote
-  votes:
-    description: Votes Command
-    aliases:
-      - vrvs
-      - vrvotes
-      - vvotes
-  votetop:
-    description: VoteTop command
-    aliases:
-      - vtop
-      - vrtop
-      - vvtop
-  rewards:
-    description: Rewards command
-    aliases:
-      - vrewards
-      - vrew
-  voteparty:
-    description: Vote Party command
-    aliases:
-      - vvp
-      - vp
-      - vrvp

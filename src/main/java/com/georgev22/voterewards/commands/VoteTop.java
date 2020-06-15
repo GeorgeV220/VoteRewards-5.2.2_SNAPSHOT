@@ -5,51 +5,58 @@ import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.PermissionsUtil;
 import com.georgev22.voterewards.utilities.Utils;
 import com.google.common.collect.Maps;
-
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
+import java.util.Arrays;
 import java.util.Map;
 
-public class VoteTop implements CommandExecutor {
+public class VoteTop extends BukkitCommand {
 
-	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		if (!sender.hasPermission(PermissionsUtil.VOTE_TOP)) {
-			MessagesUtil.NO_PERMISSION.msg(sender);
-			return true;
-		}
 
-		FileManager fm = FileManager.getInstance();
-		FileConfiguration conf = fm.getConfig().getFileConfiguration();
+    public VoteTop() {
+        super("votetop");
+        this.description = "Votes command";
+        this.usageMessage = "/votes";
+        this.setPermission("voterewards.votetop");
+        this.setAliases(Arrays.asList("vtop", "vrtop", "vvtop"));
+    }
 
-		if (conf.getBoolean("Options.gui") && Bukkit.getPluginManager().isPluginEnabled("LeaderHeads")) {
-			if (!(sender instanceof Player)) {
-				MessagesUtil.ONLY_PLAYER_COMMAND.msg(sender);
-				return true;
-			}
-			Player player = (Player) sender;
-			player.chat("/votetops");
-			return true;
-		}
+    public boolean execute(final CommandSender sender, final String label, final String[] args) {
+        if (!sender.hasPermission(PermissionsUtil.VOTE_TOP)) {
+            MessagesUtil.NO_PERMISSION.msg(sender);
+            return true;
+        }
 
-		Map<String, String> placeholders = Maps.newHashMap();
+        FileManager fm = FileManager.getInstance();
+        FileConfiguration conf = fm.getConfig().getFileConfiguration();
 
-		MessagesUtil.VOTE_TOP_HEADER.msg(sender);
+        if (conf.getBoolean("Options.gui") && Bukkit.getPluginManager().isPluginEnabled("LeaderHeads")) {
+            if (!(sender instanceof Player)) {
+                MessagesUtil.ONLY_PLAYER_COMMAND.msg(sender);
+                return true;
+            }
+            Player player = (Player) sender;
+            player.chat("/votetops");
+            return true;
+        }
 
-		for (Map.Entry<String, Integer> b : Utils.getTopPlayers().entrySet()) {
-			String[] arg = String.valueOf(b).split("=");
-			placeholders.put("%name%", arg[0]);
-			placeholders.put("%votes%", arg[1]);
+        Map<String, String> placeholders = Maps.newHashMap();
 
-			MessagesUtil.VOTE_TOP_BODY.msg(sender, placeholders, true);
-		}
-		MessagesUtil.VOTE_TOP_FOOTER.msg(sender);
-		placeholders.clear();
-		return true;
-	}
+        MessagesUtil.VOTE_TOP_HEADER.msg(sender);
+
+        for (Map.Entry<String, Integer> b : Utils.getTopPlayers().entrySet()) {
+            String[] arg = String.valueOf(b).split("=");
+            placeholders.put("%name%", arg[0]);
+            placeholders.put("%votes%", arg[1]);
+
+            MessagesUtil.VOTE_TOP_BODY.msg(sender, placeholders, true);
+        }
+        MessagesUtil.VOTE_TOP_FOOTER.msg(sender);
+        placeholders.clear();
+        return true;
+    }
 }

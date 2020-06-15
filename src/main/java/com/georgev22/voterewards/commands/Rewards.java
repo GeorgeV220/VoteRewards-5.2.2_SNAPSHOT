@@ -1,12 +1,23 @@
 package com.georgev22.voterewards.commands;
 
 import com.georgev22.voterewards.utilities.MessagesUtil;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.defaults.BukkitCommand;
 
-public class Rewards implements CommandExecutor {
-    public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
+import java.util.Arrays;
+
+public class Rewards extends BukkitCommand {
+
+
+    public Rewards() {
+        super("rewards");
+        this.description = "rewards command";
+        this.usageMessage = "/rewards";
+        this.setPermission("voterewards.rewards");
+        this.setAliases(Arrays.asList("vrewards", "vrew"));
+    }
+
+    public boolean execute(final CommandSender sender, final String label, final String[] args) {
         if (!sender.hasPermission("voterewards.rewards")) {
             MessagesUtil.NO_PERMISSION.msg(sender);
             return true;
