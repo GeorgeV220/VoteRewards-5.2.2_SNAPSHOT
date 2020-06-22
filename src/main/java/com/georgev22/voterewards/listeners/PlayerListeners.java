@@ -44,7 +44,6 @@ public class PlayerListeners implements Listener {
 	public void onSignChange(SignChangeEvent e) {
 		if (e.getLine(0).equalsIgnoreCase("[VoteRewards]")) {
 			if (e.getLine(1).isEmpty()) {
-				return;
 			}
 
 		}

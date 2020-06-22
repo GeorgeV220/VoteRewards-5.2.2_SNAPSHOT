@@ -1,15 +1,12 @@
 package com.georgev22.voterewards.utilities;
 
-import java.io.BufferedReader;
-
-import java.io.InputStreamReader;
-
-import java.net.URL;
-
-import javax.net.ssl.HttpsURLConnection;
-
 import com.georgev22.voterewards.VoteRewardPlugin;
 import org.bukkit.entity.Player;
+
+import javax.net.ssl.HttpsURLConnection;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
 
 public class Updater {
 
@@ -44,9 +41,7 @@ public class Updater {
 
             }
             if (!m.getDescription().getVersion().equalsIgnoreCase(onlineVersion)) {
-                if (m.getDescription().getVersion().contains("CustomBuild")) {
-                    return;
-                } else if (onlineVersion.contains("Beta")) {
+                if (onlineVersion.contains("Beta")) {
                     m.getLogger().warning("New beta version availiable!");
 
                     m.getLogger().warning("Beta Version: " + onlineVersion + ". You are running version: "
@@ -74,7 +69,7 @@ public class Updater {
                     m.getLogger().info("You are running the newest stable build.");
                 }
             }
-        }).run();
+        }).start();
 
     }
 
@@ -105,9 +100,7 @@ public class Updater {
 
             }
             if (!m.getDescription().getVersion().equalsIgnoreCase(onlineVersion)) {
-                if (m.getDescription().getVersion().contains("CustomBuild")) {
-                    return;
-                } else if (onlineVersion.contains("Beta")) {
+                if (onlineVersion.contains("Beta")) {
                     Utils.msg(player, "&e&lUpdater &8» &6New beta version availiable!");
                     Utils.msg(player, "&e&lUpdater &8» &6Beta Version: &c"
                             + onlineVersion + ". &6You are running version: &c" + m.getDescription().getVersion());
@@ -134,7 +127,7 @@ public class Updater {
                     Utils.msg(player, "&e&lUpdater &8» &6You are running the newest stable build.");
                 }
             }
-        }).run();
+        }).start();
 
     }
 

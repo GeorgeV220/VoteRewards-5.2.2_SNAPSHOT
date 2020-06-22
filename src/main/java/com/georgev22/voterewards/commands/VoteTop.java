@@ -2,7 +2,6 @@ package com.georgev22.voterewards.commands;
 
 import com.georgev22.voterewards.configmanager.FileManager;
 import com.georgev22.voterewards.utilities.MessagesUtil;
-import com.georgev22.voterewards.utilities.PermissionsUtil;
 import com.georgev22.voterewards.utilities.Utils;
 import com.google.common.collect.Maps;
 import org.bukkit.Bukkit;
@@ -22,15 +21,11 @@ public class VoteTop extends BukkitCommand {
         this.description = "Votes command";
         this.usageMessage = "/votes";
         this.setPermission("voterewards.votetop");
+        this.setPermissionMessage(MessagesUtil.NO_PERMISSION.getMessages()[0]);
         this.setAliases(Arrays.asList("vtop", "vrtop", "vvtop"));
     }
 
     public boolean execute(final CommandSender sender, final String label, final String[] args) {
-        if (!sender.hasPermission(PermissionsUtil.VOTE_TOP)) {
-            MessagesUtil.NO_PERMISSION.msg(sender);
-            return true;
-        }
-
         FileManager fm = FileManager.getInstance();
         FileConfiguration conf = fm.getConfig().getFileConfiguration();
 

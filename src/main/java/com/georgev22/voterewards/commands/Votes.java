@@ -2,7 +2,7 @@ package com.georgev22.voterewards.commands;
 
 import com.georgev22.voterewards.playerdata.UserVoteData;
 import com.georgev22.voterewards.utilities.MessagesUtil;
-import com.georgev22.voterewards.utilities.PermissionsUtil;
+import com.georgev22.voterewards.utilities.Utils;
 import com.google.common.collect.Maps;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -21,16 +21,17 @@ public class Votes extends BukkitCommand {
         this.description = "Votes command";
         this.usageMessage = "/votes";
         this.setPermission("voterewards.vote");
+        this.setPermissionMessage(MessagesUtil.NO_PERMISSION.getMessages()[0]);
         this.setAliases(Arrays.asList("vrvs", "vrvotes", "vvotes"));
     }
 
     public boolean execute(final CommandSender sender, final String label, final String[] args) {
-        if (!sender.hasPermission(PermissionsUtil.VOTES)) {
-            MessagesUtil.NO_PERMISSION.msg(sender);
-            return true;
-        }
         Map<String, String> placeholders = Maps.newHashMap();
         if (args.length == 0) {
+            if (!(sender instanceof Player)) {
+                Utils.msg(sender, "/votes <player>");
+                return true;
+            }
             placeholders.put("%player%", sender.getName());
             placeholders.put("%votes%",
                     String.valueOf(UserVoteData.getUser(((Player) sender).getUniqueId()).getVotes()));

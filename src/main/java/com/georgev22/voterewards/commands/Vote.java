@@ -2,7 +2,7 @@ package com.georgev22.voterewards.commands;
 
 import com.georgev22.voterewards.playerdata.UserVoteData;
 import com.georgev22.voterewards.utilities.MessagesUtil;
-import com.georgev22.voterewards.utilities.PermissionsUtil;
+import com.georgev22.voterewards.utilities.Utils;
 import com.google.common.collect.Maps;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
@@ -19,12 +19,13 @@ public class Vote extends BukkitCommand {
         this.description = "Vote command";
         this.usageMessage = "/vote";
         this.setPermission("voterewards.vote");
+        this.setPermissionMessage(MessagesUtil.NO_PERMISSION.getMessages()[0]);
         this.setAliases(Arrays.asList("vrv", "vrvote", "vvote"));
     }
 
     public boolean execute(final CommandSender sender, final String label, final String[] args) {
-        if (!sender.hasPermission(PermissionsUtil.VOTE)) {
-            MessagesUtil.NO_PERMISSION.msg(sender);
+        if (!(sender instanceof Player)) {
+            Utils.msg(sender, MessagesUtil.ONLY_PLAYER_COMMAND.getMessages()[0]);
             return true;
         }
         Player player = (Player) sender;

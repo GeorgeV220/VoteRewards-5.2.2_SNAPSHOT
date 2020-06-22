@@ -110,7 +110,7 @@ public class VoteParty extends BukkitCommand {
                     Utils.msg(sender, "&c&l(!) &cEnter a valid number");
                     return true;
                 }
-                ((Player) sender).getInventory().addItem(VotePartyUtils.getInstance().crate(Integer.valueOf(args[2])));
+                ((Player) sender).getInventory().addItem(VotePartyUtils.getInstance().crate(Integer.parseInt(args[2])));
                 placeholders.put("%amount%", args[2]);
                 MessagesUtil.VOTEPARTY_GIVE.msg(target, placeholders, true);
                 placeholders.clear();
