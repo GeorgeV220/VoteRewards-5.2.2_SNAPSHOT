@@ -32,7 +32,7 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: net.md-5:bungeecord-chat:1.12-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: me.clip:placeholderapi:2.10.5" level="project" />
     <orderEntry type="module-library">
-      <library name="Maven: be.maximvdw:placeholderapi:3.3.4-Beta">
+      <library name="Maven: be.maximvdw:placeholderapi:3.3.5-Beta">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/libs/MVdWPlaceholderAPI.jar!/" />
         </CLASSES>
@@ -41,7 +41,7 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library">
-      <library name="Maven: me.robin:leaderheads:3.3.4-Beta">
+      <library name="Maven: me.robin:leaderheads:3.3.5-Beta">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/libs/LeaderHeadsAPI.jar!/" />
         </CLASSES>

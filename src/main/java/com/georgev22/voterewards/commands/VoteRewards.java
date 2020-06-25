@@ -129,6 +129,11 @@ public class VoteRewards extends BukkitCommand {
                 String regionName = args[2];
                 Selection selection = m.getWorldEdit().getSelection(player);
 
+                if (selection == null) {
+                    Utils.msg(sender, "&c&l(!) &cPlease make a selection first!");
+                    return true;
+                }
+
                 CFG cfg = FileManager.getInstance().getData();
                 FileConfiguration data = cfg.getFileConfiguration();
 

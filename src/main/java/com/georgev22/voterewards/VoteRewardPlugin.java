@@ -212,7 +212,6 @@ public class VoteRewardPlugin extends JavaPlugin {
         String sqlCreate = "CREATE TABLE IF NOT EXISTS `users` (\n  `uuid` varchar(255) DEFAULT NULL,\n  `name` varchar(255) DEFAULT NULL,\n  `votes` int(255) DEFAULT NULL,\n  `time` varchar(255) DEFAULT NULL,\n  `voteparty` int(255) DEFAULT NULL\n)";
         PreparedStatement stmt = connection.prepareStatement(sqlCreate);
         stmt.execute();
-
     }
 
     /**
