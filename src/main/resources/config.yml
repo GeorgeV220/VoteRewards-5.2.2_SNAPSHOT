@@ -11,6 +11,7 @@ Options:
     vote: true
   gui: false
   updater: true
+  votetop: 5
   votes:
     daily:
       enabled: false

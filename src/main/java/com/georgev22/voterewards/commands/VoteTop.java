@@ -43,7 +43,7 @@ public class VoteTop extends BukkitCommand {
 
         MessagesUtil.VOTE_TOP_HEADER.msg(sender);
 
-        for (Map.Entry<String, Integer> b : Utils.getTopPlayers().entrySet()) {
+        for (Map.Entry<String, Integer> b : Utils.getTopPlayers(conf.getInt("Options.votetop", 5)).entrySet()) {
             String[] arg = String.valueOf(b).split("=");
             placeholders.put("%name%", arg[0]);
             placeholders.put("%votes%", arg[1]);

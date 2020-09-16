@@ -1,9 +1,13 @@
 package com.georgev22.voterewards.playerdata;
 
+import com.cryptomorin.xseries.XSound;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.configmanager.CFG;
 import com.georgev22.voterewards.configmanager.FileManager;
-import com.georgev22.voterewards.utilities.*;
+import com.georgev22.voterewards.utilities.MaterialUtil;
+import com.georgev22.voterewards.utilities.MessagesUtil;
+import com.georgev22.voterewards.utilities.Regions;
+import com.georgev22.voterewards.utilities.Utils;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.bukkit.Bukkit;
@@ -93,8 +97,8 @@ public class VotePartyUtils {
                             chooseRandom(PartyOptions.RANDOM.isEnabled(), offlinePlayer);
                         }
                         if ((offlinePlayer != null && offlinePlayer.isOnline()) && PartyOptions.SOUND_START.isEnabled()) {
-                            offlinePlayer.getPlayer().playSound(offlinePlayer.getPlayer().getLocation(), SoundUtil
-                                            .getSound(voteRewardPlugin.getConfig().getString("Sounds.VotePartyStart")).get(),
+                            offlinePlayer.getPlayer().playSound(offlinePlayer.getPlayer().getLocation(), XSound
+                                            .matchXSound(voteRewardPlugin.getConfig().getString("Sounds.VotePartyStart")).get().parseSound(),
                                     1000, 1);
                         }
                     }
@@ -113,7 +117,7 @@ public class VotePartyUtils {
                             UserVoteData userVoteData = UserVoteData.getUser(offlinePlayer.getUniqueId());
                             userVoteData.setVoteParty(userVoteData.getVoteParty() + 1);
                             MessagesUtil.VOTEPARTY_UNCLAIM.msg(offlinePlayer.getPlayer());
-                        }else
+                        } else
                             offlinePlayer.getPlayer().getInventory().addItem(crate(1));
                     }
 
@@ -179,8 +183,8 @@ public class VotePartyUtils {
                             chooseRandom(PartyOptions.RANDOM.isEnabled(), offlinePlayer);
                         }
                         if ((offlinePlayer != null && offlinePlayer.isOnline()) && PartyOptions.SOUND_START.isEnabled()) {
-                            offlinePlayer.getPlayer().playSound(offlinePlayer.getPlayer().getLocation(), SoundUtil
-                                            .getSound(voteRewardPlugin.getConfig().getString("Sounds.VotePartyStart")).get(),
+                            offlinePlayer.getPlayer().playSound(offlinePlayer.getPlayer().getLocation(), XSound
+                                            .matchXSound(voteRewardPlugin.getConfig().getString("Sounds.VotePartyStart")).get().parseSound(),
                                     1000, 1);
                         }
                     }

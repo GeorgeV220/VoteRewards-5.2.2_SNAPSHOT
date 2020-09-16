@@ -1,33 +1,45 @@
 package com.georgev22.voterewards.tests;
 
+import com.georgev22.voterewards.VoteRewardPlugin;
+import org.apache.commons.lang.Validate;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerLoginEvent;
+
 import java.sql.PreparedStatement;
 import java.util.UUID;
 
-import org.apache.commons.lang.Validate;
+public class DatabaseTests implements Listener {
 
-import com.georgev22.voterewards.VoteRewardPlugin;
+    VoteRewardPlugin m = VoteRewardPlugin.getInstance();
 
-public class DatabaseTests {
+    private static DatabaseTests instance = null;
 
-	VoteRewardPlugin m = VoteRewardPlugin.getInstance();
+    public static DatabaseTests getInstance() {
+        return instance == null ? instance = new DatabaseTests() : instance;
+    }
 
-	private static DatabaseTests instance = null;
+    public DatabaseTests() {
+        // throw new AssertionError();
+    }
 
-	public static DatabaseTests getInstance() {
-		return instance == null ? instance = new DatabaseTests() : instance;
-	}
+    @Deprecated
+    public void perPlayerTable(UUID uuid) throws Exception {
+        Validate.notNull(uuid);
+        String sqlCreate = "CREATE TABLE IF NOT EXISTS `" + uuid.toString()
+                + "` (\n  `name` varchar(255) DEFAULT NULL,\n  `votes` int(255) DEFAULT NULL,\n  `time` varchar(255) DEFAULT NULL,\n  `voteparty` int(255) DEFAULT NULL\n)";
+        PreparedStatement stmt = m.getConnection().prepareStatement(sqlCreate);
+        stmt.execute();
+    }
 
-	public DatabaseTests() {
-		// throw new AssertionError();
-	}
+    @EventHandler
+    public void onLogin(PlayerLoginEvent event) {
+        try {
+            perPlayerTable(event.getPlayer().getUniqueId());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-	@Deprecated
-	public void perPlayerTable(UUID uuid) throws Exception {
-		Validate.notNull(uuid);
-		String sqlCreate = String.format("CREATE TABLE IF NOT EXISTS `" + uuid.toString()
-				+ "` (\n  `name` varchar(255) DEFAULT NULL,\n  `votes` int(255) DEFAULT NULL,\n  `time` varchar(255) DEFAULT NULL,\n  `voteparty` int(255) DEFAULT NULL\n)");
-		PreparedStatement stmt = m.getConnection().prepareStatement(sqlCreate);
-		stmt.execute();
-	}
 
 }

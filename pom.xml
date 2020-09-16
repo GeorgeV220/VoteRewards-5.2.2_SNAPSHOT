@@ -6,7 +6,7 @@
 
     <groupId>com.georgev22</groupId>
     <artifactId>VoteRewards</artifactId>
-    <version>3.3.5-Beta</version>
+    <version>3.3.6</version>
     <packaging>jar</packaging>
 
     <name>VoteRewards</name>
