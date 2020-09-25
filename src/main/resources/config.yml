@@ -13,6 +13,7 @@ Options:
   updater: true
   votetop: 5
   votes:
+    world: false
     daily:
       enabled: false
       hours: 12

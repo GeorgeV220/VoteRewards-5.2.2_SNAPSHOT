@@ -12,7 +12,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.inventory.ItemStack;
@@ -39,14 +38,14 @@ public class PlayerListeners implements Listener {
         }
     }
 
-    @EventHandler
+    /*@EventHandler
     public void onSignChange(SignChangeEvent e) {
         if (e.getLine(0).equalsIgnoreCase("[VoteRewards]")) {
             if (e.getLine(1).isEmpty()) {
             }
 
         }
-    }
+    }*/
 
     private final Set<Action> clicks = EnumSet.of(Action.RIGHT_CLICK_AIR, Action.RIGHT_CLICK_BLOCK,
             Action.LEFT_CLICK_AIR, Action.RIGHT_CLICK_BLOCK);
