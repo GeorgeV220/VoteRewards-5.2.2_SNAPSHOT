@@ -90,19 +90,35 @@ public class UserVoteData {
         }
         //
 
-        // SERVICE REWARDS
-        if (this.voteRewardPlugin.getConfig().getString("Rewards.Services." + serviceName) != null) {
-            for (final String b : this.voteRewardPlugin.getConfig()
-                    .getStringList("Rewards.Services" + serviceName + ".commands")) {
-                this.runCommands(b.replace("%player%", Objects.requireNonNull(this.getVoter().getName())));
-            }
-        } else {
-            for (final String b : this.voteRewardPlugin.getConfig()
-                    .getStringList("Rewards.Services.default.commands")) {
-                this.runCommands(b.replace("%player%", Objects.requireNonNull(this.getVoter().getName())));
+        // WORLD REWARDS (WITH SERVICES)
+        if (VoteOptions.WORLD.isEnabled()) {
+            if (this.voteRewardPlugin.getConfig().getString("Rewards.Worlds." + getWorld() + "." + serviceName) != null) {
+                for (final String b : this.voteRewardPlugin.getConfig()
+                        .getStringList("Rewards.Worlds." + getWorld() + "." + serviceName)) {
+                    this.runCommands(b.replace("%player%", Objects.requireNonNull(this.getVoter().getName())));
+                }
+            } else {
+                for (final String b : this.voteRewardPlugin.getConfig()
+                        .getStringList("Rewards.Worlds" + voter.getPlayer().getWorld().getName() + ".default")) {
+                    this.runCommands(b.replace("%player%", Objects.requireNonNull(this.getVoter().getName())));
+                }
             }
         }
-        //
+
+        // SERVICE REWARDS
+        if (!VoteOptions.DISABLE_SERVICES.isEnabled()) {
+            if (this.voteRewardPlugin.getConfig().getString("Rewards.Services." + serviceName) != null) {
+                for (final String b : this.voteRewardPlugin.getConfig()
+                        .getStringList("Rewards.Services" + serviceName + ".commands")) {
+                    this.runCommands(b.replace("%player%", Objects.requireNonNull(this.getVoter().getName())));
+                }
+            } else {
+                for (final String b : this.voteRewardPlugin.getConfig()
+                        .getStringList("Rewards.Services.default.commands")) {
+                    this.runCommands(b.replace("%player%", Objects.requireNonNull(this.getVoter().getName())));
+                }
+            }
+        }
 
         // DAILY REWARDS
         if (VoteOptions.DAILY.isEnabled()) {
@@ -124,6 +140,7 @@ public class UserVoteData {
         }
         //
 
+        // PLAY SOUND
         if (VoteOptions.SOUND.isEnabled()) {
             voter.getPlayer().playSound(voter.getPlayer().getLocation(),
                     XSound.matchXSound(voteRewardPlugin.getConfig().getString("Sounds.Vote")).get().parseSound(), 1000, 1);
@@ -468,6 +485,19 @@ public class UserVoteData {
             // this.configuration.set("voteparty-votes", 0);
             this.configuration.set("voteparty", 0);
             this.saveConfiguration();
+        }
+    }
+
+    /**
+     * Get player World
+     *
+     * @return String worldName
+     */
+    public String getWorld() {
+        if (voter.isOnline()) {
+            return voter.getPlayer().getWorld().getName();
+        } else {
+            return "world";
         }
     }
 

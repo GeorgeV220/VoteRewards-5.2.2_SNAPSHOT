@@ -17,6 +17,10 @@ public enum VoteOptions {
 
     PERMISSIONS("votes.permissions"),
 
+    WORLD("votes.world"),
+
+    DISABLE_SERVICES("votes.disable_services"),
+
     LUCKY("votes.lucky"),
 
     CUMULATIVE("votes.cumulative"),

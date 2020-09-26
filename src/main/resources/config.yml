@@ -12,6 +12,7 @@ Options:
   gui: false
   updater: true
   votetop: 5
+  disable_services: false
   votes:
     world: false
     daily:
@@ -28,8 +29,33 @@ Options:
   sound: false
 
 Rewards:
+  Worlds: #By world name and service name (you can disable 'Services' if you want "disable_services: true". Only for the 'Services' section)
+    world:
+      # default is used if a service name is not listed here. If default is missing, no service will be selected.
+      default:
+        - 'eco give %player% 500'
+        - 'broadcast %player% voted for the server!'
+        - 'msg %player% you got special rewards cause you are in the OverWorld'
 
-  Services: # By service name
+      # If Minecraft-MP is the service name. This is case insensitive.
+      Minecraft-MP:
+        - 'eco give %player% 600'
+        - 'broadcast %player% voted for the server in Minecraft-MP!'
+
+    world_nether:
+      # default is used if a service name is not listed here. If default is missing, no service will be selected.
+      default:
+        - 'give %player% nether_star'
+        - 'broadcast %player% voted for the server!'
+        - 'msg %player% you got special rewards cause you are in the Nether'
+
+      # If Minecraft-MP is the service name. This is case insensitive.
+      Minecraft-MP:
+        - 'give %player% nether_star 5'
+        - 'broadcast %player% voted for the server in Minecraft-MP!'
+        - 'msg %player% you got special rewards cause you are in the Nether'
+
+  Services: # By service name (you can disable it if you use per world rewards)
     # default is used if a service name is not listed here. If default is missing, no service will be selected.
     default:
       commands:
