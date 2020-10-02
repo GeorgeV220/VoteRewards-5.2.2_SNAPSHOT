@@ -3,10 +3,11 @@ package com.georgev22.voterewards.commands;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.configmanager.CFG;
 import com.georgev22.voterewards.configmanager.FileManager;
+import com.georgev22.voterewards.hooks.WorldEditHook;
 import com.georgev22.voterewards.playerdata.UserVoteData;
 import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.Utils;
-import com.sk89q.worldedit.bukkit.selections.Selection;
+import com.google.common.collect.Lists;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -15,11 +16,14 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 public class VoteRewards extends BukkitCommand {
 
     private VoteRewardPlugin m = VoteRewardPlugin.getInstance();
+
+    public static List<Player> toolList = Lists.newArrayList();
 
     public VoteRewards() {
         super("voterewards");
@@ -127,18 +131,19 @@ public class VoteRewards extends BukkitCommand {
                 Player player = (Player) sender;
 
                 String regionName = args[2];
-                Selection selection = m.getWorldEdit().getSelection(player);
 
-                if (selection == null) {
+                WorldEditHook worldEditHook = new WorldEditHook(player);
+
+                Location a = worldEditHook.getMinimumPoint();
+                Location b = worldEditHook.getMaximumPoint();
+
+                if (a == null || b == null) {
                     Utils.msg(sender, "&c&l(!) &cPlease make a selection first!");
                     return true;
                 }
 
                 CFG cfg = FileManager.getInstance().getData();
                 FileConfiguration data = cfg.getFileConfiguration();
-
-                Location a = selection.getMinimumPoint();
-                Location b = selection.getMaximumPoint();
 
                 data.set("Regions." + regionName + ".minimumPos", a);
                 data.set("Regions." + regionName + ".maximumPos", b);
@@ -162,6 +167,8 @@ public class VoteRewards extends BukkitCommand {
                 Utils.msg(sender, "&c&l(!) &cLocation " + regionName + " removed!");
             }
 
+            return true;
+        } else {
             return true;
         }
         return true;

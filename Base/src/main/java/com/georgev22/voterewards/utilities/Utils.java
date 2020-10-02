@@ -465,8 +465,8 @@ public final class Utils {
 
     public static String getTopPlayer() {
         Map<String, Integer> result = getTopPlayersMap().entrySet().stream()
-                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())).limit(1).collect(Collectors.toMap(
-                        Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
+                .sorted(Entry.comparingByValue(Comparator.reverseOrder())).limit(1).collect(Collectors.toMap(
+                        Entry::getKey, Entry::getValue, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
         return String.valueOf(result.entrySet()).split("=")[0].replace("[", "");
     }
 

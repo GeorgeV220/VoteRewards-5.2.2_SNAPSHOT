@@ -15,13 +15,11 @@ import com.georgev22.voterewards.listeners.VotifierListener;
 import com.georgev22.voterewards.playerdata.VoteOptions;
 import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.Updater;
-import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.Listener;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -190,19 +188,6 @@ public class VoteRewardPlugin extends JavaPlugin {
             }
         }.runTaskAsynchronously(this);
 
-    }
-
-    /**
-     * WorldEdit plugin
-     *
-     * @return
-     */
-    public WorldEditPlugin getWorldEdit() {
-        Plugin p = Bukkit.getServer().getPluginManager().getPlugin("WorldEdit");
-        if (p instanceof WorldEditPlugin)
-            return (WorldEditPlugin) p;
-        else
-            return null;
     }
 
     /**

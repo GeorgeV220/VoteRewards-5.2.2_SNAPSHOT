@@ -14,7 +14,7 @@ public class Updater {
 
     public Updater() {
         new Thread(() -> {
-            final String BASE_URL = "https://git.georgev22.com/GeorgeV22/VoteRewards/raw/branch/master/version.md";
+            final String BASE_URL = "https://raw.githubusercontent.com/GeorgeV220/VoteRewards/experimental/version.md";
             m.getLogger().info("Checking for Updates ... ");
 
             String onlineVersion;
@@ -75,7 +75,7 @@ public class Updater {
 
     public Updater(Player player) {
         new Thread(() -> {
-            final String BASE_URL = "https://git.georgev22.com/GeorgeV22/VoteRewards/raw/branch/master/version.md";
+            final String BASE_URL = "https://raw.githubusercontent.com/GeorgeV220/VoteRewards/experimental/version.md";
             Utils.msg(player, "&e&lUpdater &8» &6Checking for Updates ...");
 
             String onlineVersion;

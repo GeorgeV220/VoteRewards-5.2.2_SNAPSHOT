@@ -199,6 +199,9 @@ public class VotePartyUtils {
     public boolean isInLocation(Location location) {
         CFG cfg = FileManager.getInstance().getData();
         FileConfiguration data = cfg.getFileConfiguration();
+        if (data.getConfigurationSection("Regions") == null || data.getConfigurationSection("Regions").getKeys(false).isEmpty()) {
+            return false;
+        }
         for (String s : data.getConfigurationSection("Regions").getKeys(false)) {
             Location a = (Location) data.get("Regions." + s + ".minimumPos");
             Location b = (Location) data.get("Regions." + s + ".maximumPos");
