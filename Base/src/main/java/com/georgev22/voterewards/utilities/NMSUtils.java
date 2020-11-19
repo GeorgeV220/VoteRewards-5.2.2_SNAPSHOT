@@ -3,20 +3,28 @@ package com.georgev22.voterewards.utilities;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-public class NMSUtils {
+import java.lang.reflect.InvocationTargetException;
 
-    public Class<?> getNMSClass(String name) {
-        String version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+public class NMSUtils {
+    private static final String version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+
+    public static Class<?> getNMSClass(String name) {
         try {
             return Class.forName("net.minecraft.server." + version + "." + name);
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            return null;
+            throw new RuntimeException("An error occurred while finding NMS class.", e);
         }
-
     }
 
-    public void sendPacket(Player player, Object packet) {
+    public static Class<?> getOBCClass(String className) {
+        try {
+            return Class.forName("org.bukkit.craftbukkit." + version + "." + className);
+        } catch (ClassNotFoundException ex) {
+            throw new RuntimeException("An error occurred while finding OBC class.", ex);
+        }
+    }
+
+    public static void sendPacket(Player player, Object packet) {
         try {
             Object handle = player.getClass().getMethod("getHandle").invoke(player);
             Object playerConnection = handle.getClass().getField("playerConnection").get(handle);
@@ -26,5 +34,9 @@ public class NMSUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static Object getHandle(Object object) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        return object.getClass().getMethod("getHandle").invoke(object);
     }
 }

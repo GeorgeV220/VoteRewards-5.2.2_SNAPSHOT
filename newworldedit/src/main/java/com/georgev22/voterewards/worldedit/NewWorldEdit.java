@@ -1,6 +1,5 @@
 package com.georgev22.voterewards.worldedit;
 
-import com.sk89q.worldedit.IncompleteRegionException;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.regions.Region;
@@ -9,25 +8,20 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import java.util.Objects;
-
 public final class NewWorldEdit implements WorldEditInterface {
 
-    private Location minimumPoint;
-    private Location maximumPoint;
+    private final Location minimumPoint;
+    private final Location maximumPoint;
 
     public NewWorldEdit(Player player) {
         Region selection = null;
         try {
-            selection = Objects.requireNonNull(getWorldEdit()).getSession(player).getSelection(BukkitAdapter.adapt(player.getWorld()));
-        } catch (IncompleteRegionException e) {
-            e.printStackTrace();
+            selection = getWorldEdit().getSession(player).getSelection(BukkitAdapter.adapt(player.getWorld()));
+        } catch (Exception ignored) {
         }
-        if (selection == null) {
-            return;
-        }
-        this.minimumPoint = BukkitAdapter.adapt(player.getWorld(), selection.getMinimumPoint());
-        this.maximumPoint = BukkitAdapter.adapt(player.getWorld(), selection.getMaximumPoint());
+
+        this.minimumPoint = selection != null ? BukkitAdapter.adapt(player.getWorld(), selection.getMinimumPoint()) : null;
+        this.maximumPoint = selection != null ? BukkitAdapter.adapt(player.getWorld(), selection.getMaximumPoint()) : null;
     }
 
     public Location getMinimumPoint() {

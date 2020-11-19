@@ -4,7 +4,6 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.georgev22</groupId>
     <artifactId>Base</artifactId>
     <version>4.0-Alpha</version>
     <packaging>jar</packaging>
@@ -15,6 +14,12 @@
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+    <parent>
+        <groupId>com.georgev22</groupId>
+        <artifactId>VoteRewards</artifactId>
+        <version>4.0-Alpha</version>
+    </parent>
 
     <build>
         <plugins>
@@ -31,6 +36,14 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.2.4</version>
+                <configuration>
+                    <relocations>
+                        <relocation>
+                            <pattern>com.cryptomorin.xseries</pattern>
+                            <shadedPattern>com.georgev22.voterewards.utilities</shadedPattern>
+                        </relocation>
+                    </relocations>
+                </configuration>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -117,6 +130,13 @@
             <version>2.4.4</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.github.cryptomorin</groupId>
+            <artifactId>XSeries</artifactId>
+            <version>LATEST</version>
+        </dependency>
+
         <dependency>
             <groupId>com.georgev22.worldedit</groupId>
             <artifactId>legacyworldedit</artifactId>

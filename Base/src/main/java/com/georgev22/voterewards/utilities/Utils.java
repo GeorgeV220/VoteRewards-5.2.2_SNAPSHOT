@@ -506,4 +506,29 @@ public final class Utils {
         return copy;
     }
 
+
+    public static String getArgs(String[] args, int num) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = num; i < args.length; i++) {
+            sb.append(args[i]).append(" ");
+        }
+        return sb.toString().trim();
+    }
+
+    public static String[] getArguments(String[] args, int num) {
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = num; i < args.length; i++) {
+            sb.append(args[i]).append(" ");
+        }
+        
+        return sb.toString().trim().split(" ");
+    }
+
+    public static String[] reverse(String[] a) {
+        List<String> list = Arrays.asList(a);
+        Collections.reverse(list);
+        return (String[]) list.toArray();
+    }
+
 }

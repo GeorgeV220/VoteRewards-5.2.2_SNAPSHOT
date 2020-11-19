@@ -1,10 +1,7 @@
-package com.georgev22.voterewards.playerdata;
+package com.georgev22.voterewards.utilities;
 
 import com.cryptomorin.xseries.XSound;
 import com.georgev22.voterewards.VoteRewardPlugin;
-import com.georgev22.voterewards.utilities.MessagesUtil;
-import com.georgev22.voterewards.utilities.TitleActionbarUtil;
-import com.georgev22.voterewards.utilities.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
@@ -15,8 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
@@ -33,7 +29,7 @@ public class UserVoteData {
         return new UserVoteData(uuid);
     }
 
-    private VoteRewardPlugin voteRewardPlugin = VoteRewardPlugin.getInstance();
+    private final VoteRewardPlugin voteRewardPlugin = VoteRewardPlugin.getInstance();
 
     private UserVoteData(final UUID uuid) {
         this.uuid = uuid;
@@ -79,7 +75,6 @@ public class UserVoteData {
             this.configuration.set("last-vote", System.currentTimeMillis());
             this.saveConfiguration();
         }
-        this.setDailyVotes(this.getDailyVotes() + 1);
         //
 
         // TITLE
@@ -92,36 +87,30 @@ public class UserVoteData {
 
         // WORLD REWARDS (WITH SERVICES)
         if (VoteOptions.WORLD.isEnabled()) {
+            //Bukkit.broadcastMessage("Player: " + voter.getName() + " world: " + getWorld());
             if (this.voteRewardPlugin.getConfig().getString("Rewards.Worlds." + getWorld() + "." + serviceName) != null) {
-                for (final String b : this.voteRewardPlugin.getConfig()
-                        .getStringList("Rewards.Worlds." + getWorld() + "." + serviceName)) {
-                    this.runCommands(b.replace("%player%", Objects.requireNonNull(this.getVoter().getName())));
-                }
+                this.runCommands(this.voteRewardPlugin.getConfig()
+                        .getStringList("Rewards.Worlds." + getWorld() + "." + serviceName));
             } else {
-                for (final String b : this.voteRewardPlugin.getConfig()
-                        .getStringList("Rewards.Worlds" + voter.getPlayer().getWorld().getName() + ".default")) {
-                    this.runCommands(b.replace("%player%", Objects.requireNonNull(this.getVoter().getName())));
-                }
+                this.runCommands(this.voteRewardPlugin.getConfig()
+                        .getStringList("Rewards.Worlds." + getWorld() + ".default"));
             }
         }
 
         // SERVICE REWARDS
         if (!VoteOptions.DISABLE_SERVICES.isEnabled()) {
             if (this.voteRewardPlugin.getConfig().getString("Rewards.Services." + serviceName) != null) {
-                for (final String b : this.voteRewardPlugin.getConfig()
-                        .getStringList("Rewards.Services" + serviceName + ".commands")) {
-                    this.runCommands(b.replace("%player%", Objects.requireNonNull(this.getVoter().getName())));
-                }
+                this.runCommands(this.voteRewardPlugin.getConfig()
+                        .getStringList("Rewards.Services" + serviceName + ".commands"));
             } else {
-                for (final String b : this.voteRewardPlugin.getConfig()
-                        .getStringList("Rewards.Services.default.commands")) {
-                    this.runCommands(b.replace("%player%", Objects.requireNonNull(this.getVoter().getName())));
-                }
+                this.runCommands(this.voteRewardPlugin.getConfig()
+                        .getStringList("Rewards.Services.default.commands"));
             }
         }
 
         // DAILY REWARDS
-        if (VoteOptions.DAILY.isEnabled()) {
+        /*if (VoteOptions.DAILY.isEnabled()) {
+            this.setDailyVotes(this.getDailyVotes() + 1);
             final Calendar now = Calendar.getInstance();
             final Calendar start = Calendar.getInstance();
             start.setTime(new Date(this.getLastVote()));
@@ -137,7 +126,7 @@ public class UserVoteData {
                     }
                 }
             }
-        }
+        }*/
         //
 
         // PLAY SOUND
@@ -153,10 +142,8 @@ public class UserVoteData {
             for (String s2 : this.voteRewardPlugin.getConfig().getConfigurationSection("Rewards.Lucky")
                     .getKeys(false)) {
                 if (Integer.valueOf(s2).equals(i)) {
-                    for (String b3 : this.voteRewardPlugin.getConfig()
-                            .getStringList("Rewards.Lucky." + s2 + ".commands")) {
-                        this.runCommands(b3.replace("%player%", Objects.requireNonNull(this.getVoter().getName())));
-                    }
+                    this.runCommands(this.voteRewardPlugin.getConfig()
+                            .getStringList("Rewards.Lucky." + s2 + ".commands"));
                 }
             }
         }
@@ -167,10 +154,8 @@ public class UserVoteData {
                     .getConfigurationSection("Rewards.Permission");
             for (String s2 : section.getKeys(false)) {
                 if (this.getVoter().getPlayer().hasPermission("voterewards.permission" + s2)) {
-                    for (final String b3 : this.voteRewardPlugin.getConfig()
-                            .getStringList("Rewards.Permission." + s2 + ".commands")) {
-                        this.runCommands(b3.replace("%player%", Objects.requireNonNull(this.getVoter().getName())));
-                    }
+                    this.runCommands(this.voteRewardPlugin.getConfig()
+                            .getStringList("Rewards.Permission." + s2 + ".commands"));
                 }
             }
         }
@@ -182,10 +167,8 @@ public class UserVoteData {
             for (String s2 : this.voteRewardPlugin.getConfig().getConfigurationSection("Rewards.Cumulative")
                     .getKeys(false)) {
                 if (Integer.valueOf(s2).equals(votes)) {
-                    for (String b3 : this.voteRewardPlugin.getConfig()
-                            .getStringList("Rewards.Cumulative." + s2 + ".commands")) {
-                        this.runCommands(b3.replace("%player%", Objects.requireNonNull(this.getVoter().getName())));
-                    }
+                    this.runCommands(this.voteRewardPlugin.getConfig()
+                            .getStringList("Rewards.Cumulative." + s2 + ".commands"));
                 }
             }
         }
@@ -201,10 +184,15 @@ public class UserVoteData {
      *
      * @param s
      */
-    private void runCommands(String s) {
-        if (s == null)
+    private void runCommands(List<String> s) {
+        if (s == null) {
+            //Bukkit.broadcastMessage("NULL CONFIGURATION");
             return;
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Utils.colorize(s));
+        }
+        for (String b : s) {
+            //Bukkit.broadcastMessage(b);
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Utils.colorize(b.replace("%player%", voter.getName())));
+        }
     }
 
     /**

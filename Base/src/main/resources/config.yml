@@ -7,12 +7,14 @@ Options:
     votes: true
     fakevote: true
     voteparty: true
+    hologram: false #Only for test
   title:
     vote: true
   gui: false
   updater: true
   votetop: 5
   disable_services: false
+  message: true
   votes:
     world: false
     daily:
@@ -103,6 +105,7 @@ VoteParty:
   participate: true
   sound: false
   message: true
+  regions: false
   cooldown:
     enabled: true
     seconds: 5

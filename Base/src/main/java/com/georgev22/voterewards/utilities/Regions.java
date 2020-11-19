@@ -6,15 +6,15 @@ import java.util.UUID;
 
 public class Regions {
 
-    private UUID worldUniqueId;
+    private final UUID worldUniqueId;
 
-    private double maxX;
-    private double maxY;
-    private double maxZ;
+    private final double maxX;
+    private final double maxY;
+    private final double maxZ;
 
-    private double minX;
-    private double minY;
-    private double minZ;
+    private final double minX;
+    private final double minY;
+    private final double minZ;
 
     public Regions(Location firstPoint, Location secondPoint) {
         worldUniqueId = firstPoint.getWorld().getUID();

@@ -7,17 +7,12 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import java.util.Objects;
-
 public final class LegacyWorldEdit implements WorldEditInterface {
 
-    private Selection selection;
+    private final Selection selection;
 
     public LegacyWorldEdit(Player player) {
-        this.selection = Objects.requireNonNull(getWorldEdit()).getSelection(player);
-        if (selection == null) {
-            player.sendMessage("&c&l(!) &cPlease make a selection first!");
-        }
+        this.selection = getWorldEdit().getSelection(player);
     }
 
     private WorldEditPlugin getWorldEdit() {

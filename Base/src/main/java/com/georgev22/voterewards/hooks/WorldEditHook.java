@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
  */
 public class WorldEditHook {
 
-    private WorldEditInterface worldEditInterface;
+    private final WorldEditInterface worldEditInterface;
 
     public WorldEditHook(Player player) {
         String version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3] + ".";

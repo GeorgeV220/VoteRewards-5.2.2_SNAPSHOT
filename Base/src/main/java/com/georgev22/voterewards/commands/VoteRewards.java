@@ -1,13 +1,11 @@
 package com.georgev22.voterewards.commands;
 
-import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.configmanager.CFG;
 import com.georgev22.voterewards.configmanager.FileManager;
 import com.georgev22.voterewards.hooks.WorldEditHook;
-import com.georgev22.voterewards.playerdata.UserVoteData;
 import com.georgev22.voterewards.utilities.MessagesUtil;
+import com.georgev22.voterewards.utilities.UserVoteData;
 import com.georgev22.voterewards.utilities.Utils;
-import com.google.common.collect.Lists;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -16,25 +14,21 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 
 public class VoteRewards extends BukkitCommand {
-
-    private VoteRewardPlugin m = VoteRewardPlugin.getInstance();
-
-    public static List<Player> toolList = Lists.newArrayList();
 
     public VoteRewards() {
         super("voterewards");
         this.description = "VoteRewards command";
         this.usageMessage = "/voterewards";
         this.setPermission("voterewards.basic");
-        this.setPermissionMessage(MessagesUtil.NO_PERMISSION.getMessages()[0]);
+        this.setPermissionMessage(Utils.colorize(MessagesUtil.NO_PERMISSION.getMessages()[0]));
         this.setAliases(Arrays.asList("vr", "votereward", "voter", "vrewards"));
     }
 
     public boolean execute(final CommandSender sender, final String label, final String[] args) {
+        if (!testPermission(sender)) return true;
         if (args.length == 0) {
             Utils.msg(sender, "&c&l(!) &cCommands &c&l(!)");
             Utils.msg(sender, "&6/vr reload");
@@ -169,6 +163,10 @@ public class VoteRewards extends BukkitCommand {
 
             return true;
         } else {
+            Utils.msg(sender, "&c&l(!) &cCommands &c&l(!)");
+            Utils.msg(sender, "&6/vr reload");
+            Utils.msg(sender, "&6/vr help [player, voteparty]");
+            Utils.msg(sender, "&c&l==============");
             return true;
         }
         return true;

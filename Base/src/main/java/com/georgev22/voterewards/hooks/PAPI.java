@@ -3,7 +3,7 @@ package com.georgev22.voterewards.hooks;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.configmanager.FileManager;
 
-import com.georgev22.voterewards.playerdata.UserVoteData;
+import com.georgev22.voterewards.utilities.UserVoteData;
 import com.georgev22.voterewards.utilities.Utils;
 import org.bukkit.entity.Player;
 

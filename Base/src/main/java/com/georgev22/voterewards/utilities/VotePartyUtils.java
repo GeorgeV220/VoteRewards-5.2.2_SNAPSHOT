@@ -1,13 +1,9 @@
-package com.georgev22.voterewards.playerdata;
+package com.georgev22.voterewards.utilities;
 
 import com.cryptomorin.xseries.XSound;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.configmanager.CFG;
 import com.georgev22.voterewards.configmanager.FileManager;
-import com.georgev22.voterewards.utilities.MaterialUtil;
-import com.georgev22.voterewards.utilities.MessagesUtil;
-import com.georgev22.voterewards.utilities.Regions;
-import com.georgev22.voterewards.utilities.Utils;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.bukkit.Bukkit;
@@ -32,9 +28,9 @@ public class VotePartyUtils {
         return instance == null ? instance = new VotePartyUtils() : instance;
     }
 
-    private VoteRewardPlugin voteRewardPlugin = VoteRewardPlugin.getInstance();
+    private final VoteRewardPlugin voteRewardPlugin = VoteRewardPlugin.getInstance();
 
-    private Set<OfflinePlayer> players = Sets.newHashSet();
+    private final Set<OfflinePlayer> players = Sets.newHashSet();
 
     public void run(OfflinePlayer player) {
 
@@ -199,6 +195,9 @@ public class VotePartyUtils {
     public boolean isInLocation(Location location) {
         CFG cfg = FileManager.getInstance().getData();
         FileConfiguration data = cfg.getFileConfiguration();
+        if (!PartyOptions.REGIONS.isEnabled()) {
+            return false;
+        }
         if (data.getConfigurationSection("Regions") == null || data.getConfigurationSection("Regions").getKeys(false).isEmpty()) {
             return false;
         }
@@ -228,8 +227,10 @@ public class VotePartyUtils {
      * @param s
      */
     private void runCommands(String s) {
-        if (s == null)
-            return;
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Utils.colorize(s));
+        Bukkit.getScheduler().runTask(VoteRewardPlugin.getInstance(), () -> {
+            if (s == null)
+                return;
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Utils.colorize(s));
+        });
     }
 }

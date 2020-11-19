@@ -1,4 +1,4 @@
-package com.georgev22.voterewards.playerdata;
+package com.georgev22.voterewards.utilities;
 
 import com.georgev22.voterewards.configmanager.FileManager;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -31,6 +31,8 @@ public enum VoteOptions {
 
     SOUND("sound"),
 
+    MESSAGE("message"),
+
     COMMAND_REWARDS("commands.rewards"),
 
     COMMAND_FAKEVOTE("commands.fakevote"),
@@ -45,8 +47,9 @@ public enum VoteOptions {
 
     COMMAND_VOTEREWARDS("commands.voterewards"),
 
-    ;
+    COMMAND_HOLOGRAM("commands.hologram"),
 
+    ;
     private final String pathName;
 
     VoteOptions(final String pathName) {

@@ -6,7 +6,7 @@
 
     <groupId>com.georgev22.worldedit</groupId>
     <artifactId>legacyworldedit</artifactId>
-    <version>4.0-Alpha</version>
+    <version>4.0-Beta</version>
     <packaging>jar</packaging>
 
     <name>Legacyworldedit</name>

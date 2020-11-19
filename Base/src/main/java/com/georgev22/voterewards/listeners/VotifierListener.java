@@ -2,9 +2,9 @@ package com.georgev22.voterewards.listeners;
 
 import com.cryptomorin.xseries.XSound;
 import com.georgev22.voterewards.VoteRewardPlugin;
-import com.georgev22.voterewards.playerdata.UserVoteData;
-import com.georgev22.voterewards.playerdata.VoteOptions;
 import com.georgev22.voterewards.utilities.MessagesUtil;
+import com.georgev22.voterewards.utilities.UserVoteData;
+import com.georgev22.voterewards.utilities.VoteOptions;
 import com.google.common.collect.Maps;
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.model.VotifierEvent;
@@ -22,7 +22,7 @@ import java.util.Map;
  */
 public class VotifierListener implements Listener {
 
-    private VoteRewardPlugin voteRewardPlugin = VoteRewardPlugin.getInstance();
+    private final VoteRewardPlugin voteRewardPlugin = VoteRewardPlugin.getInstance();
 
     @EventHandler
     public void onVote(VotifierEvent e) {
@@ -39,7 +39,8 @@ public class VotifierListener implements Listener {
         Map<String, String> placeholders = Maps.newHashMap();
         placeholders.put("%player%", vote.getUsername());
         placeholders.put("%servicename%", vote.getServiceName());
-        MessagesUtil.VOTE.msgAll(placeholders, true);
+        if (VoteOptions.MESSAGE.isEnabled())
+            MessagesUtil.VOTE.msgAll(placeholders, true);
 
         placeholders.clear();
         if (VoteOptions.SOUND.isEnabled()) {

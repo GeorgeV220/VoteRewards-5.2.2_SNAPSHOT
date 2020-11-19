@@ -2,10 +2,10 @@ package com.georgev22.voterewards.commands;
 
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.configmanager.FileManager;
-import com.georgev22.voterewards.playerdata.UserVoteData;
-import com.georgev22.voterewards.playerdata.VotePartyUtils;
 import com.georgev22.voterewards.utilities.MessagesUtil;
+import com.georgev22.voterewards.utilities.UserVoteData;
 import com.georgev22.voterewards.utilities.Utils;
+import com.georgev22.voterewards.utilities.VotePartyUtils;
 import com.google.common.collect.Maps;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -24,11 +24,12 @@ public class VoteParty extends BukkitCommand {
         this.description = "VoteParty command";
         this.usageMessage = "/voteparty";
         this.setPermission("voterewards.voteparty");
+        this.setPermissionMessage(Utils.colorize(MessagesUtil.NO_PERMISSION.getMessages()[0]));
         this.setAliases(Arrays.asList("vvp", "vp", "vrvp"));
     }
 
     public boolean execute(final CommandSender sender, final String label, final String[] args) {
-
+        if (!testPermission(sender)) return true;
         final Map<String, String> placeholders = Maps.newHashMap();
         final FileManager fm = FileManager.getInstance();
         if (args.length != 0) {

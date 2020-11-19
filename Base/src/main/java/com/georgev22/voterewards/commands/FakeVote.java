@@ -1,6 +1,7 @@
 package com.georgev22.voterewards.commands;
 
 import com.georgev22.voterewards.utilities.MessagesUtil;
+import com.georgev22.voterewards.utilities.Utils;
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.model.VotifierEvent;
 import org.bukkit.Bukkit;
@@ -19,11 +20,12 @@ public class FakeVote extends BukkitCommand {
         this.description = "FakeVote command";
         this.usageMessage = "/fakevote";
         this.setPermission("voterewards.fakevote");
-        this.setPermissionMessage(MessagesUtil.NO_PERMISSION.getMessages()[0]);
+        this.setPermissionMessage(Utils.colorize(MessagesUtil.NO_PERMISSION.getMessages()[0]));
         this.setAliases(Arrays.asList("vrfake", "vrfakevote", "vfake", "vfakevote"));
     }
 
     public boolean execute(final CommandSender sender, final String label, final String[] args) {
+        if (!testPermission(sender)) return true;
         if (!(sender instanceof Player)) {
             MessagesUtil.ONLY_PLAYER_COMMAND.msg(sender);
             return true;

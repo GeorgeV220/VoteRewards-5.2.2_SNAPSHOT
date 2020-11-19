@@ -12,9 +12,9 @@ import com.georgev22.voterewards.hooks.MVdWPlaceholder;
 import com.georgev22.voterewards.hooks.PAPI;
 import com.georgev22.voterewards.listeners.PlayerListeners;
 import com.georgev22.voterewards.listeners.VotifierListener;
-import com.georgev22.voterewards.playerdata.VoteOptions;
 import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.Updater;
+import com.georgev22.voterewards.utilities.VoteOptions;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
@@ -67,6 +67,9 @@ public class VoteRewardPlugin extends JavaPlugin {
             this.registerCommand("rewards", new Rewards());
         if (VoteOptions.COMMAND_VOTETOP.isEnabled())
             this.registerCommand("votetop", new VoteTop());
+
+        if (VoteOptions.COMMAND_HOLOGRAM.isEnabled())
+            this.registerCommand("hologram", new Holograms());
 
         // Start database
         setupDatabase();
