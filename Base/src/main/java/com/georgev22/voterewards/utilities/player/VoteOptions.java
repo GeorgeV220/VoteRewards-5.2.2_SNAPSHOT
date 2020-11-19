@@ -1,4 +1,4 @@
-package com.georgev22.voterewards.utilities;
+package com.georgev22.voterewards.utilities.player;
 
 import com.georgev22.voterewards.configmanager.FileManager;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -19,7 +19,7 @@ public enum VoteOptions {
 
     WORLD("votes.world"),
 
-    DISABLE_SERVICES("votes.disable_services"),
+    DISABLE_SERVICES("votes.disable services"),
 
     LUCKY("votes.lucky"),
 

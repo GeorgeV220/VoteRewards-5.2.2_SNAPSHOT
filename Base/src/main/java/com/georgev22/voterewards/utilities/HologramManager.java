@@ -10,7 +10,7 @@ import java.util.Map;
  */
 public class HologramManager {
 
-    private Map<String, Hologram> hologramMap = Maps.newHashMap();
+    private final Map<String, Hologram> hologramMap = Maps.newHashMap();
 
     public Map<String, Hologram> getHologramMap() {
         return hologramMap;

@@ -3,6 +3,8 @@ package com.georgev22.voterewards.listeners;
 import com.cryptomorin.xseries.XSound;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.utilities.*;
+import com.georgev22.voterewards.utilities.player.UserVoteData;
+import com.georgev22.voterewards.utilities.player.VotePartyUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

@@ -1,6 +1,6 @@
 package com.georgev22.voterewards.hooks;
 
-import com.georgev22.voterewards.utilities.UserVoteData;
+import com.georgev22.voterewards.utilities.player.UserVoteData;
 import me.robin.leaderheads.datacollectors.OnlineDataCollector;
 import me.robin.leaderheads.objects.BoardType;
 import org.bukkit.entity.Player;

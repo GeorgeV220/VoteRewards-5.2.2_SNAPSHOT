@@ -1,7 +1,9 @@
-package com.georgev22.voterewards.utilities;
+package com.georgev22.voterewards.utilities.player;
 
 import com.cryptomorin.xseries.XSound;
 import com.georgev22.voterewards.VoteRewardPlugin;
+import com.georgev22.voterewards.utilities.MessagesUtil;
+import com.georgev22.voterewards.utilities.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
@@ -80,8 +82,8 @@ public class UserVoteData {
         // TITLE
         if (VoteOptions.VOTE_TITLE.isEnabled()) {
             new TitleActionbarUtil(getVoter().getPlayer()).sendTitle(
-                    Utils.colorize(MessagesUtil.VOTE_TITLE.getMessages()[0]).replace("%player%", voter.getName()),
-                    Utils.colorize(MessagesUtil.VOTE_SUBTITLE.getMessages()[0]).replace("%player%", voter.getName()));
+                    Utils.colorize(MessagesUtil.VOTE_TITLE.getMessages()[0]).replace("%player%", getVoter().getName()),
+                    Utils.colorize(MessagesUtil.VOTE_SUBTITLE.getMessages()[0]).replace("%player%", getVoter().getName()));
         }
         //
 
@@ -101,38 +103,11 @@ public class UserVoteData {
         if (!VoteOptions.DISABLE_SERVICES.isEnabled()) {
             if (this.voteRewardPlugin.getConfig().getString("Rewards.Services." + serviceName) != null) {
                 this.runCommands(this.voteRewardPlugin.getConfig()
-                        .getStringList("Rewards.Services" + serviceName + ".commands"));
+                        .getStringList("Rewards.Services." + serviceName + ".commands"));
             } else {
                 this.runCommands(this.voteRewardPlugin.getConfig()
                         .getStringList("Rewards.Services.default.commands"));
             }
-        }
-
-        // DAILY REWARDS
-        /*if (VoteOptions.DAILY.isEnabled()) {
-            this.setDailyVotes(this.getDailyVotes() + 1);
-            final Calendar now = Calendar.getInstance();
-            final Calendar start = Calendar.getInstance();
-            start.setTime(new Date(this.getLastVote()));
-            final long diffHours = (start.getTimeInMillis() - now.getTimeInMillis()) / 3600000L;
-            if (diffHours >= this.voteRewardPlugin.getConfig().getLong("Options.daily.hours")) {
-                this.setDailyVotes(1);
-            }
-            for (String s : this.voteRewardPlugin.getConfig().getConfigurationSection("Rewards.Daily").getKeys(false)) {
-                if (Integer.valueOf(s).equals(this.getDailyVotes())) {
-                    for (final String b2 : this.voteRewardPlugin.getConfig()
-                            .getConfigurationSection("Rewards.Daily." + s + ".commands").getKeys(false)) {
-                        this.runCommands(b2.replace("%player%", Objects.requireNonNull(this.getVoter().getName())));
-                    }
-                }
-            }
-        }*/
-        //
-
-        // PLAY SOUND
-        if (VoteOptions.SOUND.isEnabled()) {
-            voter.getPlayer().playSound(voter.getPlayer().getLocation(),
-                    XSound.matchXSound(voteRewardPlugin.getConfig().getString("Sounds.Vote")).get().parseSound(), 1000, 1);
         }
 
         // LUCKY REWARDS
@@ -174,6 +149,13 @@ public class UserVoteData {
         }
         //
 
+        // PLAY SOUND
+        if (VoteOptions.SOUND.isEnabled()) {
+            if (getVoter().isOnline())
+                getVoter().getPlayer().playSound(getVoter().getPlayer().getLocation(),
+                        XSound.matchXSound(voteRewardPlugin.getConfig().getString("Sounds.Vote")).get().parseSound(), 1000, 1);
+        }
+
         // VOTE PARTY START
         VotePartyUtils.getInstance().run(getVoter());
 
@@ -190,8 +172,8 @@ public class UserVoteData {
             return;
         }
         for (String b : s) {
-            //Bukkit.broadcastMessage(b);
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Utils.colorize(b.replace("%player%", voter.getName())));
+            Bukkit.broadcastMessage(b);
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Utils.colorize(b.replace("%player%", getVoter().getName())));
         }
     }
 
@@ -392,7 +374,7 @@ public class UserVoteData {
                     try {
                         final PreparedStatement ps = voteRewardPlugin.getConnection()
                                 .prepareStatement(String.format("UPDATE `users` SET `name` = '%s' WHERE `uuid` = '%s'",
-                                        voter.getName(), voter.getUniqueId()));
+                                        getVoter().getName(), getVoter().getUniqueId()));
                         ps.execute();
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -482,8 +464,8 @@ public class UserVoteData {
      * @return String worldName
      */
     public String getWorld() {
-        if (voter.isOnline()) {
-            return voter.getPlayer().getWorld().getName();
+        if (getVoter().isOnline()) {
+            return getVoter().getPlayer().getWorld().getName();
         } else {
             return "world";
         }

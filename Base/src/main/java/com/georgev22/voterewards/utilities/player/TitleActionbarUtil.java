@@ -1,5 +1,6 @@
-package com.georgev22.voterewards.utilities;
+package com.georgev22.voterewards.utilities.player;
 
+import com.georgev22.voterewards.utilities.NMSUtils;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Constructor;

@@ -1,9 +1,10 @@
-package com.georgev22.voterewards.utilities;
+package com.georgev22.voterewards.utilities.player;
 
 import com.cryptomorin.xseries.XSound;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.configmanager.CFG;
 import com.georgev22.voterewards.configmanager.FileManager;
+import com.georgev22.voterewards.utilities.*;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.bukkit.Bukkit;

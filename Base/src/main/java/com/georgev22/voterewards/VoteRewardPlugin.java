@@ -14,7 +14,7 @@ import com.georgev22.voterewards.listeners.PlayerListeners;
 import com.georgev22.voterewards.listeners.VotifierListener;
 import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.Updater;
-import com.georgev22.voterewards.utilities.VoteOptions;
+import com.georgev22.voterewards.utilities.player.VoteOptions;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;

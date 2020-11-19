@@ -13,10 +13,10 @@ Options:
   gui: false
   updater: true
   votetop: 5
-  disable_services: false
   message: true
   votes:
     world: false
+    disable services: false
     daily:
       enabled: false
       hours: 12
