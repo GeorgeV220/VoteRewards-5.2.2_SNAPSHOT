@@ -1,23 +1,22 @@
 package com.georgev22.voterewards.commands;
 
-import com.georgev22.voterewards.VoteRewardPlugin;
-import com.georgev22.voterewards.utilities.HologramManager;
 import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.Utils;
+import com.georgev22.voterewards.utilities.holograms.HologramUtils;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
-import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
+import com.google.common.collect.Maps;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
+import java.util.Map;
 
 /**
  * @author GeorgeV22
  */
 public class Holograms extends BukkitCommand {
-
-    private HologramManager hologramManager = new HologramManager();
 
     public Holograms() {
         super("hologram");
@@ -42,15 +41,12 @@ public class Holograms extends BukkitCommand {
                 return true;
             }
 
-            Hologram hologram = hologramManager.getHologramMap().get(args[1]);
-            if (hologram == null) {
-                hologram = HologramsAPI.createHologram(VoteRewardPlugin.getInstance(), player.getLocation());
-                hologramManager.getHologramMap().put(args[1], hologram);
+            if (HologramUtils.hologramExists(args[1])) {
+                Utils.msg(sender, "Hologram already exists!");
+                return true;
             }
 
-            for (String text : Utils.getArguments(args, 2)) {
-                hologram.appendTextLine(text);
-            }
+            HologramUtils.show(HologramUtils.create(args[1], player.getLocation(), Utils.getArguments(args, 2), true), player);
 
         } else if (args[0].equalsIgnoreCase("remove")) {
             if (args.length == 1) {
@@ -58,15 +54,29 @@ public class Holograms extends BukkitCommand {
                 return true;
             }
 
-            Hologram hologram = hologramManager.getHologramMap().remove(args[1]);
-
-            if (hologram == null) {
-                Utils.msg(player, "Hologram " + args[1] + " doesn't exist");
+            if (!HologramUtils.hologramExists(args[1])) {
+                Utils.msg(sender, "Hologram doesn't exists!");
                 return true;
             }
 
-            hologram.delete();
-
+            HologramUtils.remove(args[1]);
+        } else if (args[0].equalsIgnoreCase("update")) {
+            if (HologramUtils.hologramExists(args[1])) {
+                Hologram hologram = HologramUtils.getHologramManager().getHologramMap().get(args[1]);
+                if (hologram == null) {
+                    Bukkit.broadcastMessage("null");
+                    return true;
+                }
+                String[] lines = {"%top1%", "%top2%", "%top3%", "%top4%", "%top5%"};
+                final Map<String, String> map = Maps.newHashMap();
+                map.put("%top1%", Utils.getTopPlayer());
+                map.put("%top2%", Utils.getTopPlayer(2));
+                map.put("%top3%", Utils.getTopPlayer(3));
+                map.put("%top4%", Utils.getTopPlayer(4));
+                map.put("%top5%", Utils.getTopPlayer(5));
+                HologramUtils.updateHologram(hologram, lines, map);
+                map.clear();
+            }
         }
         return true;
     }

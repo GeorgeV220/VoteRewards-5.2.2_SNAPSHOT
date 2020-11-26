@@ -1,14 +1,13 @@
 package com.georgev22.voterewards.configmanager;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Set;
-
+import com.google.common.collect.Sets;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.google.common.collect.Sets;
+import java.io.File;
+import java.io.IOException;
+import java.util.Set;
 
 public final class CFG {
 

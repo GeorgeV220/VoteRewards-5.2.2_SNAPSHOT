@@ -455,6 +455,18 @@ public final class Utils {
     }
 
     /**
+     * Get the top player
+     *
+     * @return top player's name
+     */
+    public static String getTopPlayer() {
+        Map<String, Integer> result = getTopPlayersMap().entrySet().stream()
+                .sorted(Entry.comparingByValue(Comparator.reverseOrder())).limit(1).collect(Collectors.toMap(
+                        Entry::getKey, Entry::getValue, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
+        return String.valueOf(result.entrySet()).split("=")[0].replace("[", "");
+    }
+
+    /**
      *
      */
     public static Map<String, Integer> getTopPlayers(int limit) {
@@ -463,11 +475,9 @@ public final class Utils {
                         Entry::getKey, Entry::getValue, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
     }
 
-    public static String getTopPlayer() {
-        Map<String, Integer> result = getTopPlayersMap().entrySet().stream()
-                .sorted(Entry.comparingByValue(Comparator.reverseOrder())).limit(1).collect(Collectors.toMap(
-                        Entry::getKey, Entry::getValue, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
-        return String.valueOf(result.entrySet()).split("=")[0].replace("[", "");
+
+    public static String getTopPlayer(int number) {
+        return String.valueOf(getTopPlayers(number).keySet().toArray()[number]);
     }
 
     /**
@@ -521,7 +531,7 @@ public final class Utils {
         for (int i = num; i < args.length; i++) {
             sb.append(args[i]).append(" ");
         }
-        
+
         return sb.toString().trim().split(" ");
     }
 

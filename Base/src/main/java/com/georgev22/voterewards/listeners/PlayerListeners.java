@@ -2,14 +2,20 @@ package com.georgev22.voterewards.listeners;
 
 import com.cryptomorin.xseries.XSound;
 import com.georgev22.voterewards.VoteRewardPlugin;
-import com.georgev22.voterewards.utilities.*;
+import com.georgev22.voterewards.utilities.MaterialUtil;
+import com.georgev22.voterewards.utilities.PartyOptions;
+import com.georgev22.voterewards.utilities.Updater;
+import com.georgev22.voterewards.utilities.Utils;
+import com.georgev22.voterewards.utilities.holograms.HologramUtils;
 import com.georgev22.voterewards.utilities.player.UserVoteData;
 import com.georgev22.voterewards.utilities.player.VotePartyUtils;
+import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -26,7 +32,7 @@ public class PlayerListeners implements Listener {
     }
 
     @EventHandler
-    public void onJoin(PlayerLoginEvent event) {
+    public void onLogin(PlayerLoginEvent event) {
         UserVoteData.getUser(event.getPlayer().getUniqueId()).setupUser();
         if (plugin.getConfig().getBoolean("Options.updater")) {
             if (event.getPlayer().hasPermission("voterewards.updater") || event.getPlayer().isOp()) {
@@ -35,14 +41,14 @@ public class PlayerListeners implements Listener {
         }
     }
 
-    /*@EventHandler
-    public void onSignChange(SignChangeEvent e) {
-        if (e.getLine(0).equalsIgnoreCase("[VoteRewards]")) {
-            if (e.getLine(1).isEmpty()) {
-            }
-
+    @EventHandler
+    public void onJoin(PlayerJoinEvent event) {
+        if (HologramUtils.getHolograms().isEmpty())
+            return;
+        for (Hologram hologram : HologramUtils.getHolograms()) {
+            HologramUtils.show(hologram, event.getPlayer());
         }
-    }*/
+    }
 
     private final Set<Action> clicks = EnumSet.of(Action.RIGHT_CLICK_AIR, Action.RIGHT_CLICK_BLOCK,
             Action.LEFT_CLICK_AIR, Action.RIGHT_CLICK_BLOCK);

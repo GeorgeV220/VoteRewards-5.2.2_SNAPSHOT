@@ -7,7 +7,7 @@ Options:
     votes: true
     fakevote: true
     voteparty: true
-    hologram: false #Only for test
+    hologram: false #Only for test. Is not ready yet
   title:
     vote: true
   gui: false
@@ -22,6 +22,7 @@ Options:
       hours: 12
     offline: false
     permissions: false
+    lucky numbers: 50
     lucky: false
     cumulative: false
   # File, MySQL, SQLite
@@ -82,11 +83,15 @@ Rewards:
       commands:
         - broadcast %player% Voted 10 times
 
-  # Lucky vote % (0-100)
+  # Lucky vote (0-X) set lucky numbers. Higher values than 50 can be very difficult to get rewards
   Lucky:
     '10':
       commands:
         - eco give %player% 1000
+        - broadcast %player% was lucky and get 1000$
+    '17':
+      commands:
+        - eco give %player% 3000
         - broadcast %player% was lucky and get 1000$
 
   # Permission based rewards (eg: voterewards.rewards.starter , voterewards.rewards.vip )

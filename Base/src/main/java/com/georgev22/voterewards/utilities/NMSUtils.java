@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 import java.lang.reflect.InvocationTargetException;
 
 public class NMSUtils {
-    private static final String version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+    public static final String version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
 
     public static Class<?> getNMSClass(String name) {
         try {

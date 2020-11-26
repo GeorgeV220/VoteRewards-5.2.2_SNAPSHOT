@@ -2,6 +2,8 @@ target/
 
 build/
 
+libs/
+
 .idea/
 .ipr
 .iws

@@ -1,4 +1,4 @@
-package com.georgev22.voterewards.utilities;
+package com.georgev22.voterewards.utilities.holograms;
 
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.google.common.collect.Maps;

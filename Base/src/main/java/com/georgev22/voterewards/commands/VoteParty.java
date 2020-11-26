@@ -3,8 +3,8 @@ package com.georgev22.voterewards.commands;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.configmanager.FileManager;
 import com.georgev22.voterewards.utilities.MessagesUtil;
-import com.georgev22.voterewards.utilities.player.UserVoteData;
 import com.georgev22.voterewards.utilities.Utils;
+import com.georgev22.voterewards.utilities.player.UserVoteData;
 import com.georgev22.voterewards.utilities.player.VotePartyUtils;
 import com.google.common.collect.Maps;
 import org.bukkit.Bukkit;
@@ -125,14 +125,14 @@ public class VoteParty extends BukkitCommand {
         placeholders.put("%need%", String.valueOf(this.m.getConfig().getInt("VoteParty.votes")));
         MessagesUtil.VOTEPARTY.msg(sender, placeholders, true);
         placeholders.clear();
-        if (sender.hasPermission("voterewards.voteparty.help")) {
+        /*if (sender.hasPermission("voterewards.voteparty.help")) {
             Utils.msg(sender, "&c&l(!) &cCommands &c&l(!)");
             Utils.msg(sender, "&a/voteparty");
             Utils.msg(sender, "&a/voteparty start");
             Utils.msg(sender, "&a/voteparty claim");
             Utils.msg(sender, "&a/voteparty give");
             return true;
-        }
+        }*/
         return true;
     }
 }

@@ -2,6 +2,7 @@ package com.georgev22.voterewards;
 
 import com.georgev22.org.bstats.bukkit.MetricsLite;
 import com.georgev22.voterewards.commands.*;
+import com.georgev22.voterewards.configmanager.CFG;
 import com.georgev22.voterewards.configmanager.FileManager;
 import com.georgev22.voterewards.database.DB;
 import com.georgev22.voterewards.database.DatabaseType;
@@ -14,8 +15,10 @@ import com.georgev22.voterewards.listeners.PlayerListeners;
 import com.georgev22.voterewards.listeners.VotifierListener;
 import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.Updater;
+import com.georgev22.voterewards.utilities.holograms.HologramUtils;
 import com.georgev22.voterewards.utilities.player.VoteOptions;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -96,6 +99,13 @@ public class VoteRewardPlugin extends JavaPlugin {
             Bukkit.getLogger().info("[VoteRewards] Metrics is enabled!");
         }
 
+        CFG dataCFG = fm.getData();
+        FileConfiguration data = dataCFG.getFileConfiguration();
+        if (data.get("Holograms") != null) {
+            for (String b : data.getConfigurationSection("Holograms").getKeys(false)) {
+                HologramUtils.create(b, (Location) data.get("Holograms." + b + ".location"), data.getStringList("Holograms." + b + ".lines"), false);
+            }
+        }
     }
 
     @Override

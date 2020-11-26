@@ -113,7 +113,7 @@ public class UserVoteData {
         // LUCKY REWARDS
         if (VoteOptions.LUCKY.isEnabled()) {
             ThreadLocalRandom random = ThreadLocalRandom.current();
-            int i = random.nextInt(101);
+            int i = random.nextInt(this.voteRewardPlugin.getConfig().getInt("Options.votes.lucky numbers") + 1);
             for (String s2 : this.voteRewardPlugin.getConfig().getConfigurationSection("Rewards.Lucky")
                     .getKeys(false)) {
                 if (Integer.valueOf(s2).equals(i)) {
@@ -172,7 +172,6 @@ public class UserVoteData {
             return;
         }
         for (String b : s) {
-            Bukkit.broadcastMessage(b);
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Utils.colorize(b.replace("%player%", getVoter().getName())));
         }
     }
