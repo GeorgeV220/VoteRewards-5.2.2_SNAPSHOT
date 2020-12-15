@@ -35,7 +35,7 @@ public class HolographicDisplays {
         }
 
         for (String line : fileManager.getConfig().getFileConfiguration().getStringList("Holograms." + type)) {
-            hologram.appendTextLine(line);
+            hologram.appendTextLine(Utils.colorize(line));
         }
 
         if (save) {
