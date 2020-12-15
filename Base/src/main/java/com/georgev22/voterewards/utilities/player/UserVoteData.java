@@ -4,7 +4,9 @@ import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.hooks.HolographicDisplays;
 import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.Utils;
+import com.georgev22.voterewards.utilities.options.VoteOptions;
 import com.georgev22.xseries.XSound;
+import com.georgev22.xseries.messages.Titles;
 import com.google.common.collect.Lists;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -79,19 +81,16 @@ public class UserVoteData {
             this.configuration.set("last-vote", System.currentTimeMillis());
             this.saveConfiguration();
         }
-        //
 
         // TITLE
         if (VoteOptions.VOTE_TITLE.isEnabled()) {
-            new TitleActionbarUtil(getVoter().getPlayer()).sendTitle(
+            Titles.sendTitle(getVoter().getPlayer(),
                     Utils.colorize(MessagesUtil.VOTE_TITLE.getMessages()[0]).replace("%player%", getVoter().getName()),
                     Utils.colorize(MessagesUtil.VOTE_SUBTITLE.getMessages()[0]).replace("%player%", getVoter().getName()));
         }
-        //
 
         // WORLD REWARDS (WITH SERVICES)
         if (VoteOptions.WORLD.isEnabled()) {
-            //Bukkit.broadcastMessage("Player: " + voter.getName() + " world: " + getWorld());
             if (this.voteRewardPlugin.getConfig().getString("Rewards.Worlds." + getWorld() + "." + serviceName) != null) {
                 this.runCommands(this.voteRewardPlugin.getConfig()
                         .getStringList("Rewards.Worlds." + getWorld() + "." + serviceName));
@@ -136,7 +135,6 @@ public class UserVoteData {
                 }
             }
         }
-        //
 
         // CUMULATIVE REWARDS
         if (VoteOptions.CUMULATIVE.isEnabled()) {
@@ -149,7 +147,6 @@ public class UserVoteData {
                 }
             }
         }
-        //
 
         // PLAY SOUND
         if (VoteOptions.SOUND.isEnabled()) {
@@ -179,7 +176,6 @@ public class UserVoteData {
      */
     private void runCommands(List<String> s) {
         if (s == null) {
-            //Bukkit.broadcastMessage("NULL CONFIGURATION");
             return;
         }
         for (String b : s) {
@@ -200,8 +196,6 @@ public class UserVoteData {
                         .prepareStatement("SELECT votes FROM users WHERE UUID = ?");
                 ps.setString(1, uuid.toString());
 
-                // PreparedStatement ps = voteRewardPlugin.getConnection()
-                // .prepareStatement("SELECT * FROM " + voter.getUniqueId().toString());
                 ResultSet rs = ps.executeQuery();
                 rs.next();
                 return rs.getInt("votes");
@@ -220,9 +214,6 @@ public class UserVoteData {
                 final PreparedStatement statement = this.voteRewardPlugin.getConnection().prepareStatement(
                         String.format("UPDATE `users` SET `votes` = '%d' WHERE `uuid` = '%s'", votes, name));
 
-                // final PreparedStatement statement = this.voteRewardPlugin.getConnection()
-                // .prepareStatement(String.format("UPDATE `" + name + "` SET `votes` = '%d'",
-                // votes));
                 statement.executeUpdate();
             } catch (Exception e) {
                 e.printStackTrace();

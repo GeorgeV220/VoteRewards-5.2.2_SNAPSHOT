@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 
 public final class Utils {
 
-    private static VoteRewardPlugin m = VoteRewardPlugin.getInstance();
+    private static final VoteRewardPlugin m = VoteRewardPlugin.getInstance();
 
     private Utils() {
         throw new AssertionError();
@@ -49,7 +49,7 @@ public final class Utils {
         /* Days */
         final long days = TimeUnit.SECONDS.toDays(input);
         if (days > 0) {
-            builder.append(days + " " + (days == 1 ? dayInput : daysInput));
+            builder.append(days).append(" ").append(days == 1 ? dayInput : daysInput);
             comma = true;
         }
 
@@ -59,7 +59,7 @@ public final class Utils {
             if (comma) {
                 builder.append(", ");
             }
-            builder.append(hours + " " + (hours == 1 ? hourInput : hoursInput));
+            builder.append(hours).append(" ").append(hours == 1 ? hourInput : hoursInput);
             comma = true;
         }
 
@@ -70,7 +70,7 @@ public final class Utils {
             if (comma) {
                 builder.append(", ");
             }
-            builder.append(minutes + " " + (minutes == 1 ? minuteInput : minutesInput));
+            builder.append(minutes).append(" ").append(minutes == 1 ? minuteInput : minutesInput);
             comma = true;
         }
 
@@ -81,7 +81,7 @@ public final class Utils {
             if (comma) {
                 builder.append(", ");
             }
-            builder.append(seconds + " " + (seconds == 1 ? secondInput : secondsInput));
+            builder.append(seconds).append(" ").append(seconds == 1 ? secondInput : secondsInput);
         }
 
         /* Result */
@@ -184,7 +184,7 @@ public final class Utils {
             return;
         }
         Validate.noNullElements(message, "The list can't have null elements.");
-        msg(target, message.stream().toArray(String[]::new));
+        msg(target, message.toArray(new String[0]));
     }
 
     /* ----------------------------------------------------------------- */
@@ -233,13 +233,13 @@ public final class Utils {
     public static String placeHolder(String str, final Map<String, String> map, final boolean ignoreCase) {
         Validate.notNull(str, "The string can't be null!");
         if (map == null) {
-            return new String(str);
+            return str;
         }
         for (final Entry<String, String> entr : map.entrySet()) {
             str = ignoreCase ? replaceIgnoreCase(str, entr.getKey(), entr.getValue())
                     : str.replace(entr.getKey(), entr.getValue());
         }
-        return new String(str);
+        return str;
     }
 
     private static String replaceIgnoreCase(final String text, String searchString, final String replacement) {
@@ -265,7 +265,7 @@ public final class Utils {
         }
         final int replLength = searchString.length();
         int increase = replacement.length() - replLength;
-        increase = increase < 0 ? 0 : increase;
+        increase = Math.max(increase, 0);
         increase *= 16;
 
         final StringBuilder buf = new StringBuilder(text.length() + increase);

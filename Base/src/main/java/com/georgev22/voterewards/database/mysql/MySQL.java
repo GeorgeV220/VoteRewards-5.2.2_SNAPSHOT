@@ -1,10 +1,10 @@
 package com.georgev22.voterewards.database.mysql;
 
+import com.georgev22.voterewards.database.Database;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-
-import com.georgev22.voterewards.database.Database;
 
 public class MySQL extends Database {
     private final String user;

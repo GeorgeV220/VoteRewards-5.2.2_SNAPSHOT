@@ -1,11 +1,11 @@
 package com.georgev22.voterewards.database.sqlite;
 
+import com.georgev22.voterewards.database.Database;
+
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-
-import com.georgev22.voterewards.database.Database;
 
 public class SQLite extends Database {
 
@@ -18,7 +18,7 @@ public class SQLite extends Database {
     }
 
     @Override
-    public Connection openConnection() throws SQLException, ClassNotFoundException {
+    public Connection openConnection() throws SQLException {
         if (checkConnection()) {
             return connection;
         }

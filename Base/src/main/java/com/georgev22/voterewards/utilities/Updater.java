@@ -10,11 +10,11 @@ import java.net.URL;
 
 public class Updater {
 
-    private VoteRewardPlugin m = VoteRewardPlugin.getInstance();
+    private final VoteRewardPlugin m = VoteRewardPlugin.getInstance();
 
     public Updater() {
         new Thread(() -> {
-            final String BASE_URL = "https://raw.githubusercontent.com/GeorgeV220/VoteRewards/experimental/version.md";
+            final String BASE_URL = "https://raw.githubusercontent.com/GeorgeV220/VoteRewards/master/version.md";
             m.getLogger().info("Checking for Updates ... ");
 
             String onlineVersion;
@@ -75,7 +75,7 @@ public class Updater {
 
     public Updater(Player player) {
         new Thread(() -> {
-            final String BASE_URL = "https://raw.githubusercontent.com/GeorgeV220/VoteRewards/experimental/version.md";
+            final String BASE_URL = "https://raw.githubusercontent.com/GeorgeV220/VoteRewards/master/version.md";
             Utils.msg(player, "&e&lUpdater &8» &6Checking for Updates ...");
 
             String onlineVersion;
