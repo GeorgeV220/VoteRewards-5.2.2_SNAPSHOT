@@ -1,13 +1,12 @@
 package com.georgev22.voterewards.listeners;
 
 import com.georgev22.voterewards.VoteRewardPlugin;
-import com.georgev22.voterewards.hooks.AuthMe;
 import com.georgev22.voterewards.hooks.HolographicDisplays;
-import com.georgev22.voterewards.utilities.PartyOptions;
 import com.georgev22.voterewards.utilities.Updater;
 import com.georgev22.voterewards.utilities.Utils;
+import com.georgev22.voterewards.utilities.options.PartyOptions;
+import com.georgev22.voterewards.utilities.options.VoteOptions;
 import com.georgev22.voterewards.utilities.player.UserVoteData;
-import com.georgev22.voterewards.utilities.player.VoteOptions;
 import com.georgev22.voterewards.utilities.player.VotePartyUtils;
 import com.georgev22.xseries.XMaterial;
 import com.georgev22.xseries.XSound;
@@ -56,8 +55,9 @@ public class PlayerListeners implements Listener {
 
         //HOLOGRAM UPDATE
         HolographicDisplays.updateAll();
+
+        //OFFLINE VOTING
         if (Bukkit.getPluginManager().isPluginEnabled("AuthMeReloaded")) {
-            new AuthMe();
             return;
         }
         if (VoteOptions.OFFLINE.isEnabled()) {

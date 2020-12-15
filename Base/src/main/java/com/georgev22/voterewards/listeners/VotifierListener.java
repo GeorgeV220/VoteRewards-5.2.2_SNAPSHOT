@@ -2,8 +2,8 @@ package com.georgev22.voterewards.listeners;
 
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.utilities.MessagesUtil;
+import com.georgev22.voterewards.utilities.options.VoteOptions;
 import com.georgev22.voterewards.utilities.player.UserVoteData;
-import com.georgev22.voterewards.utilities.player.VoteOptions;
 import com.georgev22.xseries.XSound;
 import com.google.common.collect.Maps;
 import com.vexsoftware.votifier.model.Vote;

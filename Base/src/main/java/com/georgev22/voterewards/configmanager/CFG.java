@@ -114,10 +114,7 @@ public final class CFG {
             return false;
         CFG other = (CFG) obj;
         if (fileName == null) {
-            if (other.fileName != null)
-                return false;
-        } else if (!fileName.equals(other.fileName))
-            return false;
-        return true;
+            return other.fileName == null;
+        } else return fileName.equals(other.fileName);
     }
 }

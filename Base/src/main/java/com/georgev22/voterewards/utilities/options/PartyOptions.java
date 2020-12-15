@@ -1,4 +1,4 @@
-package com.georgev22.voterewards.utilities;
+package com.georgev22.voterewards.utilities.options;
 
 import com.georgev22.voterewards.configmanager.FileManager;
 import org.bukkit.configuration.file.FileConfiguration;

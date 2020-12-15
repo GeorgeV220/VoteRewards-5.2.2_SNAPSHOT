@@ -8,15 +8,12 @@ import com.georgev22.voterewards.database.DB;
 import com.georgev22.voterewards.database.DatabaseType;
 import com.georgev22.voterewards.database.mysql.MySQL;
 import com.georgev22.voterewards.database.sqlite.SQLite;
-import com.georgev22.voterewards.hooks.HolographicDisplays;
-import com.georgev22.voterewards.hooks.LeaderHeads;
-import com.georgev22.voterewards.hooks.MVdWPlaceholder;
-import com.georgev22.voterewards.hooks.PAPI;
+import com.georgev22.voterewards.hooks.*;
 import com.georgev22.voterewards.listeners.PlayerListeners;
 import com.georgev22.voterewards.listeners.VotifierListener;
 import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.Updater;
-import com.georgev22.voterewards.utilities.player.VoteOptions;
+import com.georgev22.voterewards.utilities.options.VoteOptions;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -96,13 +93,18 @@ public class VoteRewardPlugin extends JavaPlugin {
             Bukkit.getLogger().info("[VoteRewards] Hooked into LeaderHeads!");
         }
 
-        if (getServer().getPluginManager().isPluginEnabled("HolographicDisplays")) {
+        if (Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays")) {
             if (data.get("Holograms") != null) {
                 for (String b : data.getConfigurationSection("Holograms").getKeys(false)) {
                     HolographicDisplays.create(b, (Location) data.get("Holograms." + b + ".location"), data.getString("Holograms." + b + ".type"), false);
                 }
             }
             Bukkit.getLogger().info("[VoteRewards] Hooked into HolographicDisplays!");
+        }
+
+        if (Bukkit.getPluginManager().isPluginEnabled("AuthMeReloaded")) {
+            Bukkit.getPluginManager().registerEvents(new AuthMe(), this);
+            Bukkit.getLogger().info("[VoteRewards] Hooked into AuthMeReloaded!");
         }
 
         if (VoteOptions.UPDATER.isEnabled()) {
