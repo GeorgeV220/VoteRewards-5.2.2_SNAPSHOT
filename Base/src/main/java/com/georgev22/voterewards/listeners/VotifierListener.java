@@ -1,14 +1,15 @@
 package com.georgev22.voterewards.listeners;
 
-import com.cryptomorin.xseries.XSound;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.player.UserVoteData;
 import com.georgev22.voterewards.utilities.player.VoteOptions;
+import com.georgev22.xseries.XSound;
 import com.google.common.collect.Maps;
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.model.VotifierEvent;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -26,11 +27,16 @@ public class VotifierListener implements Listener {
 
     @EventHandler
     public void onVote(VotifierEvent e) {
-
         final Vote vote = e.getVote();
         final Player target = Bukkit.getPlayerExact(vote.getUsername());
 
         if (target == null) {
+            if (VoteOptions.OFFLINE.isEnabled()) {
+                OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(vote.getUsername());
+                UserVoteData userVoteData = UserVoteData.getUser(offlinePlayer.getUniqueId());
+                userVoteData.processOfflineVote(vote.getServiceName());
+                return;
+            }
             return;
         }
 

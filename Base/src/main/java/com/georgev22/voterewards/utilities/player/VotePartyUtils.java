@@ -1,10 +1,14 @@
 package com.georgev22.voterewards.utilities.player;
 
-import com.cryptomorin.xseries.XSound;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.configmanager.CFG;
 import com.georgev22.voterewards.configmanager.FileManager;
-import com.georgev22.voterewards.utilities.*;
+import com.georgev22.voterewards.utilities.MessagesUtil;
+import com.georgev22.voterewards.utilities.PartyOptions;
+import com.georgev22.voterewards.utilities.Regions;
+import com.georgev22.voterewards.utilities.Utils;
+import com.georgev22.xseries.XMaterial;
+import com.georgev22.xseries.XSound;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.bukkit.Bukkit;
@@ -16,10 +20,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 public class VotePartyUtils {
 
@@ -212,8 +213,8 @@ public class VotePartyUtils {
     }
 
     public ItemStack crate(int amount) {
-        ItemStack itemStack = new ItemStack(
-                MaterialUtil.valueOf(voteRewardPlugin.getConfig().getString("VoteParty.crate.item")).parseMaterial());
+
+        ItemStack itemStack = new ItemStack(Objects.requireNonNull(XMaterial.matchXMaterial(Objects.requireNonNull(voteRewardPlugin.getConfig().getString("VoteParty.crate.item"))).get().parseMaterial()));
         ItemMeta itemMeta = itemStack.getItemMeta();
         itemMeta.setDisplayName(Utils.colorize(voteRewardPlugin.getConfig().getString("VoteParty.crate.name")));
         itemMeta.setLore(Utils.colorize(voteRewardPlugin.getConfig().getStringList("VoteParty.crate.lores")));

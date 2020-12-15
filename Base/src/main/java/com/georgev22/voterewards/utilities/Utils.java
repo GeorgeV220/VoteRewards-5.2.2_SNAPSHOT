@@ -404,7 +404,7 @@ public final class Utils {
     public static String getProgressBar(double current, double max, int totalBars, String symbol, String completedColor,
                                         String notCompletedColor) {
         final double percent = (float) Math.min(current, max) / max;
-        final int progressBars = (int) ((int) totalBars * percent);
+        final int progressBars = (int) (totalBars * percent);
         final int leftOver = totalBars - progressBars;
 
         final StringBuilder sb = new StringBuilder();
@@ -429,17 +429,17 @@ public final class Utils {
     public static Map<String, Integer> getTopPlayersMap() {
         Map<String, Integer> top = Maps.newHashMap();
         if (m.database) {
-            try {
-                PreparedStatement s = m.getConnection().prepareStatement("SELECT * FROM `users`");
-                ResultSet rs = s.executeQuery();
-                while (rs.next()) {
-                    top.put(rs.getString("name"), rs.getInt("votes"));
+            Bukkit.getScheduler().runTaskAsynchronously(m, () -> {
+                try {
+                    PreparedStatement s = m.getConnection().prepareStatement("SELECT * FROM `users`");
+                    ResultSet rs = s.executeQuery();
+                    while (rs.next()) {
+                        top.put(rs.getString("name"), rs.getInt("votes"));
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return top;
+            });
 
         } else {
             File[] files = new File(VoteRewardPlugin.getInstance().getDataFolder(), "userdata").listFiles();
@@ -450,8 +450,8 @@ public final class Utils {
                     continue;
                 top.put(cfg.getString("last-name"), cfg.getInt("total-votes"));
             }
-            return top;
         }
+        return top;
     }
 
     /**
@@ -477,7 +477,11 @@ public final class Utils {
 
 
     public static String getTopPlayer(int number) {
-        return String.valueOf(getTopPlayers(number).keySet().toArray()[number]);
+        try {
+            return String.valueOf(getTopPlayers(number + 1).keySet().toArray()[number]);
+        } catch (ArrayIndexOutOfBoundsException ignored) {
+            return getTopPlayer();
+        }
     }
 
     /**

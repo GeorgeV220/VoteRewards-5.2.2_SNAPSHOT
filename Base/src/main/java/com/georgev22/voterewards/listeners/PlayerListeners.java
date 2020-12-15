@@ -1,15 +1,19 @@
 package com.georgev22.voterewards.listeners;
 
-import com.cryptomorin.xseries.XSound;
 import com.georgev22.voterewards.VoteRewardPlugin;
-import com.georgev22.voterewards.utilities.MaterialUtil;
+import com.georgev22.voterewards.hooks.AuthMe;
+import com.georgev22.voterewards.hooks.HolographicDisplays;
 import com.georgev22.voterewards.utilities.PartyOptions;
 import com.georgev22.voterewards.utilities.Updater;
 import com.georgev22.voterewards.utilities.Utils;
-import com.georgev22.voterewards.utilities.holograms.HologramUtils;
 import com.georgev22.voterewards.utilities.player.UserVoteData;
+import com.georgev22.voterewards.utilities.player.VoteOptions;
 import com.georgev22.voterewards.utilities.player.VotePartyUtils;
+import com.georgev22.xseries.XMaterial;
+import com.georgev22.xseries.XSound;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
+import com.google.common.collect.Lists;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -21,6 +25,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.EnumSet;
+import java.util.Objects;
 import java.util.Set;
 
 public class PlayerListeners implements Listener {
@@ -34,7 +39,7 @@ public class PlayerListeners implements Listener {
     @EventHandler
     public void onLogin(PlayerLoginEvent event) {
         UserVoteData.getUser(event.getPlayer().getUniqueId()).setupUser();
-        if (plugin.getConfig().getBoolean("Options.updater")) {
+        if (VoteOptions.UPDATER.isEnabled()) {
             if (event.getPlayer().hasPermission("voterewards.updater") || event.getPlayer().isOp()) {
                 new Updater(event.getPlayer());
             }
@@ -43,12 +48,27 @@ public class PlayerListeners implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
-        if (HologramUtils.getHolograms().isEmpty())
+        if (HolographicDisplays.getHolograms().isEmpty())
             return;
-        for (Hologram hologram : HologramUtils.getHolograms()) {
-            HologramUtils.show(hologram, event.getPlayer());
+        for (Hologram hologram : HolographicDisplays.getHolograms()) {
+            HolographicDisplays.show(hologram, event.getPlayer());
+        }
+
+        //HOLOGRAM UPDATE
+        HolographicDisplays.updateAll();
+        if (Bukkit.getPluginManager().isPluginEnabled("AuthMeReloaded")) {
+            new AuthMe();
+            return;
+        }
+        if (VoteOptions.OFFLINE.isEnabled()) {
+            UserVoteData userVoteData = UserVoteData.getUser(event.getPlayer().getUniqueId());
+            for (String serviceName : userVoteData.getServices()) {
+                userVoteData.processVote(serviceName);
+            }
+            userVoteData.setOfflineServices(Lists.newArrayList());
         }
     }
+
 
     private final Set<Action> clicks = EnumSet.of(Action.RIGHT_CLICK_AIR, Action.RIGHT_CLICK_BLOCK,
             Action.LEFT_CLICK_AIR, Action.RIGHT_CLICK_BLOCK);
@@ -65,7 +85,7 @@ public class PlayerListeners implements Listener {
 
         final ItemStack item = p.getInventory().getItemInHand();
 
-        if (item.getType() != MaterialUtil.valueOf(plugin.getConfig().getString("VoteParty.crate.item"))
+        if (item.getType() != XMaterial.matchXMaterial(Objects.requireNonNull(plugin.getConfig().getString("VoteParty.crate.item"))).get()
                 .parseMaterial()) {
             return;
         }
@@ -97,11 +117,7 @@ public class PlayerListeners implements Listener {
 
         if (PartyOptions.SOUND_CRATE.isEnabled()) {
 
-            // SoundUtil.valueOf(plugin.getConfig().getString("Sounds.Crate")).getSound()
-
-            XSound.matchXSound(plugin.getConfig().getString("Sounds.Crate"))
-                    .ifPresent(sound -> p.playSound(p.getLocation(), sound.parseSound(), 1000, 1));
-
+            p.playSound(p.getLocation(), Objects.requireNonNull(XSound.matchXSound(Objects.requireNonNull(plugin.getConfig().getString("Sounds.Crate"))).get().parseSound()), 1000, 1);
         }
         event.setCancelled(true);
 

@@ -19,6 +19,16 @@ public enum PartyOptions {
 
     REGIONS("regions"),
 
+    VOTES("votes"),
+
+    BARS("progress.bars"),
+
+    COMPLETE_COLOR("progress.complete color"),
+
+    NOT_COMPLETE_COLOR("progress.not complete color"),
+
+    BAR_SYMBOL("progress.bar symbol"),
+
     ;
 
     private final String pathName;
@@ -30,5 +40,10 @@ public enum PartyOptions {
     public boolean isEnabled() {
         final FileConfiguration file = FileManager.getInstance().getConfig().getFileConfiguration();
         return file.getBoolean("VoteParty." + this.pathName, false);
+    }
+
+    public Object getValue() {
+        final FileConfiguration file = FileManager.getInstance().getConfig().getFileConfiguration();
+        return file.get("VoteParty." + this.pathName, 0);
     }
 }

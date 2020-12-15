@@ -27,27 +27,35 @@ public class FakeVote extends BukkitCommand {
     public boolean execute(final CommandSender sender, final String label, final String[] args) {
         if (!testPermission(sender)) return true;
         if (!(sender instanceof Player)) {
-            MessagesUtil.ONLY_PLAYER_COMMAND.msg(sender);
+            if (args.length == 0) {
+                Utils.msg(sender, "&c&l(!) &cNot enough arguments");
+            } else if (args.length == 1) {
+                process(args[0], "fakeVote");
+            } else {
+                process(args[0], args[1]);
+            }
             return true;
         }
 
         if (args.length == 0) {
-            Vote vote = new Vote();
-            vote.setUsername(sender.getName());
-            vote.setTimeStamp(String.valueOf(System.currentTimeMillis()));
-            vote.setAddress(((Player) sender).getAddress().getAddress().getHostAddress());
-            vote.setServiceName("fakeVote");
-            Bukkit.getServer().getPluginManager().callEvent(new VotifierEvent(vote));
-            return true;
+            process(sender.getName(), "fakeVote");
+        } else if (args.length == 1) {
+            process(args[0], "fakeVote");
+        } else {
+            process(args[0], args[1]);
         }
-        OfflinePlayer target = Bukkit.getOfflinePlayer(args[0]);
+
+        return true;
+    }
+
+    private void process(String userName, String serviceName) {
+        OfflinePlayer target = Bukkit.getOfflinePlayer(userName);
         Vote vote = new Vote();
         vote.setUsername(target.getName());
         vote.setTimeStamp(String.valueOf(System.currentTimeMillis()));
         vote.setAddress("localhost");
-        vote.setServiceName("fakeVote");
+        vote.setServiceName(serviceName);
         Bukkit.getServer().getPluginManager().callEvent(new VotifierEvent(vote));
 
-        return true;
     }
 }

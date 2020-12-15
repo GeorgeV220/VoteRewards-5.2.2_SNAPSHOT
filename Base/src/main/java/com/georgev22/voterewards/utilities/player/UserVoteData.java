@@ -1,9 +1,11 @@
 package com.georgev22.voterewards.utilities.player;
 
-import com.cryptomorin.xseries.XSound;
 import com.georgev22.voterewards.VoteRewardPlugin;
+import com.georgev22.voterewards.hooks.HolographicDisplays;
 import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.Utils;
+import com.georgev22.xseries.XSound;
+import com.google.common.collect.Lists;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
@@ -159,6 +161,15 @@ public class UserVoteData {
         // VOTE PARTY START
         VotePartyUtils.getInstance().run(getVoter());
 
+        //HOLOGRAM UPDATE
+        HolographicDisplays.updateAll();
+    }
+
+    public void processOfflineVote(final String serviceName) {
+        List<String> services = this.configuration.getStringList("offline vote.services");
+        services.add(serviceName);
+        this.configuration.set("offline vote.services", services);
+        this.saveConfiguration();
     }
 
     /**
@@ -391,6 +402,7 @@ public class UserVoteData {
                     this.configuration.set("daily-votes", 0);
                     // this.configuration.set("voteparty-votes", 0);
                     this.configuration.set("voteparty", 0);
+                    this.configuration.set("offline votes.service", Lists.newArrayList());
                 }
             }
         } catch (Exception e) {
@@ -408,7 +420,7 @@ public class UserVoteData {
             public void run() {
                 try {
                     PreparedStatement statement1 = voteRewardPlugin.getConnection().prepareStatement(String.format(
-                            "INSERT INTO users (`uuid`, `votes`, `time`, `voteparty`) VALUES ('%s', '0', '0', '0');",
+                            "INSERT INTO users (`uuid`, `votes`, `time`, `voteparty, `offlinevote`) VALUES ('%s', '0', '0', '0', '" + Lists.newArrayList() + "');",
                             uuid.toString()));
                     statement1.executeUpdate();
                 } catch (Exception e) {
@@ -453,6 +465,7 @@ public class UserVoteData {
             this.configuration.set("daily-votes", 0);
             // this.configuration.set("voteparty-votes", 0);
             this.configuration.set("voteparty", 0);
+            this.configuration.set("offline votes.service", Lists.newArrayList());
             this.saveConfiguration();
         }
     }
@@ -470,6 +483,25 @@ public class UserVoteData {
         }
     }
 
+    /**
+     * Get offline vote services
+     *
+     * @return String list with the service names
+     */
+    public List<String> getServices() {
+        return this.configuration.getStringList("offline vote.services");
+    }
+
+    /**
+     * Set offline services
+     *
+     * @param services
+     */
+    public void setOfflineServices(List<String> services) {
+        this.configuration.set("offline vote.services", services);
+        this.saveConfiguration();
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -483,5 +515,4 @@ public class UserVoteData {
         return (this == object)
                 || (object instanceof UserVoteData && Objects.equals(this.uuid, ((UserVoteData) object).uuid));
     }
-
 }

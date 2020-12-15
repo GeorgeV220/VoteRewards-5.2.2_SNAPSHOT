@@ -8,6 +8,7 @@ import com.georgev22.voterewards.database.DB;
 import com.georgev22.voterewards.database.DatabaseType;
 import com.georgev22.voterewards.database.mysql.MySQL;
 import com.georgev22.voterewards.database.sqlite.SQLite;
+import com.georgev22.voterewards.hooks.HolographicDisplays;
 import com.georgev22.voterewards.hooks.LeaderHeads;
 import com.georgev22.voterewards.hooks.MVdWPlaceholder;
 import com.georgev22.voterewards.hooks.PAPI;
@@ -15,7 +16,6 @@ import com.georgev22.voterewards.listeners.PlayerListeners;
 import com.georgev22.voterewards.listeners.VotifierListener;
 import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.Updater;
-import com.georgev22.voterewards.utilities.holograms.HologramUtils;
 import com.georgev22.voterewards.utilities.player.VoteOptions;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -53,6 +53,8 @@ public class VoteRewardPlugin extends JavaPlugin {
         final FileManager fm = FileManager.getInstance();
         fm.loadFiles(this);
         MessagesUtil.repairPaths(fm.getMessages());
+        CFG dataCFG = fm.getData();
+        FileConfiguration data = dataCFG.getFileConfiguration();
 
         this.registerListeners(new VotifierListener(), new PlayerListeners(this));
 
@@ -80,32 +82,39 @@ public class VoteRewardPlugin extends JavaPlugin {
 
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             new PAPI().register();
+            Bukkit.getLogger().info("[VoteRewards] Hooked into PlaceholderAPI!");
         }
 
         if (Bukkit.getPluginManager().isPluginEnabled("MVdWPlaceholderAPI")) {
             MVdWPlaceholder MVdWPlaceholderAPI = new MVdWPlaceholder(this);
             MVdWPlaceholderAPI.hook();
+            Bukkit.getLogger().info("[VoteRewards] Hooked into MVdWPlaceholderAPI!");
         }
 
         if (Bukkit.getPluginManager().isPluginEnabled("LeaderHeads")) {
             new LeaderHeads();
+            Bukkit.getLogger().info("[VoteRewards] Hooked into LeaderHeads!");
         }
 
-        if (getConfig().getBoolean("Options.updater")) {
+        if (getServer().getPluginManager().isPluginEnabled("HolographicDisplays")) {
+            if (data.get("Holograms") != null) {
+                for (String b : data.getConfigurationSection("Holograms").getKeys(false)) {
+                    HolographicDisplays.create(b, (Location) data.get("Holograms." + b + ".location"), data.getString("Holograms." + b + ".type"), false);
+                }
+            }
+            Bukkit.getLogger().info("[VoteRewards] Hooked into HolographicDisplays!");
+        }
+
+        if (VoteOptions.UPDATER.isEnabled()) {
             new Updater();
         }
+
         MetricsLite metrics = new MetricsLite(this);
         if (metrics.isEnabled()) {
             Bukkit.getLogger().info("[VoteRewards] Metrics is enabled!");
         }
 
-        CFG dataCFG = fm.getData();
-        FileConfiguration data = dataCFG.getFileConfiguration();
-        if (data.get("Holograms") != null) {
-            for (String b : data.getConfigurationSection("Holograms").getKeys(false)) {
-                HologramUtils.create(b, (Location) data.get("Holograms." + b + ".location"), data.getStringList("Holograms." + b + ".lines"), false);
-            }
-        }
+
     }
 
     @Override

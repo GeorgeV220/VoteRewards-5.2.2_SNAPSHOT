@@ -105,8 +105,25 @@ Rewards:
         - 'eco give %player% 10000'
         - 'give %player% minecraft:nether_star 100'
 
+Holograms:
+  votetop:
+    - 'VoteTop'
+    - '%top-1%'
+    - '%top-2%'
+    - '%top-3%'
+    - '%top-4%'
+    - '%top-5%'
+  progress:
+    - 'VoteParty progress bar'
+    - '%bar%'
+
 VoteParty:
   votes: 2
+  progress:
+    bars: 10
+    complete color: "&a"
+    not complete color: "&c"
+    bar symbol: "|"
   participate: true
   sound: false
   message: true
