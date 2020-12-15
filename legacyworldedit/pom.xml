@@ -4,25 +4,30 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.georgev22</groupId>
-    <artifactId>VoteRewards</artifactId>
-    <version>4.0-Alpha</version>
-    <packaging>pom</packaging>
+    <groupId>com.georgev22.voterewards.worldedit</groupId>
+    <artifactId>legacyworldedit</artifactId>
+    <version>4.0-Beta</version>
+    <packaging>jar</packaging>
 
-    <name>VoteRewards</name>
+    <name>Legacyworldedit</name>
 
     <properties>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <parent>
+        <groupId>com.georgev22</groupId>
+        <artifactId>VoteRewards</artifactId>
+        <version>4.0-Alpha</version>
+    </parent>
+
     <build>
-        <defaultGoal>clean package</defaultGoal>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.7.0</version>
+                <version>3.8.1</version>
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
@@ -46,15 +51,24 @@
             <id>sonatype</id>
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
+        <repository>
+            <id>enginehub-maven</id>
+            <url>http://maven.enginehub.org/repo/</url>
+        </repository>
     </repositories>
 
     <dependencies>
+        <dependency>
+            <groupId>com.sk89q.worldedit</groupId>
+            <artifactId>worldedit-bukkit</artifactId>
+            <version>6.1.4-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.georgev22.voterewards</groupId>
+            <artifactId>Interface</artifactId>
+            <version>4.0-Alpha</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
-
-    <modules>
-        <module>Base</module>
-        <module>legacyworldedit</module>
-        <module>newworldedit</module>
-        <module>interface</module>
-    </modules>
 </project>

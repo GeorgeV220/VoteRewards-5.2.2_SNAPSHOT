@@ -1,0 +1,18 @@
+name: VoteRewards
+version: 4.0
+main: com.georgev22.voterewards.VoteRewardPlugin
+api-version: 1.13
+prefix: VoteRewards
+author: GeorgeV22
+contributors:
+  - GeorgeV22
+  - ShinigamiX
+description: Rewards players at voting
+website: https://georgev22.com
+depend:
+  - Votifier
+softdepend:
+  - PlaceholderAPI
+  - LeaderHeads
+  - MVdWPlaceholderAPI
+  - WorldEdit
