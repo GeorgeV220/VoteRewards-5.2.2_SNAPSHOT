@@ -27,7 +27,9 @@ public enum VoteOptions {
 
     VOTE_PARTY("voteparty"),
 
-    REMINDER("reminder"),
+    REMINDER("reminder.enabled"),
+
+    REMINDER_SEC("reminder.time"),
 
     SOUND("sound"),
 
@@ -59,6 +61,11 @@ public enum VoteOptions {
     public boolean isEnabled() {
         final FileConfiguration file = FileManager.getInstance().getConfig().getFileConfiguration();
         return file.getBoolean("Options." + this.pathName, true);
+    }
+
+    public Object getValue() {
+        final FileConfiguration file = FileManager.getInstance().getConfig().getFileConfiguration();
+        return file.get("VoteParty." + this.pathName, 0);
     }
 
 }

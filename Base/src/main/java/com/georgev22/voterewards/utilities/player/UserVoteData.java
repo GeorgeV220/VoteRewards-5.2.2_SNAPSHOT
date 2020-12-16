@@ -159,7 +159,8 @@ public class UserVoteData {
         VotePartyUtils.getInstance().run(getVoter());
 
         //HOLOGRAM UPDATE
-        HolographicDisplays.updateAll();
+        if (Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays"))
+            HolographicDisplays.updateAll();
     }
 
     public void processOfflineVote(final String serviceName) {

@@ -113,6 +113,8 @@ public class HolographicDisplays {
     }
 
     public static void updateAll() {
+        if (data.get("Holograms") == null)
+            return;
         for (String hologramName : data.getConfigurationSection("Holograms").getKeys(false)) {
             Hologram hologram = getHologram(hologramName);
             HolographicDisplays.updateHologram(hologram, m.getConfig().getStringList("Holograms." + data.getString("Holograms." + hologramName + ".type")).toArray(new String[0]), getPlaceholderMap());

@@ -7,7 +7,7 @@ Options:
     votes: true
     fakevote: true
     voteparty: true
-    hologram: false #Only for test. Is not ready yet
+    hologram: false
   title:
     vote: true
   gui: false
@@ -28,7 +28,9 @@ Options:
   # File, MySQL, SQLite
   database: File
   voteparty: false
-  reminder: false
+  reminder:
+    enabled: false
+    time: 120 #Every X seconds
   sound: false
 
 Rewards:

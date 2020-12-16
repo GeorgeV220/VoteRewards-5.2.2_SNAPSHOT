@@ -14,11 +14,14 @@ import com.georgev22.voterewards.listeners.VotifierListener;
 import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.Updater;
 import com.georgev22.voterewards.utilities.options.VoteOptions;
+import com.georgev22.voterewards.utilities.player.UserVoteData;
+import com.google.common.collect.Maps;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -28,6 +31,7 @@ import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Map;
 
 public class VoteRewardPlugin extends JavaPlugin {
 
@@ -116,7 +120,18 @@ public class VoteRewardPlugin extends JavaPlugin {
             Bukkit.getLogger().info("[VoteRewards] Metrics is enabled!");
         }
 
-
+        if (VoteOptions.REMINDER.isEnabled()) {
+            Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    UserVoteData userVoteData = UserVoteData.getUser(player.getUniqueId());
+                    if (System.currentTimeMillis() >= userVoteData.getLastVote() + 24 * 60 * 60 * 1000) {
+                        Map<String, String> placeholders = Maps.newHashMap();
+                        placeholders.put("%player%", player.getName());
+                        MessagesUtil.REMINDER.msg(player, placeholders, true);
+                    }
+                }
+            }, 20, (int) VoteOptions.REMINDER_SEC.getValue() * 20);
+        }
     }
 
     @Override

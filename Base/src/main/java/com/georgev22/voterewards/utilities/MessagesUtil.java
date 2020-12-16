@@ -17,6 +17,8 @@ public enum MessagesUtil {
 
     VOTE("Messages.Vote", "&a&l(!) &7%player% &aThanks for vote on %servicename%"),
 
+    REMINDER("Messages.Reminder", "&a&l(!) &7%player%&a please don't forget to vote for us today!"),
+
     VOTE_COMMAND("Messages.Vote-Command", "https://example.com", "%votes%"),
 
     OFFLINE_PLAYER("Messages.Offline-Player", "&c&l(!) &cThis player is offline!"),
