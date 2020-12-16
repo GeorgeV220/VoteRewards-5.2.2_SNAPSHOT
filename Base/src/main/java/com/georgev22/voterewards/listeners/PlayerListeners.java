@@ -47,15 +47,16 @@ public class PlayerListeners implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
-        if (HolographicDisplays.getHolograms().isEmpty())
-            return;
-        for (Hologram hologram : HolographicDisplays.getHolograms()) {
-            HolographicDisplays.show(hologram, event.getPlayer());
+        if (Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays")) {
+            if (HolographicDisplays.getHolograms().isEmpty())
+                return;
+            for (Hologram hologram : HolographicDisplays.getHolograms()) {
+                HolographicDisplays.show(hologram, event.getPlayer());
+            }
+
+            //HOLOGRAM UPDATE
+            HolographicDisplays.updateAll();
         }
-
-        //HOLOGRAM UPDATE
-        HolographicDisplays.updateAll();
-
         //OFFLINE VOTING
         if (Bukkit.getPluginManager().isPluginEnabled("AuthMeReloaded")) {
             return;
