@@ -20,7 +20,7 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem.
 
 **Server Info (please complete the following information):**
- - OS: [e.g. iOS]
+ - OS: [e.g. Ubuntu 18.04]
  - Java Version [e.g. OpenJDK 8]
  - Minecraft Server [e.g. 1.12.2]
 
