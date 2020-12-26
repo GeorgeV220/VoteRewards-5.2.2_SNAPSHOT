@@ -35,6 +35,12 @@ public enum VoteOptions {
 
     MESSAGE("message"),
 
+    VOTETOP_HEADER("votetop.header"),
+
+    VOTETOP_FOOTER("votetop.footer"),
+
+    VOTETOP_VOTERS("votetop.voters"),
+
     COMMAND_REWARDS("commands.rewards"),
 
     COMMAND_FAKEVOTE("commands.fakevote"),

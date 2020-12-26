@@ -3,6 +3,7 @@ package com.georgev22.voterewards.commands;
 import com.georgev22.voterewards.configmanager.FileManager;
 import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.Utils;
+import com.georgev22.voterewards.utilities.options.VoteOptions;
 import com.google.common.collect.Maps;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -42,16 +43,18 @@ public class VoteTop extends BukkitCommand {
 
         Map<String, String> placeholders = Maps.newHashMap();
 
-        MessagesUtil.VOTE_TOP_HEADER.msg(sender);
+        if (VoteOptions.VOTETOP_HEADER.isEnabled())
+            MessagesUtil.VOTE_TOP_HEADER.msg(sender);
 
-        for (Map.Entry<String, Integer> b : Utils.getTopPlayers(conf.getInt("Options.votetop", 5)).entrySet()) {
+        for (Map.Entry<String, Integer> b : Utils.getTopPlayers((Integer) VoteOptions.VOTETOP_VOTERS.getValue()).entrySet()) {
             String[] arg = String.valueOf(b).split("=");
             placeholders.put("%name%", arg[0]);
             placeholders.put("%votes%", arg[1]);
 
             MessagesUtil.VOTE_TOP_BODY.msg(sender, placeholders, true);
         }
-        MessagesUtil.VOTE_TOP_FOOTER.msg(sender);
+        if (VoteOptions.VOTETOP_FOOTER.isEnabled())
+            MessagesUtil.VOTE_TOP_FOOTER.msg(sender);
         placeholders.clear();
         return true;
     }

@@ -12,7 +12,10 @@ Options:
     vote: true
   gui: false
   updater: true
-  votetop: 5
+  votetop:
+    header: true
+    footer: true
+    voters: 5
   message: true
   votes:
     world: false
