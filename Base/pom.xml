@@ -137,12 +137,6 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.georgev22.voterewards.worldedit</groupId>
-            <artifactId>NewWorldEdit</artifactId>
-            <version>4.0-Alpha</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>com.georgev22.voterewards</groupId>
             <artifactId>Interface</artifactId>
             <version>4.0-Alpha</version>
@@ -154,6 +148,12 @@
             <artifactId>jsr305</artifactId>
             <version>3.0.2</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.georgev22.voterewards.worldedit</groupId>
+            <artifactId>NewWorldEdit</artifactId>
+            <version>4.0-Alpha</version>
+            <scope>compile</scope>
         </dependency>
 
     </dependencies>

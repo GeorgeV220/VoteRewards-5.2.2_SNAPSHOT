@@ -65,7 +65,7 @@ public enum VoteOptions {
 
     public Object getValue() {
         final FileConfiguration file = FileManager.getInstance().getConfig().getFileConfiguration();
-        return file.get("VoteParty." + this.pathName, 0);
+        return file.get("Options." + this.pathName, 0);
     }
 
 }

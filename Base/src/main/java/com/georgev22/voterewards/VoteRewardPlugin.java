@@ -57,7 +57,7 @@ public class VoteRewardPlugin extends JavaPlugin {
         CFG dataCFG = fm.getData();
         FileConfiguration data = dataCFG.getFileConfiguration();
 
-        this.registerListeners(new VotifierListener(), new PlayerListeners(this));
+        this.registerListeners(new VotifierListener(), new PlayerListeners());
 
         if (VoteOptions.COMMAND_VOTEREWARDS.isEnabled())
             this.registerCommand("voterewards", new VoteRewards());
@@ -122,15 +122,20 @@ public class VoteRewardPlugin extends JavaPlugin {
 
         if (VoteOptions.REMINDER.isEnabled()) {
             Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
-                for (Player player : Bukkit.getOnlinePlayers()) {
-                    UserVoteData userVoteData = UserVoteData.getUser(player.getUniqueId());
-                    if (System.currentTimeMillis() >= userVoteData.getLastVote() + 24 * 60 * 60 * 1000) {
-                        Map<String, String> placeholders = Maps.newHashMap();
-                        placeholders.put("%player%", player.getName());
-                        MessagesUtil.REMINDER.msg(player, placeholders, true);
+                for (Map.Entry<Player, Long> entry : reminderMap.entrySet()) {
+                    Player player = entry.getKey();
+                    Long reminderTimer = entry.getValue();
+                    if (reminderTimer <= System.currentTimeMillis()) {
+                        UserVoteData userVoteData = UserVoteData.getUser(player.getUniqueId());
+                        if (System.currentTimeMillis() >= userVoteData.getLastVote() + 24 * 60 * 60 * 1000) {
+                            Map<String, String> placeholders = Maps.newHashMap();
+                            placeholders.put("%player%", player.getName());
+                            MessagesUtil.REMINDER.msg(player, placeholders, true);
+                        }
+                        reminderMap.replace(player, System.currentTimeMillis() + ((int) VoteOptions.REMINDER_SEC.getValue() * 1000));
                     }
                 }
-            }, 20, (int) VoteOptions.REMINDER_SEC.getValue() * 20);
+            }, 20, 20);
         }
     }
 
@@ -251,5 +256,13 @@ public class VoteRewardPlugin extends JavaPlugin {
     public FileConfiguration getConfig() {
         return FileManager.getInstance().getConfig().getFileConfiguration();
     }
+
+    /**
+     * Creates the reminder map
+     *
+     * @return a new, empty {@code ConcurrentMap}
+     */
+    public final Map<Player, Long> reminderMap = Maps.newConcurrentMap();
+
 
 }

@@ -20,6 +20,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -29,45 +30,49 @@ import java.util.Set;
 
 public class PlayerListeners implements Listener {
 
-    private final VoteRewardPlugin plugin;
-
-    public PlayerListeners(final VoteRewardPlugin plugin) {
-        this.plugin = plugin;
-    }
+    private final VoteRewardPlugin m = VoteRewardPlugin.getInstance();
 
     @EventHandler
     public void onLogin(PlayerLoginEvent event) {
         UserVoteData.getUser(event.getPlayer().getUniqueId()).setupUser();
+    }
+
+    @EventHandler
+    public void onJoin(PlayerJoinEvent event) {
+        //HOLOGRAMS
+        if (Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays")) {
+            if (!HolographicDisplays.getHolograms().isEmpty()) {
+                for (Hologram hologram : HolographicDisplays.getHolograms()) {
+                    HolographicDisplays.show(hologram, event.getPlayer());
+                }
+
+                HolographicDisplays.updateAll();
+            }
+        }
+
+        UserVoteData userVoteData = UserVoteData.getUser(event.getPlayer().getUniqueId());
+        //OFFLINE VOTING
+        if (VoteOptions.OFFLINE.isEnabled() && !Bukkit.getPluginManager().isPluginEnabled("AuthMeReloaded")) {
+            for (String serviceName : userVoteData.getServices()) {
+                userVoteData.processVote(serviceName);
+            }
+
+            userVoteData.setOfflineServices(Lists.newArrayList());
+        }
+
+        //UPDATER
         if (VoteOptions.UPDATER.isEnabled()) {
             if (event.getPlayer().hasPermission("voterewards.updater") || event.getPlayer().isOp()) {
                 new Updater(event.getPlayer());
             }
         }
+
+        m.reminderMap.put(event.getPlayer(), System.currentTimeMillis());
     }
 
     @EventHandler
-    public void onJoin(PlayerJoinEvent event) {
-        if (Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays")) {
-            if (HolographicDisplays.getHolograms().isEmpty())
-                return;
-            for (Hologram hologram : HolographicDisplays.getHolograms()) {
-                HolographicDisplays.show(hologram, event.getPlayer());
-            }
-
-            //HOLOGRAM UPDATE
-            HolographicDisplays.updateAll();
-        }
-        //OFFLINE VOTING
-        if (Bukkit.getPluginManager().isPluginEnabled("AuthMeReloaded")) {
-            return;
-        }
-        if (VoteOptions.OFFLINE.isEnabled()) {
-            UserVoteData userVoteData = UserVoteData.getUser(event.getPlayer().getUniqueId());
-            for (String serviceName : userVoteData.getServices()) {
-                userVoteData.processVote(serviceName);
-            }
-            userVoteData.setOfflineServices(Lists.newArrayList());
-        }
+    public void onQuit(PlayerQuitEvent event) {
+        m.reminderMap.remove(event.getPlayer());
     }
 
 
@@ -77,7 +82,6 @@ public class PlayerListeners implements Listener {
     @SuppressWarnings("deprecation")
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
-
         if (!clicks.contains(event.getAction())) {
             return;
         }
@@ -86,7 +90,7 @@ public class PlayerListeners implements Listener {
 
         final ItemStack item = p.getInventory().getItemInHand();
 
-        if (item.getType() != XMaterial.matchXMaterial(Objects.requireNonNull(plugin.getConfig().getString("VoteParty.crate.item"))).get()
+        if (item.getType() != XMaterial.matchXMaterial(Objects.requireNonNull(m.getConfig().getString("VoteParty.crate.item"))).get()
                 .parseMaterial()) {
             return;
         }
@@ -97,7 +101,7 @@ public class PlayerListeners implements Listener {
             return;
         }
 
-        final String itemName = plugin.getConfig().getString("VoteParty.crate.name");
+        final String itemName = m.getConfig().getString("VoteParty.crate.name");
         if (itemName == null) {
             return;
         }
@@ -117,9 +121,9 @@ public class PlayerListeners implements Listener {
         VotePartyUtils.getInstance().chooseRandom(PartyOptions.RANDOM.isEnabled(), p);
 
         if (PartyOptions.SOUND_CRATE.isEnabled()) {
-
-            p.playSound(p.getLocation(), Objects.requireNonNull(XSound.matchXSound(Objects.requireNonNull(plugin.getConfig().getString("Sounds.Crate"))).get().parseSound()), 1000, 1);
+            p.playSound(p.getLocation(), Objects.requireNonNull(XSound.matchXSound(Objects.requireNonNull(m.getConfig().getString("Sounds.Crate"))).get().parseSound()), 1000, 1);
         }
+
         event.setCancelled(true);
 
     }
