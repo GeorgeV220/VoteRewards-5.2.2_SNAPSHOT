@@ -185,6 +185,7 @@ public class UserVoteData {
                     }
                 }
             }.runTaskAsynchronously(voteRewardPlugin);
+            return;
         }
         this.configuration.set("offline vote.services", services);
         this.saveConfiguration();
@@ -493,6 +494,7 @@ public class UserVoteData {
                     }
                 }
             }.runTaskAsynchronously(voteRewardPlugin);
+            return;
         }
         this.configuration.set("total-votes", 0);
         this.configuration.set("daily-votes", 0);
@@ -555,6 +557,7 @@ public class UserVoteData {
                     }
                 }
             }.runTaskAsynchronously(voteRewardPlugin);
+            return;
         }
         this.configuration.set("offline vote.services", services);
         this.saveConfiguration();
