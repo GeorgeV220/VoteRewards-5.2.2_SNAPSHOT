@@ -4,25 +4,17 @@ import be.maximvdw.placeholderapi.PlaceholderAPI;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.configmanager.FileManager;
 import com.georgev22.voterewards.utilities.Utils;
-import org.bukkit.Bukkit;
+import com.georgev22.voterewards.utilities.player.UserVoteData;
 
 public class MVdWPlaceholder {
-    private final VoteRewardPlugin plugin;
 
-    public MVdWPlaceholder(VoteRewardPlugin plugin) {
-        this.plugin = plugin;
-    }
+    VoteRewardPlugin plugin = VoteRewardPlugin.getInstance();
 
     public void hook() {
-        MVdWPlaceholderAPI();
-    }
-
-    private void MVdWPlaceholderAPI() {
-        if (!Bukkit.getPluginManager().isPluginEnabled("MVdWPlaceholderAPI")) {
-            return;
-        }
-
         FileManager fm = FileManager.getInstance();
+
+        PlaceholderAPI.registerPlaceholder(this.plugin, "voterewards_player_votes",
+                event -> String.valueOf(UserVoteData.getUser(event.getPlayer().getUniqueId()).getVotes()));
 
         PlaceholderAPI.registerPlaceholder(this.plugin, "voterewards_total_votes",
                 event -> String.valueOf(fm.getData().getFileConfiguration().getInt("VoteParty-Votes")));

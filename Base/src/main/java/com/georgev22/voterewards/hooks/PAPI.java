@@ -47,7 +47,7 @@ public class PAPI extends PlaceholderExpansion {
             return "null";
         }
 
-        if (identifier.equalsIgnoreCase("player_player_votes")) {
+        if (identifier.equalsIgnoreCase("player_votes")) {
             return String.valueOf(UserVoteData.getUser(player.getUniqueId()).getVotes());
         }
 
@@ -67,7 +67,7 @@ public class PAPI extends PlaceholderExpansion {
             return Utils.getTopPlayer();
         }
 
-        return null;
+        return "null";
     }
 
 }

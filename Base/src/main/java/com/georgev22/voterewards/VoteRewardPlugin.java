@@ -87,8 +87,7 @@ public class VoteRewardPlugin extends JavaPlugin {
         }
 
         if (Bukkit.getPluginManager().isPluginEnabled("MVdWPlaceholderAPI")) {
-            MVdWPlaceholder MVdWPlaceholderAPI = new MVdWPlaceholder(this);
-            MVdWPlaceholderAPI.hook();
+            new MVdWPlaceholder().hook();
             Bukkit.getLogger().info("[VoteRewards] Hooked into MVdWPlaceholderAPI!");
         }
 
@@ -238,7 +237,7 @@ public class VoteRewardPlugin extends JavaPlugin {
      * Create the user table
      */
     public void createTable() throws SQLException {
-        String sqlCreate = "CREATE TABLE IF NOT EXISTS `users` (\n  `uuid` varchar(255) DEFAULT NULL,\n  `name` varchar(255) DEFAULT NULL,\n  `votes` int(255) DEFAULT NULL,\n  `time` varchar(255) DEFAULT NULL,\n  `voteparty` int(255) DEFAULT NULL\n)";
+        String sqlCreate = "CREATE TABLE IF NOT EXISTS `users` (\n  `uuid` varchar(255) DEFAULT NULL,\n  `name` varchar(255) DEFAULT NULL,\n  `votes` int(255) DEFAULT NULL,\n  `time` varchar(255) DEFAULT NULL,\n  `voteparty` int(255) DEFAULT NULL\n `offlinevote` varchar(1000) DEFAULT NULL\n)";
         PreparedStatement stmt = connection.prepareStatement(sqlCreate);
         stmt.execute();
     }

@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -67,15 +68,20 @@ public class UserVoteData {
 
         // ADD STATS
         if (this.voteRewardPlugin.database) {
-            try {
-                final String name = this.getVoter().getUniqueId().toString();
-                final PreparedStatement statement = this.voteRewardPlugin.getConnection().prepareStatement(
-                        String.format("UPDATE `users` SET `votes` = '%d', `time` = '%d' WHERE `uuid` = '%s'",
-                                this.getVotes() + 1, System.currentTimeMillis(), name));
-                statement.executeUpdate();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    try {
+                        final String name = getVoter().getUniqueId().toString();
+                        final PreparedStatement statement = voteRewardPlugin.getConnection().prepareStatement(
+                                String.format("UPDATE `users` SET `votes` = '%d', `time` = '%d' WHERE `uuid` = '%s'",
+                                        getVotes() + 1, System.currentTimeMillis(), name));
+                        statement.executeUpdate();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }.runTaskAsynchronously(voteRewardPlugin);
         } else {
             this.configuration.set("total-votes", this.getVotes() + 1);
             this.configuration.set("last-vote", System.currentTimeMillis());
@@ -176,9 +182,6 @@ public class UserVoteData {
      * @param s
      */
     private void runCommands(List<String> s) {
-        if (s == null) {
-            return;
-        }
         for (String b : s) {
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Utils.colorize(b.replace("%player%", getVoter().getName())));
         }
@@ -192,7 +195,6 @@ public class UserVoteData {
     public int getVotes() {
         if (voteRewardPlugin.database) {
             try {
-
                 PreparedStatement ps = voteRewardPlugin.getConnection()
                         .prepareStatement("SELECT votes FROM users WHERE UUID = ?");
                 ps.setString(1, uuid.toString());
@@ -210,15 +212,20 @@ public class UserVoteData {
 
     public void setVotes(final int votes) {
         if (voteRewardPlugin.database) {
-            try {
-                final String name = this.getVoter().getUniqueId().toString();
-                final PreparedStatement statement = this.voteRewardPlugin.getConnection().prepareStatement(
-                        String.format("UPDATE `users` SET `votes` = '%d' WHERE `uuid` = '%s'", votes, name));
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    try {
+                        final String name = getVoter().getUniqueId().toString();
+                        final PreparedStatement statement = voteRewardPlugin.getConnection().prepareStatement(
+                                String.format("UPDATE `users` SET `votes` = '%d' WHERE `uuid` = '%s'", votes, name));
 
-                statement.executeUpdate();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+                        statement.executeUpdate();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }.runTaskAsynchronously(voteRewardPlugin);
         } else {
             this.configuration.set("total-votes", votes);
             this.saveConfiguration();
@@ -244,14 +251,19 @@ public class UserVoteData {
      */
     private void setDailyVotes(final int i) {
         if (this.voteRewardPlugin.database) {
-            try {
-                final String name = this.getVoter().getUniqueId().toString();
-                final PreparedStatement statement = this.voteRewardPlugin.getConnection().prepareStatement(
-                        String.format("UPDATE `users` SET `daily` = '%d' WHERE `uuid` = '%s'", i, name));
-                statement.executeUpdate();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    try {
+                        final String name = getVoter().getUniqueId().toString();
+                        final PreparedStatement statement = voteRewardPlugin.getConnection().prepareStatement(
+                                String.format("UPDATE `users` SET `daily` = '%d' WHERE `uuid` = '%s'", i, name));
+                        statement.executeUpdate();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }.runTaskAsynchronously(voteRewardPlugin);
         } else {
             this.configuration.set("daily-votes", i);
             this.saveConfiguration();
@@ -265,14 +277,19 @@ public class UserVoteData {
      */
     public void setVoteParty(final int i) {
         if (this.voteRewardPlugin.database) {
-            try {
-                final String name = this.getVoter().getUniqueId().toString();
-                final PreparedStatement statement = this.voteRewardPlugin.getConnection().prepareStatement(
-                        String.format("UPDATE `users` SET `voteparty` = '%d' WHERE `uuid` = '%s'", i, name));
-                statement.executeUpdate();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    try {
+                        final String name = getVoter().getUniqueId().toString();
+                        final PreparedStatement statement = voteRewardPlugin.getConnection().prepareStatement(
+                                String.format("UPDATE `users` SET `voteparty` = '%d' WHERE `uuid` = '%s'", i, name));
+                        statement.executeUpdate();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }.runTaskAsynchronously(voteRewardPlugin);
         } else {
             this.configuration.set("voteparty-votes", i);
             this.saveConfiguration();
@@ -329,14 +346,19 @@ public class UserVoteData {
      */
     public void setLastVote(long i) {
         if (this.voteRewardPlugin.database) {
-            try {
-                final String name = this.getVoter().getUniqueId().toString();
-                final PreparedStatement statement = this.voteRewardPlugin.getConnection().prepareStatement(
-                        String.format("UPDATE `users` SET `time` = '%d' WHERE `uuid` = '%s'", i, name));
-                statement.executeUpdate();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    try {
+                        final String name = getVoter().getUniqueId().toString();
+                        final PreparedStatement statement = voteRewardPlugin.getConnection().prepareStatement(
+                                String.format("UPDATE `users` SET `time` = '%d' WHERE `uuid` = '%s'", i, name));
+                        statement.executeUpdate();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }.runTaskAsynchronously(voteRewardPlugin);
         } else {
             this.configuration.set("last-vote", i);
             this.saveConfiguration();
@@ -392,7 +414,6 @@ public class UserVoteData {
                 } else {
                     this.configuration.set("total-votes", 0);
                     this.configuration.set("daily-votes", 0);
-                    // this.configuration.set("voteparty-votes", 0);
                     this.configuration.set("voteparty", 0);
                     this.configuration.set("offline votes.service", Lists.newArrayList());
                 }
@@ -412,7 +433,7 @@ public class UserVoteData {
             public void run() {
                 try {
                     PreparedStatement statement1 = voteRewardPlugin.getConnection().prepareStatement(String.format(
-                            "INSERT INTO users (`uuid`, `votes`, `time`, `voteparty, `offlinevote`) VALUES ('%s', '0', '0', '0', '" + Lists.newArrayList() + "');",
+                            "INSERT INTO users (`uuid`, `votes`, `time`, `voteparty`, `offlinevote`) VALUES ('%s', '0', '0', '0', '" + Lists.newArrayList() + "');",
                             uuid.toString()));
                     statement1.executeUpdate();
                 } catch (Exception e) {
@@ -426,40 +447,49 @@ public class UserVoteData {
      * Check if the player exist
      *
      * @return boolean
-     * @throws Exception
      */
-    public boolean playerExist() throws Exception {
+    public boolean playerExist() {
         if (voteRewardPlugin.database) {
-            PreparedStatement ps = voteRewardPlugin.getConnection()
-                    .prepareStatement("SELECT uuid FROM users WHERE uuid = ?");
-            ps.setString(1, uuid.toString());
-            ResultSet rs = ps.executeQuery();
-            return rs.next();
-        } else {
-            return configuration.get("total-votes") != null;
+            try {
+                PreparedStatement ps = voteRewardPlugin.getConnection()
+                        .prepareStatement("SELECT uuid FROM users WHERE uuid = ?");
+                ps.setString(1, uuid.toString());
+                ResultSet rs = ps.executeQuery();
+                return rs.next();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+                return false;
+            }
         }
+        return configuration.get("total-votes") != null;
+
     }
 
     /**
      * Reset player
-     *
-     * @throws Exception
      */
-    public void reset() throws Exception {
+    public void reset() {
         if (voteRewardPlugin.database) {
-            PreparedStatement ps = voteRewardPlugin.getConnection()
-                    .prepareStatement("DELETE from users WHERE uuid = ?");
-            ps.setString(1, uuid.toString());
-            ps.executeQuery();
-            this.setupMySQLUser();
-        } else {
-            this.configuration.set("total-votes", 0);
-            this.configuration.set("daily-votes", 0);
-            // this.configuration.set("voteparty-votes", 0);
-            this.configuration.set("voteparty", 0);
-            this.configuration.set("offline votes.service", Lists.newArrayList());
-            this.saveConfiguration();
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    try {
+                        PreparedStatement ps = voteRewardPlugin.getConnection()
+                                .prepareStatement("DELETE from users WHERE uuid = ?");
+                        ps.setString(1, uuid.toString());
+                        ps.executeQuery();
+                        setupMySQLUser();
+                    } catch (SQLException throwables) {
+                        throwables.printStackTrace();
+                    }
+                }
+            }.runTaskAsynchronously(voteRewardPlugin);
         }
+        this.configuration.set("total-votes", 0);
+        this.configuration.set("daily-votes", 0);
+        this.configuration.set("voteparty", 0);
+        this.configuration.set("offline votes.service", Lists.newArrayList());
+        this.saveConfiguration();
     }
 
     /**
@@ -481,6 +511,20 @@ public class UserVoteData {
      * @return String list with the service names
      */
     public List<String> getServices() {
+        if (voteRewardPlugin.database) {
+            try {
+                PreparedStatement ps = voteRewardPlugin.getConnection()
+                        .prepareStatement("SELECT votes FROM users WHERE UUID = ?");
+                ps.setString(1, uuid.toString());
+
+                ResultSet rs = ps.executeQuery();
+                rs.next();
+                return (List<String>) rs.getObject("votes");
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+                return null;
+            }
+        }
         return this.configuration.getStringList("offline vote.services");
     }
 
@@ -490,6 +534,19 @@ public class UserVoteData {
      * @param services
      */
     public void setOfflineServices(List<String> services) {
+        if (voteRewardPlugin.database) {
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    try {
+                        PreparedStatement ps = voteRewardPlugin.getConnection().prepareStatement("");
+                        ps.executeQuery();
+                    } catch (SQLException throwables) {
+                        throwables.printStackTrace();
+                    }
+                }
+            }.runTaskAsynchronously(voteRewardPlugin);
+        }
         this.configuration.set("offline vote.services", services);
         this.saveConfiguration();
     }

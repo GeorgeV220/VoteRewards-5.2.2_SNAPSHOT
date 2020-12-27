@@ -43,15 +43,12 @@ public class VoteRewards extends BukkitCommand {
             }
             final Player target = Bukkit.getPlayerExact(args[1]);
             final UserVoteData userVoteData = UserVoteData.getUser(target.getUniqueId());
-            try {
-                if (userVoteData.playerExist()) {
-                    userVoteData.reset();
-                    Utils.msg(sender, "&c&l(!) &cYou cleared player " + target.getName());
-                } else {
-                    Utils.msg(sender, "&c&l(!) &cPlayer " + target.getName() + " doesn't exist");
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+
+            if (userVoteData.playerExist()) {
+                userVoteData.reset();
+                Utils.msg(sender, "&c&l(!) &cYou cleared player " + target.getName());
+            } else {
+                Utils.msg(sender, "&c&l(!) &cPlayer " + target.getName() + " doesn't exist");
             }
         } else if (args[0].equalsIgnoreCase("reload")) {
             final FileManager fm = FileManager.getInstance();

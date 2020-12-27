@@ -11,13 +11,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Arrays;
 import java.util.Map;
 
 public class VoteParty extends BukkitCommand {
 
-    private VoteRewardPlugin m = VoteRewardPlugin.getInstance();
+    private final VoteRewardPlugin m = VoteRewardPlugin.getInstance();
 
     public VoteParty() {
         super("voteparty");
@@ -49,16 +50,21 @@ public class VoteParty extends BukkitCommand {
                     return true;
                 }
                 final UserVoteData userVoteData = UserVoteData.getUser(((Player) sender).getUniqueId());
-                if (userVoteData.getVoteParty() > 0) {
-                    ((Player) sender).getInventory()
-                            .addItem(VotePartyUtils.getInstance().crate(userVoteData.getVoteParty()));
-                    placeholders.put("%crates%", String.valueOf(userVoteData.getVoteParty()));
-                    userVoteData.setVoteParty(0);
-                    MessagesUtil.VOTEPARTY_CLAIM.msg(sender, placeholders, true);
-                    placeholders.clear();
-                } else {
-                    MessagesUtil.VOTEPARTY_NOTHINGTOCLAIM.msg(sender);
-                }
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        if (userVoteData.getVoteParty() > 0) {
+                            ((Player) sender).getInventory()
+                                    .addItem(VotePartyUtils.getInstance().crate(userVoteData.getVoteParty()));
+                            placeholders.put("%crates%", String.valueOf(userVoteData.getVoteParty()));
+                            userVoteData.setVoteParty(0);
+                            MessagesUtil.VOTEPARTY_CLAIM.msg(sender, placeholders, true);
+                            placeholders.clear();
+                        } else {
+                            MessagesUtil.VOTEPARTY_NOTHINGTOCLAIM.msg(sender);
+                        }
+                    }
+                }.runTaskAsynchronously(m);
                 return true;
             } else if (args[0].equalsIgnoreCase("give")) {
                 if (!sender.hasPermission("voterewards.voteparty.give")) {
@@ -125,14 +131,6 @@ public class VoteParty extends BukkitCommand {
         placeholders.put("%need%", String.valueOf(this.m.getConfig().getInt("VoteParty.votes")));
         MessagesUtil.VOTEPARTY.msg(sender, placeholders, true);
         placeholders.clear();
-        /*if (sender.hasPermission("voterewards.voteparty.help")) {
-            Utils.msg(sender, "&c&l(!) &cCommands &c&l(!)");
-            Utils.msg(sender, "&a/voteparty");
-            Utils.msg(sender, "&a/voteparty start");
-            Utils.msg(sender, "&a/voteparty claim");
-            Utils.msg(sender, "&a/voteparty give");
-            return true;
-        }*/
         return true;
     }
 }
