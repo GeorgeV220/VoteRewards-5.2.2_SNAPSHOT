@@ -23,6 +23,7 @@ import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.EnumSet;
 import java.util.Objects;
@@ -53,11 +54,15 @@ public class PlayerListeners implements Listener {
         UserVoteData userVoteData = UserVoteData.getUser(event.getPlayer().getUniqueId());
         //OFFLINE VOTING
         if (VoteOptions.OFFLINE.isEnabled() && !Bukkit.getPluginManager().isPluginEnabled("AuthMeReloaded")) {
-            for (String serviceName : userVoteData.getServices()) {
-                userVoteData.processVote(serviceName);
-            }
-
-            userVoteData.setOfflineServices(Lists.newArrayList());
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    for (String serviceName : userVoteData.getServices()) {
+                        userVoteData.processVote(serviceName);
+                    }
+                    userVoteData.setOfflineServices(Lists.newArrayList());
+                }
+            }.runTaskAsynchronously(m);
         }
 
         //UPDATER

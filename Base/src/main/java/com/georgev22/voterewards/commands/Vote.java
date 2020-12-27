@@ -1,5 +1,6 @@
 package com.georgev22.voterewards.commands;
 
+import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.Utils;
 import com.georgev22.voterewards.utilities.player.UserVoteData;
@@ -7,6 +8,7 @@ import com.google.common.collect.Maps;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -29,10 +31,15 @@ public class Vote extends BukkitCommand {
             Utils.msg(sender, MessagesUtil.ONLY_PLAYER_COMMAND.getMessages()[0]);
             return true;
         }
-        Player player = (Player) sender;
-        Map<String, String> placeholders = Maps.newHashMap();
-        placeholders.put("%votes%", String.valueOf(UserVoteData.getUser(player.getUniqueId()).getVotes()));
-        MessagesUtil.VOTE_COMMAND.msg(sender, placeholders, true);
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                Player player = (Player) sender;
+                Map<String, String> placeholders = Maps.newHashMap();
+                placeholders.put("%votes%", String.valueOf(UserVoteData.getUser(player.getUniqueId()).getVotes()));
+                MessagesUtil.VOTE_COMMAND.msg(sender, placeholders, true);
+            }
+        }.runTaskAsynchronously(VoteRewardPlugin.getInstance());
         return true;
     }
 }
