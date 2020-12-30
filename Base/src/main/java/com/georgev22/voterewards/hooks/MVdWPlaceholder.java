@@ -26,6 +26,6 @@ public class MVdWPlaceholder {
                 event -> String.valueOf(fm.getConfig().getFileConfiguration().getInt("VoteParty.votes", 2)
                         - fm.getData().getFileConfiguration().getInt("VoteParty-Votes", 0)));
 
-        PlaceholderAPI.registerPlaceholder(this.plugin, "voterewards_vote_top", event -> Utils.getTopPlayer());
+        PlaceholderAPI.registerPlaceholder(this.plugin, "voterewards_top_voter", event -> Utils.getTopPlayer(0));
     }
 }

@@ -19,9 +19,7 @@ import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -173,19 +171,7 @@ public class UserVoteData {
         List<String> services = getServices();
         services.add(serviceName);
         if (voteRewardPlugin.database) {
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    try {
-                        PreparedStatement ps = voteRewardPlugin.getConnection().prepareStatement(
-                                "UPDATE `users` SET `offlinevote` = '" + services + "' WHERE `uuid` = '" + getVoter().getUniqueId() + "'");
-                        ps.executeQuery();
-                    } catch (SQLException throwables) {
-                        throwables.printStackTrace();
-                    }
-                }
-            }.runTaskAsynchronously(voteRewardPlugin);
-            return;
+            setOfflineServices(services);
         }
         this.configuration.set("offline vote.services", services);
         this.saveConfiguration();
@@ -198,7 +184,12 @@ public class UserVoteData {
      */
     private void runCommands(List<String> s) {
         for (String b : s) {
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Utils.colorize(b.replace("%player%", getVoter().getName())));
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Utils.colorize(b.replace("%player%", getVoter().getName())));
+                }
+            }.runTask(voteRewardPlugin);
         }
     }
 
@@ -217,8 +208,8 @@ public class UserVoteData {
                 ResultSet rs = ps.executeQuery();
                 rs.next();
                 return rs.getInt("votes");
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
                 return 0;
             }
         }
@@ -235,8 +226,8 @@ public class UserVoteData {
                                 String.format("UPDATE `users` SET `votes` = '%d' WHERE `uuid` = '%s'", votes, getVoter().getUniqueId().toString()));
 
                         statement.executeUpdate();
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    } catch (SQLException throwables) {
+                        throwables.printStackTrace();
                     }
                 }
             }.runTaskAsynchronously(voteRewardPlugin);
@@ -272,8 +263,8 @@ public class UserVoteData {
                         final PreparedStatement statement = voteRewardPlugin.getConnection().prepareStatement(
                                 String.format("UPDATE `users` SET `daily` = '%d' WHERE `uuid` = '%s'", i, getVoter().getUniqueId().toString()));
                         statement.executeUpdate();
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    } catch (SQLException throwables) {
+                        throwables.printStackTrace();
                     }
                 }
             }.runTaskAsynchronously(voteRewardPlugin);
@@ -297,8 +288,8 @@ public class UserVoteData {
                         final PreparedStatement statement = voteRewardPlugin.getConnection().prepareStatement(
                                 String.format("UPDATE `users` SET `voteparty` = '%d' WHERE `uuid` = '%s'", i, getVoter().getUniqueId().toString()));
                         statement.executeUpdate();
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    } catch (SQLException throwables) {
+                        throwables.printStackTrace();
                     }
                 }
             }.runTaskAsynchronously(voteRewardPlugin);
@@ -322,8 +313,8 @@ public class UserVoteData {
                 final ResultSet rs = ps.executeQuery();
                 rs.next();
                 return rs.getInt("voteparty");
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
                 return 0;
             }
         }
@@ -339,12 +330,13 @@ public class UserVoteData {
         if (this.voteRewardPlugin.database) {
             try {
                 final PreparedStatement ps = this.voteRewardPlugin.getConnection()
-                        .prepareStatement("SELECT uuid FROM users WHERE uuid = ?");
+                        .prepareStatement("SELECT time FROM users WHERE uuid = ?");
                 ps.setString(1, this.uuid.toString());
                 final ResultSet rs = ps.executeQuery();
                 rs.next();
                 return rs.getLong("time");
-            } catch (Exception e) {
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
                 return 0L;
             }
         }
@@ -443,8 +435,8 @@ public class UserVoteData {
             public void run() {
                 try {
                     PreparedStatement statement1 = voteRewardPlugin.getConnection().prepareStatement(String.format(
-                            "INSERT INTO users (`uuid`, `votes`, `time`, `voteparty`, `offlinevote`) VALUES ('%s', '0', '0', '0', '" + Lists.newArrayList() + "');",
-                            uuid.toString()));
+                            "INSERT INTO users (`uuid`, `name`, `votes`, `time`, `voteparty`, `services`) VALUES ('%s', '%s','0', '0', '0', '" + Lists.newArrayList(), toString().replace("[", "").replace("]", "") + "');",
+                            uuid.toString(), getVoter().getName()));
                     statement1.executeUpdate();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -525,12 +517,15 @@ public class UserVoteData {
         if (voteRewardPlugin.database) {
             try {
                 PreparedStatement ps = voteRewardPlugin.getConnection()
-                        .prepareStatement("SELECT votes FROM users WHERE UUID = ?");
+                        .prepareStatement("SELECT services FROM users WHERE UUID = ?");
                 ps.setString(1, uuid.toString());
 
                 ResultSet rs = ps.executeQuery();
                 rs.next();
-                return (List<String>) rs.getObject("offlinevote");
+                if (rs.getString("services").isEmpty()) {
+                    return Lists.newArrayList();
+                }
+                return new ArrayList<>(Arrays.asList(rs.getString("services").split(",")));
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
                 return Lists.newArrayList();
@@ -550,8 +545,10 @@ public class UserVoteData {
                 @Override
                 public void run() {
                     try {
-                        PreparedStatement ps = voteRewardPlugin.getConnection().prepareStatement("");
-                        ps.executeQuery();
+                        final PreparedStatement ps = voteRewardPlugin.getConnection()
+                                .prepareStatement(String.format("UPDATE `users` SET `services` = '%s' WHERE `uuid` = '%s'",
+                                        services.toString().replace("[", "").replace("]", ""), getVoter().getUniqueId()));
+                        ps.execute();
                     } catch (SQLException throwables) {
                         throwables.printStackTrace();
                     }
@@ -561,6 +558,27 @@ public class UserVoteData {
         }
         this.configuration.set("offline vote.services", services);
         this.saveConfiguration();
+    }
+
+    /**
+     * Get the total votes until the next cumulative reward
+     *
+     * @return Integer total votes until the next cumulative reward
+     */
+    public int votesUntilNextCumulativeVote() {
+        if (voteRewardPlugin.getConfig().getConfigurationSection("Rewards.Cumulative") == null) {
+            return 0;
+        }
+        int votesUntil = 0;
+        for (String b : voteRewardPlugin.getConfig().getConfigurationSection("Rewards.Cumulative").getKeys(false)) {
+            int cumulative = Integer.parseInt(b);
+            if (cumulative <= getVotes()) {
+                continue;
+            }
+            votesUntil = cumulative - getVotes();
+            break;
+        }
+        return votesUntil;
     }
 
     @Override

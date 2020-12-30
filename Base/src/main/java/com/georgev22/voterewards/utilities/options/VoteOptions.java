@@ -25,6 +25,8 @@ public enum VoteOptions {
 
     CUMULATIVE("votes.cumulative"),
 
+    CUMULATIVE_MESSAGE("votes.cumulative message"),
+
     VOTE_PARTY("voteparty"),
 
     REMINDER("reminder.enabled"),

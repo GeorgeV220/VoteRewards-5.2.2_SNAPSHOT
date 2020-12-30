@@ -17,6 +17,7 @@ Options:
     footer: true
     voters: 5
   message: true
+  cumulative message: true #cumulative must be enabled
   votes:
     world: false
     disable services: false

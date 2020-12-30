@@ -128,7 +128,7 @@ public class HolographicDisplays {
 
     public static Map<String, String> getPlaceholderMap() {
         final Map<String, String> map = Maps.newHashMap();
-        map.put("%top-1%", Utils.getTopPlayer());
+        map.put("%top-1%", Utils.getTopPlayer(0));
         map.put("%top-2%", Utils.getTopPlayer(1));
         map.put("%top-3%", Utils.getTopPlayer(2));
         map.put("%top-4%", Utils.getTopPlayer(3));

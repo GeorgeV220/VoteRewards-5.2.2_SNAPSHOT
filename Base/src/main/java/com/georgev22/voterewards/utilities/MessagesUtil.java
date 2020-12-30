@@ -21,6 +21,8 @@ public enum MessagesUtil {
 
     VOTE_COMMAND("Messages.Vote-Command", "https://example.com", "%votes%"),
 
+    VOTE_COMMAND_CUMULATIVE("Messages.Vote-Command-Cumulative", "&a&l(!) &7Votes until next cumulative reward: %votes%"),
+
     OFFLINE_PLAYER("Messages.Offline-Player", "&c&l(!) &cThis player is offline!"),
 
     VOTEPARTY("Messages.VoteParty", "&c&l(!) &aVote until VoteParty: %votes% (%current%/%need%"),

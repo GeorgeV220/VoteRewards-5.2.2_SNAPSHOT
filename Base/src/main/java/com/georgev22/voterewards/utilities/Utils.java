@@ -22,6 +22,7 @@ import java.sql.ResultSet;
 import java.text.NumberFormat;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -89,11 +90,11 @@ public final class Utils {
         return result.equals("") ? invalidInput : result;
     }
 
-    // public static String convertSeconds(long input) {
-    // return convertSeconds(input, "second", "seconds", "minute", "minutes",
-    // "hour", "hours", "day", "days",
-    // "invalid time");
-    // }
+    public static String convertSeconds(long input) {
+        return convertSeconds(input, "second", "seconds", "minute", "minutes",
+                "hour", "hours", "day", "days",
+                "invalid time");
+    }
 
     /* ----------------------------------------------------------------- */
 
@@ -427,7 +428,7 @@ public final class Utils {
      * @return Map
      */
     public static Map<String, Integer> getTopPlayersMap() {
-        Map<String, Integer> top = Maps.newHashMap();
+        ConcurrentMap<String, Integer> top = Maps.newConcurrentMap();
         if (m.database) {
             Bukkit.getScheduler().runTaskAsynchronously(m, () -> {
                 try {
@@ -455,18 +456,6 @@ public final class Utils {
     }
 
     /**
-     * Get the top player
-     *
-     * @return top player's name
-     */
-    public static String getTopPlayer() {
-        Map<String, Integer> result = getTopPlayersMap().entrySet().stream()
-                .sorted(Entry.comparingByValue(Comparator.reverseOrder())).limit(1).collect(Collectors.toMap(
-                        Entry::getKey, Entry::getValue, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
-        return String.valueOf(result.entrySet()).split("=")[0].replace("[", "");
-    }
-
-    /**
      *
      */
     public static Map<String, Integer> getTopPlayers(int limit) {
@@ -478,9 +467,9 @@ public final class Utils {
 
     public static String getTopPlayer(int number) {
         try {
-            return String.valueOf(getTopPlayers(number + 1).keySet().toArray()[number]);
+            return String.valueOf(getTopPlayers(number + 1).keySet().toArray()[number]).replace("[", "").replace("]", "");
         } catch (ArrayIndexOutOfBoundsException ignored) {
-            return getTopPlayer();
+            return getTopPlayer(0);
         }
     }
 

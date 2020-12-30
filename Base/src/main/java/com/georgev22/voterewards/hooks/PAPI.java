@@ -64,7 +64,7 @@ public class PAPI extends PlaceholderExpansion {
         }
 
         if (identifier.equalsIgnoreCase("top_voter")) {
-            return Utils.getTopPlayer();
+            return Utils.getTopPlayer(0);
         }
 
         return "null";
