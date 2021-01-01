@@ -2,7 +2,7 @@ package com.georgev22.voterewards.hooks;
 
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.utilities.options.VoteOptions;
-import com.georgev22.voterewards.utilities.player.UserUtils;
+import com.georgev22.voterewards.utilities.player.UserVoteData;
 import com.georgev22.voterewards.utilities.player.VoteUtils;
 import com.google.common.collect.Lists;
 import fr.xephi.authme.events.LoginEvent;
@@ -21,11 +21,11 @@ public class AuthMe implements Listener {
             @Override
             public void run() {
                 if (VoteOptions.OFFLINE.isEnabled()) {
-                    UserUtils userUtils = UserUtils.getUser(event.getPlayer().getUniqueId());
-                    for (String serviceName : userUtils.getOfflineServices()) {
+                    UserVoteData userVoteData = UserVoteData.getUser(event.getPlayer().getUniqueId());
+                    for (String serviceName : userVoteData.getOfflineServices()) {
                         VoteUtils.processVote(event.getPlayer(), serviceName);
                     }
-                    userUtils.setOfflineServices(Lists.newArrayList());
+                    userVoteData.setOfflineServices(Lists.newArrayList());
                 }
             }
         }.runTaskAsynchronously(VoteRewardPlugin.getInstance());

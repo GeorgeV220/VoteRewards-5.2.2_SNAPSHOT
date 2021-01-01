@@ -3,7 +3,7 @@ package com.georgev22.voterewards.hooks;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.configmanager.FileManager;
 import com.georgev22.voterewards.utilities.Utils;
-import com.georgev22.voterewards.utilities.player.UserUtils;
+import com.georgev22.voterewards.utilities.player.UserVoteData;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
 
@@ -48,7 +48,7 @@ public class PAPI extends PlaceholderExpansion {
         }
 
         if (identifier.equalsIgnoreCase("player_votes")) {
-            return String.valueOf(UserUtils.getUser(player.getUniqueId()).getVotes());
+            return String.valueOf(UserVoteData.getUser(player.getUniqueId()).getVotes());
         }
 
         final FileManager fm = FileManager.getInstance();

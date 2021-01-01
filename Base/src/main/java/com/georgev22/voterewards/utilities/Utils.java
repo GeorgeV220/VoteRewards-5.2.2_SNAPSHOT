@@ -1,7 +1,7 @@
 package com.georgev22.voterewards.utilities;
 
 import com.georgev22.voterewards.VoteRewardPlugin;
-import com.georgev22.voterewards.utilities.player.UserUtils;
+import com.georgev22.voterewards.utilities.player.UserVoteData;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.primitives.Doubles;
@@ -461,7 +461,7 @@ public final class Utils {
     public static Map<String, Integer> getTopPlayers(int limit) {
         if (m.database) {
             try {
-                return UserUtils.SQLUserUtils.getAllUsers().entrySet().stream()
+                return UserVoteData.SQLUserUtils.getAllUsers().entrySet().stream()
                         .sorted(Entry.comparingByValue(Comparator.reverseOrder())).limit(limit).collect(Collectors.toMap(
                                 Entry::getKey, Entry::getValue, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
             } catch (SQLException throwables) {
@@ -469,7 +469,7 @@ public final class Utils {
                 return null;
             }
         } else {
-            return UserUtils.getAllUsers().entrySet().stream()
+            return UserVoteData.getAllUsers().entrySet().stream()
                     .sorted(Entry.comparingByValue(Comparator.reverseOrder())).limit(limit).collect(Collectors.toMap(
                             Entry::getKey, Entry::getValue, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
         }

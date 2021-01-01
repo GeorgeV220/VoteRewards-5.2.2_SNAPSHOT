@@ -5,7 +5,7 @@ import com.georgev22.voterewards.configmanager.FileManager;
 import com.georgev22.voterewards.hooks.WorldEditHook;
 import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.Utils;
-import com.georgev22.voterewards.utilities.player.UserUtils;
+import com.georgev22.voterewards.utilities.player.UserVoteData;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -42,10 +42,10 @@ public class VoteRewards extends BukkitCommand {
                 return true;
             }
             Player target = Bukkit.getPlayerExact(args[1]);
-            UserUtils userUtils = UserUtils.getUser(target.getUniqueId());
+            UserVoteData userVoteData = UserVoteData.getUser(target.getUniqueId());
 
-            if (userUtils.playerExists()) {
-                userUtils.reset();
+            if (userVoteData.playerExists()) {
+                userVoteData.reset();
                 Utils.msg(sender, "&c&l(!) &cYou cleared player " + target.getName());
             } else {
                 Utils.msg(sender, "&c&l(!) &cPlayer " + target.getName() + " doesn't exist");
@@ -65,15 +65,15 @@ public class VoteRewards extends BukkitCommand {
             if (Objects.isNull(target.getPlayer())) {
                 return true;
             }
-            UserUtils userUtils = UserUtils.getUser(target.getUniqueId());
+            UserVoteData userVoteData = UserVoteData.getUser(target.getUniqueId());
             if (args[2].equalsIgnoreCase("votes")) {
-                userUtils.setVotes(Integer.parseInt(args[3]));
+                userVoteData.setVotes(Integer.parseInt(args[3]));
                 Utils.msg(sender, "&a&l(!) &aSuccessfully set " + target.getName() + " votes to " + args[3]);
             } else if (args[2].equalsIgnoreCase("voteparty")) {
-                userUtils.setVoteParties(Integer.parseInt(args[3]));
+                userVoteData.setVoteParties(Integer.parseInt(args[3]));
                 Utils.msg(sender, "&a&l(!) &aSuccessfully set " + target.getName() + " voteparty crates to " + args[3]);
             } else if (args[2].equalsIgnoreCase("time")) {
-                userUtils.setLastVoted(Integer.parseInt(args[3]));
+                userVoteData.setLastVoted(Integer.parseInt(args[3]));
                 Utils.msg(sender, "&a&l(!) &aSuccessfully set " + target.getName() + " last time vote to " + args[3]);
             }
             return true;

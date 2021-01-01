@@ -84,8 +84,8 @@ public class VotePartyUtils {
                         if (PartyOptions.CRATE.isEnabled()) {
                             if (offlinePlayer != null && offlinePlayer.isOnline()) {
                                 if (isInLocation(offlinePlayer.getPlayer().getLocation())) {
-                                    UserUtils userUtils = UserUtils.getUser(offlinePlayer.getUniqueId());
-                                    userUtils.setVoteParties(userUtils.getVoteParties() + 1);
+                                    UserVoteData userVoteData = UserVoteData.getUser(offlinePlayer.getUniqueId());
+                                    userVoteData.setVoteParties(userVoteData.getVoteParty() + 1);
                                     MessagesUtil.VOTEPARTY_UNCLAIM.msg(offlinePlayer.getPlayer());
                                 } else
                                     offlinePlayer.getPlayer().getInventory().addItem(crate(1));
@@ -112,8 +112,8 @@ public class VotePartyUtils {
                 if (PartyOptions.CRATE.isEnabled()) {
                     if (offlinePlayer.getPlayer() != null) {
                         if (isInLocation(offlinePlayer.getPlayer().getLocation())) {
-                            UserUtils userUtils = UserUtils.getUser(offlinePlayer.getUniqueId());
-                            userUtils.setVoteParties(userUtils.getVoteParties() + 1);
+                            UserVoteData userVoteData = UserVoteData.getUser(offlinePlayer.getUniqueId());
+                            userVoteData.setVoteParties(userVoteData.getVoteParty() + 1);
                             MessagesUtil.VOTEPARTY_UNCLAIM.msg(offlinePlayer.getPlayer());
                         } else
                             offlinePlayer.getPlayer().getInventory().addItem(crate(1));
@@ -170,8 +170,8 @@ public class VotePartyUtils {
                         if (PartyOptions.CRATE.isEnabled()) {
                             if (offlinePlayer != null && offlinePlayer.isOnline()) {
                                 if (isInLocation(offlinePlayer.getPlayer().getLocation())) {
-                                    UserUtils userUtils = UserUtils.getUser(offlinePlayer.getUniqueId());
-                                    userUtils.setVoteParties(userUtils.getVoteParties() + 1);
+                                    UserVoteData userVoteData = UserVoteData.getUser(offlinePlayer.getUniqueId());
+                                    userVoteData.setVoteParties(userVoteData.getVoteParty() + 1);
                                     MessagesUtil.VOTEPARTY_UNCLAIM.msg(offlinePlayer.getPlayer());
                                 } else
                                     offlinePlayer.getPlayer().getInventory().addItem(crate(1));

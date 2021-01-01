@@ -4,7 +4,7 @@ import be.maximvdw.placeholderapi.PlaceholderAPI;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.configmanager.FileManager;
 import com.georgev22.voterewards.utilities.Utils;
-import com.georgev22.voterewards.utilities.player.UserUtils;
+import com.georgev22.voterewards.utilities.player.UserVoteData;
 
 public class MVdWPlaceholder {
 
@@ -14,7 +14,7 @@ public class MVdWPlaceholder {
         FileManager fm = FileManager.getInstance();
 
         PlaceholderAPI.registerPlaceholder(plugin, "voterewards_player_votes",
-                event -> String.valueOf(UserUtils.getUser(event.getPlayer().getUniqueId()).getVotes()));
+                event -> String.valueOf(UserVoteData.getUser(event.getPlayer().getUniqueId()).getVotes()));
 
         PlaceholderAPI.registerPlaceholder(plugin, "voterewards_total_votes",
                 event -> String.valueOf(fm.getData().getFileConfiguration().getInt("VoteParty-Votes")));

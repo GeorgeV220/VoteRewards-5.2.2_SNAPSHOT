@@ -25,10 +25,10 @@ public class VoteUtils {
      * @param serviceName   the service name (dah)
      */
     public static void processVote(OfflinePlayer offlinePlayer, String serviceName) {
-        UserUtils userUtils = UserUtils.getUser(offlinePlayer.getUniqueId());
-        userUtils.setVotes(userUtils.getVotes() + 1);
-        userUtils.setLastVoted(System.currentTimeMillis());
-        userUtils.save();
+        UserVoteData userVoteData = UserVoteData.getUser(offlinePlayer.getUniqueId());
+        userVoteData.setVotes(userVoteData.getVotes() + 1);
+        userVoteData.setLastVoted(System.currentTimeMillis());
+        userVoteData.save();
 
         if (VoteOptions.VOTE_TITLE.isEnabled()) {
             Titles.sendTitle(offlinePlayer.getPlayer(),
@@ -39,10 +39,10 @@ public class VoteUtils {
         // WORLD REWARDS (WITH SERVICES)
         if (VoteOptions.WORLD.isEnabled()) {
             if (voteRewardPlugin.getConfig().getString("Rewards.Worlds." + offlinePlayer.getPlayer().getWorld() + "." + serviceName) != null) {
-                userUtils.runCommands(voteRewardPlugin.getConfig()
+                userVoteData.runCommands(voteRewardPlugin.getConfig()
                         .getStringList("Rewards.Worlds." + offlinePlayer.getPlayer().getWorld() + "." + serviceName));
             } else {
-                userUtils.runCommands(voteRewardPlugin.getConfig()
+                userVoteData.runCommands(voteRewardPlugin.getConfig()
                         .getStringList("Rewards.Worlds." + offlinePlayer.getPlayer().getWorld() + ".default"));
             }
         }
@@ -50,10 +50,10 @@ public class VoteUtils {
         // SERVICE REWARDS
         if (!VoteOptions.DISABLE_SERVICES.isEnabled()) {
             if (voteRewardPlugin.getConfig().getString("Rewards.Services." + serviceName) != null) {
-                userUtils.runCommands(voteRewardPlugin.getConfig()
+                userVoteData.runCommands(voteRewardPlugin.getConfig()
                         .getStringList("Rewards.Services." + serviceName + ".commands"));
             } else {
-                userUtils.runCommands(voteRewardPlugin.getConfig()
+                userVoteData.runCommands(voteRewardPlugin.getConfig()
                         .getStringList("Rewards.Services.default.commands"));
             }
         }
@@ -65,7 +65,7 @@ public class VoteUtils {
             for (String s2 : voteRewardPlugin.getConfig().getConfigurationSection("Rewards.Lucky")
                     .getKeys(false)) {
                 if (Integer.valueOf(s2).equals(i)) {
-                    userUtils.runCommands(voteRewardPlugin.getConfig()
+                    userVoteData.runCommands(voteRewardPlugin.getConfig()
                             .getStringList("Rewards.Lucky." + s2 + ".commands"));
                 }
             }
@@ -77,7 +77,7 @@ public class VoteUtils {
                     .getConfigurationSection("Rewards.Permission");
             for (String s2 : section.getKeys(false)) {
                 if (offlinePlayer.getPlayer().hasPermission("voterewards.permission" + s2)) {
-                    userUtils.runCommands(voteRewardPlugin.getConfig()
+                    userVoteData.runCommands(voteRewardPlugin.getConfig()
                             .getStringList("Rewards.Permission." + s2 + ".commands"));
                 }
             }
@@ -85,11 +85,11 @@ public class VoteUtils {
 
         // CUMULATIVE REWARDS
         if (VoteOptions.CUMULATIVE.isEnabled()) {
-            int votes = userUtils.getVotes();
+            int votes = userVoteData.getVotes();
             for (String s2 : voteRewardPlugin.getConfig().getConfigurationSection("Rewards.Cumulative")
                     .getKeys(false)) {
                 if (Integer.valueOf(s2).equals(votes)) {
-                    userUtils.runCommands(voteRewardPlugin.getConfig()
+                    userVoteData.runCommands(voteRewardPlugin.getConfig()
                             .getStringList("Rewards.Cumulative." + s2 + ".commands"));
                 }
             }
@@ -119,11 +119,11 @@ public class VoteUtils {
      * @param serviceName   service name (dah)
      */
     public static void processOfflineVote(OfflinePlayer offlinePlayer, final String serviceName) {
-        UserUtils userUtils = UserUtils.getUser(offlinePlayer.getUniqueId());
-        List<String> services = userUtils.getOfflineServices();
+        UserVoteData userVoteData = UserVoteData.getUser(offlinePlayer.getUniqueId());
+        List<String> services = userVoteData.getOfflineServices();
         services.add(serviceName);
-        userUtils.setOfflineServices(services);
-        userUtils.save();
+        userVoteData.setOfflineServices(services);
+        userVoteData.save();
     }
 
 }

@@ -15,7 +15,7 @@ import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.Updater;
 import com.georgev22.voterewards.utilities.Utils;
 import com.georgev22.voterewards.utilities.options.VoteOptions;
-import com.georgev22.voterewards.utilities.player.UserUtils;
+import com.georgev22.voterewards.utilities.player.UserVoteData;
 import com.google.common.collect.Maps;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -126,8 +126,8 @@ public class VoteRewardPlugin extends JavaPlugin {
                     Player player = entry.getKey();
                     Long reminderTimer = entry.getValue();
                     if (reminderTimer <= System.currentTimeMillis()) {
-                        UserUtils userUtils = UserUtils.getUser(player.getUniqueId());
-                        if (System.currentTimeMillis() >= userUtils.getLastVoted() + 24 * 60 * 60 * 1000) {
+                        UserVoteData userVoteData = UserVoteData.getUser(player.getUniqueId());
+                        if (System.currentTimeMillis() >= userVoteData.getLastVote() + 24 * 60 * 60 * 1000) {
                             Map<String, String> placeholders = Maps.newHashMap();
                             placeholders.put("%player%", player.getName());
                             MessagesUtil.REMINDER.msg(player, placeholders, true);

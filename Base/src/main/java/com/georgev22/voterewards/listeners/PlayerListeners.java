@@ -6,7 +6,7 @@ import com.georgev22.voterewards.utilities.Updater;
 import com.georgev22.voterewards.utilities.Utils;
 import com.georgev22.voterewards.utilities.options.PartyOptions;
 import com.georgev22.voterewards.utilities.options.VoteOptions;
-import com.georgev22.voterewards.utilities.player.UserUtils;
+import com.georgev22.voterewards.utilities.player.UserVoteData;
 import com.georgev22.voterewards.utilities.player.VotePartyUtils;
 import com.georgev22.voterewards.utilities.player.VoteUtils;
 import com.georgev22.xseries.XMaterial;
@@ -35,7 +35,7 @@ public class PlayerListeners implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
-        UserUtils.getUser(event.getPlayer().getUniqueId()).load();
+        UserVoteData.getUser(event.getPlayer().getUniqueId()).load();
         //HOLOGRAMS
         if (Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays")) {
             if (!HolographicDisplays.getHolograms().isEmpty()) {
@@ -47,16 +47,16 @@ public class PlayerListeners implements Listener {
             }
         }
 
-        UserUtils userUtils = UserUtils.getUser(event.getPlayer().getUniqueId());
+        UserVoteData userVoteData = UserVoteData.getUser(event.getPlayer().getUniqueId());
         //OFFLINE VOTING
         if (VoteOptions.OFFLINE.isEnabled() && !Bukkit.getPluginManager().isPluginEnabled("AuthMeReloaded")) {
             new BukkitRunnable() {
                 @Override
                 public void run() {
-                    for (String serviceName : userUtils.getOfflineServices()) {
+                    for (String serviceName : userVoteData.getOfflineServices()) {
                         VoteUtils.processVote(event.getPlayer(), serviceName);
                     }
-                    userUtils.setOfflineServices(Lists.newArrayList());
+                    userVoteData.setOfflineServices(Lists.newArrayList());
                 }
             }.runTaskAsynchronously(m);
         }
@@ -74,7 +74,7 @@ public class PlayerListeners implements Listener {
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         m.reminderMap.remove(event.getPlayer());
-        UserUtils.getUserMap().remove(event.getPlayer().getUniqueId());
+        UserVoteData.getUserMap().remove(event.getPlayer().getUniqueId());
     }
 
 
