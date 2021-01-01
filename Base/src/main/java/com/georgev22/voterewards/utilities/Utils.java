@@ -1,6 +1,7 @@
 package com.georgev22.voterewards.utilities;
 
 import com.georgev22.voterewards.VoteRewardPlugin;
+import com.georgev22.voterewards.utilities.player.UserUtils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.primitives.Doubles;
@@ -17,8 +18,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.util.*;
 import java.util.Map.Entry;
@@ -455,13 +458,21 @@ public final class Utils {
         return top;
     }
 
-    /**
-     *
-     */
     public static Map<String, Integer> getTopPlayers(int limit) {
-        return getTopPlayersMap().entrySet().stream()
-                .sorted(Entry.comparingByValue(Comparator.reverseOrder())).limit(limit).collect(Collectors.toMap(
-                        Entry::getKey, Entry::getValue, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
+        if (m.database) {
+            try {
+                return UserUtils.SQLUserUtils.getAllUsers().entrySet().stream()
+                        .sorted(Entry.comparingByValue(Comparator.reverseOrder())).limit(limit).collect(Collectors.toMap(
+                                Entry::getKey, Entry::getValue, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+                return null;
+            }
+        } else {
+            return UserUtils.getAllUsers().entrySet().stream()
+                    .sorted(Entry.comparingByValue(Comparator.reverseOrder())).limit(limit).collect(Collectors.toMap(
+                            Entry::getKey, Entry::getValue, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
+        }
     }
 
 
@@ -532,6 +543,16 @@ public final class Utils {
         List<String> list = Arrays.asList(a);
         Collections.reverse(list);
         return (String[]) list.toArray();
+    }
+
+    public static Object getPrivateField(Object object, String field) throws SecurityException,
+            NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
+        Class<?> clazz = object.getClass();
+        Field objectField = clazz.getDeclaredField(field);
+        objectField.setAccessible(true);
+        Object result = objectField.get(object);
+        objectField.setAccessible(false);
+        return result;
     }
 
 }

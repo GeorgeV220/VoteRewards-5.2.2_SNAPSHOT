@@ -6,8 +6,9 @@ import com.georgev22.voterewards.utilities.Updater;
 import com.georgev22.voterewards.utilities.Utils;
 import com.georgev22.voterewards.utilities.options.PartyOptions;
 import com.georgev22.voterewards.utilities.options.VoteOptions;
-import com.georgev22.voterewards.utilities.player.UserVoteData;
+import com.georgev22.voterewards.utilities.player.UserUtils;
 import com.georgev22.voterewards.utilities.player.VotePartyUtils;
+import com.georgev22.voterewards.utilities.player.VoteUtils;
 import com.georgev22.xseries.XMaterial;
 import com.georgev22.xseries.XSound;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
@@ -19,7 +20,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -34,12 +34,8 @@ public class PlayerListeners implements Listener {
     private final VoteRewardPlugin m = VoteRewardPlugin.getInstance();
 
     @EventHandler
-    public void onLogin(PlayerLoginEvent event) {
-        UserVoteData.getUser(event.getPlayer().getUniqueId()).setupUser();
-    }
-
-    @EventHandler
     public void onJoin(PlayerJoinEvent event) {
+        UserUtils.getUser(event.getPlayer().getUniqueId()).load();
         //HOLOGRAMS
         if (Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays")) {
             if (!HolographicDisplays.getHolograms().isEmpty()) {
@@ -51,16 +47,16 @@ public class PlayerListeners implements Listener {
             }
         }
 
-        UserVoteData userVoteData = UserVoteData.getUser(event.getPlayer().getUniqueId());
+        UserUtils userUtils = UserUtils.getUser(event.getPlayer().getUniqueId());
         //OFFLINE VOTING
         if (VoteOptions.OFFLINE.isEnabled() && !Bukkit.getPluginManager().isPluginEnabled("AuthMeReloaded")) {
             new BukkitRunnable() {
                 @Override
                 public void run() {
-                    for (String serviceName : userVoteData.getServices()) {
-                        userVoteData.processVote(serviceName);
+                    for (String serviceName : userUtils.getOfflineServices()) {
+                        VoteUtils.processVote(event.getPlayer(), serviceName);
                     }
-                    userVoteData.setOfflineServices(Lists.newArrayList());
+                    userUtils.setOfflineServices(Lists.newArrayList());
                 }
             }.runTaskAsynchronously(m);
         }
@@ -78,6 +74,7 @@ public class PlayerListeners implements Listener {
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         m.reminderMap.remove(event.getPlayer());
+        UserUtils.getUserMap().remove(event.getPlayer().getUniqueId());
     }
 
 

@@ -36,7 +36,6 @@ public class VotePartyUtils {
     private final Set<OfflinePlayer> players = Sets.newHashSet();
 
     public void run(OfflinePlayer player) {
-
         if (!VoteOptions.VOTE_PARTY.isEnabled()) {
             return;
         }
@@ -85,8 +84,8 @@ public class VotePartyUtils {
                         if (PartyOptions.CRATE.isEnabled()) {
                             if (offlinePlayer != null && offlinePlayer.isOnline()) {
                                 if (isInLocation(offlinePlayer.getPlayer().getLocation())) {
-                                    UserVoteData userVoteData = UserVoteData.getUser(offlinePlayer.getUniqueId());
-                                    userVoteData.setVoteParty(userVoteData.getVoteParty() + 1);
+                                    UserUtils userUtils = UserUtils.getUser(offlinePlayer.getUniqueId());
+                                    userUtils.setVoteParties(userUtils.getVoteParties() + 1);
                                     MessagesUtil.VOTEPARTY_UNCLAIM.msg(offlinePlayer.getPlayer());
                                 } else
                                     offlinePlayer.getPlayer().getInventory().addItem(crate(1));
@@ -113,8 +112,8 @@ public class VotePartyUtils {
                 if (PartyOptions.CRATE.isEnabled()) {
                     if (offlinePlayer.getPlayer() != null) {
                         if (isInLocation(offlinePlayer.getPlayer().getLocation())) {
-                            UserVoteData userVoteData = UserVoteData.getUser(offlinePlayer.getUniqueId());
-                            userVoteData.setVoteParty(userVoteData.getVoteParty() + 1);
+                            UserUtils userUtils = UserUtils.getUser(offlinePlayer.getUniqueId());
+                            userUtils.setVoteParties(userUtils.getVoteParties() + 1);
                             MessagesUtil.VOTEPARTY_UNCLAIM.msg(offlinePlayer.getPlayer());
                         } else
                             offlinePlayer.getPlayer().getInventory().addItem(crate(1));
@@ -171,8 +170,8 @@ public class VotePartyUtils {
                         if (PartyOptions.CRATE.isEnabled()) {
                             if (offlinePlayer != null && offlinePlayer.isOnline()) {
                                 if (isInLocation(offlinePlayer.getPlayer().getLocation())) {
-                                    UserVoteData userVoteData = UserVoteData.getUser(offlinePlayer.getUniqueId());
-                                    userVoteData.setVoteParty(userVoteData.getVoteParty() + 1);
+                                    UserUtils userUtils = UserUtils.getUser(offlinePlayer.getUniqueId());
+                                    userUtils.setVoteParties(userUtils.getVoteParties() + 1);
                                     MessagesUtil.VOTEPARTY_UNCLAIM.msg(offlinePlayer.getPlayer());
                                 } else
                                     offlinePlayer.getPlayer().getInventory().addItem(crate(1));

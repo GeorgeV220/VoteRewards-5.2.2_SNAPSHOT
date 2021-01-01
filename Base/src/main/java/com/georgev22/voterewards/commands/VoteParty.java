@@ -4,7 +4,7 @@ import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.configmanager.FileManager;
 import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.Utils;
-import com.georgev22.voterewards.utilities.player.UserVoteData;
+import com.georgev22.voterewards.utilities.player.UserUtils;
 import com.georgev22.voterewards.utilities.player.VotePartyUtils;
 import com.google.common.collect.Maps;
 import org.bukkit.Bukkit;
@@ -49,15 +49,15 @@ public class VoteParty extends BukkitCommand {
                     MessagesUtil.NO_PERMISSION.msg(sender);
                     return true;
                 }
-                final UserVoteData userVoteData = UserVoteData.getUser(((Player) sender).getUniqueId());
+                final UserUtils userUtils = UserUtils.getUser(((Player) sender).getUniqueId());
                 new BukkitRunnable() {
                     @Override
                     public void run() {
-                        if (userVoteData.getVoteParty() > 0) {
+                        if (userUtils.getVoteParties() > 0) {
                             ((Player) sender).getInventory()
-                                    .addItem(VotePartyUtils.getInstance().crate(userVoteData.getVoteParty()));
-                            placeholders.put("%crates%", String.valueOf(userVoteData.getVoteParty()));
-                            userVoteData.setVoteParty(0);
+                                    .addItem(VotePartyUtils.getInstance().crate(userUtils.getVoteParties()));
+                            placeholders.put("%crates%", String.valueOf(userUtils.getVoteParties()));
+                            userUtils.setVoteParties(0);
                             MessagesUtil.VOTEPARTY_CLAIM.msg(sender, placeholders, true);
                             placeholders.clear();
                         } else {

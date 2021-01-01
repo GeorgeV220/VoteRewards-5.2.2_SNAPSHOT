@@ -4,7 +4,7 @@ import be.maximvdw.placeholderapi.PlaceholderAPI;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.configmanager.FileManager;
 import com.georgev22.voterewards.utilities.Utils;
-import com.georgev22.voterewards.utilities.player.UserVoteData;
+import com.georgev22.voterewards.utilities.player.UserUtils;
 
 public class MVdWPlaceholder {
 
@@ -13,19 +13,19 @@ public class MVdWPlaceholder {
     public void hook() {
         FileManager fm = FileManager.getInstance();
 
-        PlaceholderAPI.registerPlaceholder(this.plugin, "voterewards_player_votes",
-                event -> String.valueOf(UserVoteData.getUser(event.getPlayer().getUniqueId()).getVotes()));
+        PlaceholderAPI.registerPlaceholder(plugin, "voterewards_player_votes",
+                event -> String.valueOf(UserUtils.getUser(event.getPlayer().getUniqueId()).getVotes()));
 
-        PlaceholderAPI.registerPlaceholder(this.plugin, "voterewards_total_votes",
+        PlaceholderAPI.registerPlaceholder(plugin, "voterewards_total_votes",
                 event -> String.valueOf(fm.getData().getFileConfiguration().getInt("VoteParty-Votes")));
 
-        PlaceholderAPI.registerPlaceholder(this.plugin, "voterewards_votes_needed",
+        PlaceholderAPI.registerPlaceholder(plugin, "voterewards_votes_needed",
                 event -> String.valueOf(fm.getConfig().getFileConfiguration().getInt("VoteParty.votes", 2)));
 
-        PlaceholderAPI.registerPlaceholder(this.plugin, "voterewards_votes_until",
+        PlaceholderAPI.registerPlaceholder(plugin, "voterewards_votes_until",
                 event -> String.valueOf(fm.getConfig().getFileConfiguration().getInt("VoteParty.votes", 2)
                         - fm.getData().getFileConfiguration().getInt("VoteParty-Votes", 0)));
 
-        PlaceholderAPI.registerPlaceholder(this.plugin, "voterewards_top_voter", event -> Utils.getTopPlayer(0));
+        PlaceholderAPI.registerPlaceholder(plugin, "voterewards_top_voter", event -> Utils.getTopPlayer(0));
     }
 }

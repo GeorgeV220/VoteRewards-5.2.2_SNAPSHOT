@@ -3,7 +3,7 @@ package com.georgev22.voterewards.listeners;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.options.VoteOptions;
-import com.georgev22.voterewards.utilities.player.UserVoteData;
+import com.georgev22.voterewards.utilities.player.VoteUtils;
 import com.georgev22.xseries.XSound;
 import com.google.common.collect.Maps;
 import com.vexsoftware.votifier.model.Vote;
@@ -33,15 +33,13 @@ public class VotifierListener implements Listener {
         if (target == null) {
             if (VoteOptions.OFFLINE.isEnabled()) {
                 OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(vote.getUsername());
-                UserVoteData userVoteData = UserVoteData.getUser(offlinePlayer.getUniqueId());
-                userVoteData.processOfflineVote(vote.getServiceName());
+                VoteUtils.processOfflineVote(offlinePlayer, vote.getServiceName());
                 return;
             }
             return;
         }
 
-        UserVoteData user = UserVoteData.getUser(target.getUniqueId());
-        user.processVote(vote.getServiceName());
+        VoteUtils.processVote(target, vote.getUsername());
         Map<String, String> placeholders = Maps.newHashMap();
         placeholders.put("%player%", vote.getUsername());
         placeholders.put("%servicename%", vote.getServiceName());

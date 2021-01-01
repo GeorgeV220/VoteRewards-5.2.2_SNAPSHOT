@@ -3,7 +3,7 @@ package com.georgev22.voterewards.commands;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.Utils;
-import com.georgev22.voterewards.utilities.player.UserVoteData;
+import com.georgev22.voterewards.utilities.player.UserUtils;
 import com.google.common.collect.Maps;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -40,14 +40,14 @@ public class Votes extends BukkitCommand {
                     }
                     placeholders.put("%player%", sender.getName());
                     placeholders.put("%votes%",
-                            String.valueOf(UserVoteData.getUser(((Player) sender).getUniqueId()).getVotes()));
+                            String.valueOf(UserUtils.getUser(((Player) sender).getUniqueId()).getVotes()));
                     MessagesUtil.VOTES.msg(sender, placeholders, true);
                     placeholders.clear();
                     return;
                 }
                 OfflinePlayer target = Bukkit.getOfflinePlayer(args[0]);
                 placeholders.put("%player%", target.getName());
-                placeholders.put("%votes%", String.valueOf(UserVoteData.getUser(target.getUniqueId()).getVotes()));
+                placeholders.put("%votes%", String.valueOf(UserUtils.getUser(target.getUniqueId()).getVotes()));
                 MessagesUtil.VOTES.msg(sender, placeholders, true);
                 placeholders.clear();
             }

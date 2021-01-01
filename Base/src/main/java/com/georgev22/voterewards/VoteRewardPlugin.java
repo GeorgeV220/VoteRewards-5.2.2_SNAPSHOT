@@ -13,13 +13,14 @@ import com.georgev22.voterewards.listeners.PlayerListeners;
 import com.georgev22.voterewards.listeners.VotifierListener;
 import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.Updater;
+import com.georgev22.voterewards.utilities.Utils;
 import com.georgev22.voterewards.utilities.options.VoteOptions;
-import com.georgev22.voterewards.utilities.player.UserVoteData;
+import com.georgev22.voterewards.utilities.player.UserUtils;
 import com.google.common.collect.Maps;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandMap;
+import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -27,10 +28,10 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
 
 public class VoteRewardPlugin extends JavaPlugin {
@@ -125,8 +126,8 @@ public class VoteRewardPlugin extends JavaPlugin {
                     Player player = entry.getKey();
                     Long reminderTimer = entry.getValue();
                     if (reminderTimer <= System.currentTimeMillis()) {
-                        UserVoteData userVoteData = UserVoteData.getUser(player.getUniqueId());
-                        if (System.currentTimeMillis() >= userVoteData.getLastVote() + 24 * 60 * 60 * 1000) {
+                        UserUtils userUtils = UserUtils.getUser(player.getUniqueId());
+                        if (System.currentTimeMillis() >= userUtils.getLastVoted() + 24 * 60 * 60 * 1000) {
                             Map<String, String> placeholders = Maps.newHashMap();
                             placeholders.put("%player%", player.getName());
                             MessagesUtil.REMINDER.msg(player, placeholders, true);
@@ -140,6 +141,23 @@ public class VoteRewardPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        Bukkit.getScheduler().getActiveWorkers().forEach(bukkitWorker -> Bukkit.getScheduler().cancelTasks(this));
+        if (VoteOptions.COMMAND_VOTEREWARDS.isEnabled())
+            this.unRegisterCommand("voterewards");
+        if (VoteOptions.COMMAND_FAKEVOTE.isEnabled())
+            this.unRegisterCommand("fakevote");
+        if (VoteOptions.COMMAND_VOTE.isEnabled())
+            this.unRegisterCommand("vote");
+        if (VoteOptions.COMMAND_VOTES.isEnabled())
+            this.unRegisterCommand("votes");
+        if (VoteOptions.COMMAND_VOTEPARTY.isEnabled())
+            this.unRegisterCommand("voteparty");
+        if (VoteOptions.COMMAND_REWARDS.isEnabled())
+            this.unRegisterCommand("rewards");
+        if (VoteOptions.COMMAND_VOTETOP.isEnabled())
+            this.unRegisterCommand("votetop");
+        if (VoteOptions.COMMAND_HOLOGRAM.isEnabled())
+            this.unRegisterCommand("hologram");
         if (connection != null) {
             try {
                 connection.close();
@@ -159,7 +177,6 @@ public class VoteRewardPlugin extends JavaPlugin {
         for (final Listener listener : listeners) {
             pm.registerEvents(listener, this);
         }
-
     }
 
     /**
@@ -170,12 +187,32 @@ public class VoteRewardPlugin extends JavaPlugin {
      */
     private void registerCommand(final String commandName, final Command command) {
         try {
-            final Field bukkitCommandMap = Bukkit.getServer().getClass().getDeclaredField("commandMap");
-
-            bukkitCommandMap.setAccessible(true);
-            CommandMap commandMap = (CommandMap) bukkitCommandMap.get(Bukkit.getServer());
-
+            Object result = Utils.getPrivateField(this.getServer().getPluginManager(), "commandMap");
+            SimpleCommandMap commandMap = (SimpleCommandMap) result;
             commandMap.register(commandName, command);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * unregister a command
+     *
+     * @param commandName
+     */
+    private void unRegisterCommand(String commandName) {
+        try {
+            Object result = Utils.getPrivateField(this.getServer().getPluginManager(), "commandMap");
+            SimpleCommandMap commandMap = (SimpleCommandMap) result;
+            Object map = Utils.getPrivateField(commandMap, "knownCommands");
+            HashMap<String, Command> knownCommands = (HashMap<String, Command>) map;
+            Command command = commandMap.getCommand(commandName);
+            knownCommands.remove(command.getName());
+            for (String alias : command.getAliases()) {
+                if (knownCommands.containsKey(alias) && knownCommands.get(alias).toString().contains(this.getName())) {
+                    knownCommands.remove(alias);
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -186,11 +223,9 @@ public class VoteRewardPlugin extends JavaPlugin {
      */
     private void setupDatabase() {
         new BukkitRunnable() {
-            @SuppressWarnings("deprecation")
             @Override
             public void run() {
-                String b = getConfig().getString("Options.database");
-                switch (b) {
+                switch (getConfig().getString("Options.database")) {
                     case "MySQL":
                         try {
                             if (connection == null || connection.isClosed()) {
