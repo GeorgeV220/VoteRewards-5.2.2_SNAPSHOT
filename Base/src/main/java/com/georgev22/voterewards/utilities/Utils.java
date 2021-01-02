@@ -21,7 +21,6 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.util.*;
 import java.util.Map.Entry;
@@ -459,20 +458,9 @@ public final class Utils {
     }
 
     public static Map<String, Integer> getTopPlayers(int limit) {
-        if (m.database) {
-            try {
-                return UserVoteData.SQLUserUtils.getAllUsers().entrySet().stream()
-                        .sorted(Entry.comparingByValue(Comparator.reverseOrder())).limit(limit).collect(Collectors.toMap(
-                                Entry::getKey, Entry::getValue, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
-                return null;
-            }
-        } else {
-            return UserVoteData.getAllUsers().entrySet().stream()
-                    .sorted(Entry.comparingByValue(Comparator.reverseOrder())).limit(limit).collect(Collectors.toMap(
-                            Entry::getKey, Entry::getValue, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
-        }
+        return UserVoteData.getAllUsersMap().entrySet().stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())).limit(limit).collect(Collectors.toMap(
+                        Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
     }
 
 

@@ -69,6 +69,10 @@ public class PlayerListeners implements Listener {
         }
 
         m.reminderMap.put(event.getPlayer(), System.currentTimeMillis());
+
+        if (!UserVoteData.getAllUsersMap().containsKey(event.getPlayer().getName())) {
+            UserVoteData.getAllUsersMap().put(event.getPlayer().getName(), userVoteData.getVotes());
+        }
     }
 
     @EventHandler

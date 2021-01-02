@@ -12,7 +12,6 @@ import com.google.common.collect.Maps;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Collection;
 import java.util.Map;
@@ -114,18 +113,13 @@ public class HolographicDisplays {
     }
 
     public static void updateAll() {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (data.get("Holograms") == null)
-                    return;
-                for (String hologramName : data.getConfigurationSection("Holograms").getKeys(false)) {
-                    Hologram hologram = getHologram(hologramName);
-                    HolographicDisplays.updateHologram(hologram, m.getConfig().getStringList("Holograms." + data.getString("Holograms." + hologramName + ".type")).toArray(new String[0]), getPlaceholderMap());
-                    getPlaceholderMap().clear();
-                }
-            }
-        }.runTaskAsynchronously(m);
+        if (data.get("Holograms") == null)
+            return;
+        for (String hologramName : data.getConfigurationSection("Holograms").getKeys(false)) {
+            Hologram hologram = getHologram(hologramName);
+            HolographicDisplays.updateHologram(hologram, m.getConfig().getStringList("Holograms." + data.getString("Holograms." + hologramName + ".type")).toArray(new String[0]), getPlaceholderMap());
+            getPlaceholderMap().clear();
+        }
     }
 
     public static Map<String, Hologram> getHologramMap() {

@@ -5,6 +5,7 @@ import com.georgev22.voterewards.database.Database;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Properties;
 
 public class MySQL extends Database {
     private final String user;
@@ -31,15 +32,13 @@ public class MySQL extends Database {
             return connection;
         }
 
-        String connectionURL = "jdbc:mysql://" + this.hostname + ":" + this.port;
-        if (database != null) {
-            connectionURL = connectionURL + "/" + this.database + "?autoReconnect=true&useUnicode=yes";
-        }
-
         Class.forName("com.mysql.jdbc.Driver");
-        connection = DriverManager.getConnection("jdbc:mysql://" + hostname + ":3306/" + database
-                + "?autoReconnect=true&user=" + user + "&password=" + password);
-        connection.createStatement().setQueryTimeout(Integer.MAX_VALUE);
-        return connection;
+        final Properties prop = new Properties();
+        prop.setProperty("user", user);
+        prop.setProperty("password", password);
+        prop.setProperty("useSSL", "false");
+        prop.setProperty("autoReconnect", "true");
+        prop.setProperty("connectTimeout", String.valueOf(Integer.MAX_VALUE));
+        return connection = DriverManager.getConnection("jdbc:mysql://" + this.hostname + ":" + this.port + "/" + this.database, prop);
     }
 }

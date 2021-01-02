@@ -24,6 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class UserVoteData {
 
     private static final Map<UUID, User> userMap = Maps.newHashMap();
+    private static final VoteRewardPlugin voteRewardPlugin = VoteRewardPlugin.getInstance();
 
     /**
      * Returns all loaded users
@@ -32,6 +33,32 @@ public class UserVoteData {
      */
     public static Map<UUID, User> getUserMap() {
         return userMap;
+    }
+
+    private static final Map<String, Integer> allUsersMap = Maps.newConcurrentMap();
+
+    /**
+     * Returns all the players in a map
+     *
+     * @return all the players
+     */
+    public static Map<String, Integer> getAllUsersMap() {
+        return allUsersMap;
+    }
+
+    /**
+     * Load all users
+     */
+    public static void loadAllUsers() {
+        if (voteRewardPlugin.database) {
+            try {
+                allUsersMap.putAll(UserVoteData.SQLUserUtils.getAllUsers());
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        } else {
+            allUsersMap.putAll(UserVoteData.UserUtils.getAllUsers());
+        }
     }
 
     /**
@@ -47,29 +74,8 @@ public class UserVoteData {
         return new UserVoteData(userMap.get(uuid));
     }
 
-    /**
-     * Returns all the users on userdata/ folder
-     *
-     * @return all the users on userdata/ folder
-     */
-    public static Map<String, Integer> getAllUsers() {
-        Map<String, Integer> map = new ConcurrentHashMap<>();
-
-        File[] files = new File(VoteRewardPlugin.getInstance().getDataFolder(), "userdata").listFiles();
-
-        for (File file : Objects.requireNonNull(files)) {
-            FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
-            if (cfg.get("last-name") == null)
-                continue;
-            map.put(cfg.getString("last-name"), cfg.getInt("total-votes"));
-        }
-
-        return map;
-    }
-
     private final User user;
     private final UserUtils userUtils;
-    private final VoteRewardPlugin voteRewardPlugin = VoteRewardPlugin.getInstance();
 
     private UserVoteData(User user) {
         this.user = user;
@@ -432,6 +438,26 @@ public class UserVoteData {
          */
         public static UserUtils getUser(final UUID uuid) {
             return new UserUtils(uuid);
+        }
+
+        /**
+         * Returns all the users on userdata/ folder
+         *
+         * @return all the users on userdata/ folder
+         */
+        public static Map<String, Integer> getAllUsers() {
+            Map<String, Integer> map = new ConcurrentHashMap<>();
+
+            File[] files = new File(VoteRewardPlugin.getInstance().getDataFolder(), "userdata").listFiles();
+
+            for (File file : Objects.requireNonNull(files)) {
+                FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
+                if (cfg.get("last-name") == null)
+                    continue;
+                map.put(cfg.getString("last-name"), cfg.getInt("total-votes"));
+            }
+
+            return map;
         }
 
         private final VoteRewardPlugin voteRewardPlugin = VoteRewardPlugin.getInstance();

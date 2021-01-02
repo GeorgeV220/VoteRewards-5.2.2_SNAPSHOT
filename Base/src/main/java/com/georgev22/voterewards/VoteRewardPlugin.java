@@ -121,7 +121,7 @@ public class VoteRewardPlugin extends JavaPlugin {
         }
 
         if (VoteOptions.REMINDER.isEnabled()) {
-            Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
+            Bukkit.getScheduler().runTaskTimerAsynchronously(instance, () -> {
                 for (Map.Entry<Player, Long> entry : reminderMap.entrySet()) {
                     Player player = entry.getKey();
                     Long reminderTimer = entry.getValue();
@@ -137,6 +137,13 @@ public class VoteRewardPlugin extends JavaPlugin {
                 }
             }, 20, 20);
         }
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                UserVoteData.loadAllUsers();
+            }
+        }.runTaskAsynchronously(instance);
     }
 
     @Override
@@ -237,6 +244,7 @@ public class VoteRewardPlugin extends JavaPlugin {
                                     database = true;
                                 }
                                 createTable();
+                                Bukkit.getLogger().info("[VoteRewards] Database: MySQL");
                             }
                         } catch (Exception e) {
                             database = false;
@@ -253,6 +261,7 @@ public class VoteRewardPlugin extends JavaPlugin {
                                     database = true;
                                 }
                                 createTable();
+                                Bukkit.getLogger().info("[VoteRewards] Database: SQLite");
                             }
                         } catch (Exception e) {
                             database = false;
@@ -260,6 +269,7 @@ public class VoteRewardPlugin extends JavaPlugin {
                         }
                         break;
                     default:
+                        Bukkit.getLogger().info("[VoteRewards] Database: File");
                         database = false;
                         break;
                 }

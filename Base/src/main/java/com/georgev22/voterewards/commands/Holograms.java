@@ -12,7 +12,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Arrays;
 
@@ -55,20 +54,14 @@ public class Holograms extends BukkitCommand {
                 return true;
             }
 
-            new BukkitRunnable() {
-                @Override
-                public void run() {
+            HolographicDisplays.show(HolographicDisplays.updateHologram(HolographicDisplays.create(
+                    args[1],
+                    player.getLocation(),
+                    args[2], true),
+                    m.getConfig().getStringList("Holograms." + args[2]).toArray(new String[0]), HolographicDisplays.getPlaceholderMap()),
+                    player);
 
-                    HolographicDisplays.show(HolographicDisplays.updateHologram(HolographicDisplays.create(
-                            args[1],
-                            player.getLocation(),
-                            args[2], true),
-                            m.getConfig().getStringList("Holograms." + args[2]).toArray(new String[0]), HolographicDisplays.getPlaceholderMap()),
-                            player);
-
-                    HolographicDisplays.getPlaceholderMap().clear();
-                }
-            }.runTaskAsynchronously(m);
+            HolographicDisplays.getPlaceholderMap().clear();
 
         } else if (args[0].equalsIgnoreCase("remove")) {
             if (args.length == 1) {
@@ -83,22 +76,17 @@ public class Holograms extends BukkitCommand {
 
             HolographicDisplays.remove(args[1]);
         } else if (args[0].equalsIgnoreCase("update")) {
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    if (HolographicDisplays.hologramExists(args[1])) {
-                        Hologram hologram = HolographicDisplays.getHologramMap().get(args[1]);
-                        //String[] lines = {"%top1%", "%top2%", "%top3%", "%top4%", "%top5%"};
-                        HolographicDisplays.updateHologram(hologram, m.getConfig().getStringList("Holograms." + args[2]).toArray(new String[0]), HolographicDisplays.getPlaceholderMap());
-                        HolographicDisplays.getPlaceholderMap().clear();
-                        HolographicDisplays.hide(hologram, player);
-                        Bukkit.getScheduler().runTaskLaterAsynchronously(m, () -> HolographicDisplays.show(hologram, player), 20);
-                        Utils.msg(player, args[1] + " " + args[2]);
-                    } else {
-                        Utils.msg(player, "&c&l(!) &cHologram doesn't exists!");
-                    }
-                }
-            }.runTaskAsynchronously(m);
+            if (HolographicDisplays.hologramExists(args[1])) {
+                Hologram hologram = HolographicDisplays.getHologramMap().get(args[1]);
+                //String[] lines = {"%top1%", "%top2%", "%top3%", "%top4%", "%top5%"};
+                HolographicDisplays.updateHologram(hologram, m.getConfig().getStringList("Holograms." + args[2]).toArray(new String[0]), HolographicDisplays.getPlaceholderMap());
+                HolographicDisplays.getPlaceholderMap().clear();
+                HolographicDisplays.hide(hologram, player);
+                Bukkit.getScheduler().runTaskLaterAsynchronously(m, () -> HolographicDisplays.show(hologram, player), 20);
+                Utils.msg(player, args[1] + " " + args[2]);
+            } else {
+                Utils.msg(player, "&c&l(!) &cHologram doesn't exists!");
+            }
         }
         return true;
     }
