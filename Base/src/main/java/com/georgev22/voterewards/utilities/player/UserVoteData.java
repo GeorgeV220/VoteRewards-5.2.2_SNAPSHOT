@@ -76,10 +76,12 @@ public class UserVoteData {
 
     private final User user;
     private final UserUtils userUtils;
+    private final SQLUserUtils sqlUserUtils;
 
     private UserVoteData(User user) {
         this.user = user;
         this.userUtils = UserUtils.getUser(user.getUniqueID());
+        this.sqlUserUtils = SQLUserUtils.getUser(user.getUniqueID());
     }
 
     /**
@@ -193,6 +195,15 @@ public class UserVoteData {
     }
 
     /**
+     * Returns the SQLUserUtils class object
+     *
+     * @return the SQLUserUtils class object
+     */
+    public SQLUserUtils getSQLUserUtils() {
+        return sqlUserUtils;
+    }
+
+    /**
      * Check if the player exists
      *
      * @return true if player exists or false when is not
@@ -200,7 +211,7 @@ public class UserVoteData {
     public boolean playerExists() {
         if (voteRewardPlugin.database) {
             try {
-                return SQLUserUtils.playerExists(user.getUniqueID());
+                return sqlUserUtils.playerExists();
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
                 return false;
@@ -255,7 +266,7 @@ public class UserVoteData {
                 @Override
                 public void run() {
                     try {
-                        SQLUserUtils.setupUser(user.getUniqueID());
+                        sqlUserUtils.setupUser();
                     } catch (SQLException throwables) {
                         throwables.printStackTrace();
                     }
@@ -275,7 +286,7 @@ public class UserVoteData {
                 @Override
                 public void run() {
                     try {
-                        SQLUserUtils.save(user.getUniqueID());
+                        sqlUserUtils.save();
                     } catch (SQLException throwables) {
                         throwables.printStackTrace();
                     }
@@ -295,7 +306,7 @@ public class UserVoteData {
                 @Override
                 public void run() {
                     try {
-                        SQLUserUtils.reset(user.getUniqueID());
+                        sqlUserUtils.reset();
                     } catch (SQLException throwables) {
                         throwables.printStackTrace();
                     }
@@ -315,13 +326,23 @@ public class UserVoteData {
 
         private static final VoteRewardPlugin voteRewardPlugin = VoteRewardPlugin.getInstance();
 
+
+        public static SQLUserUtils getUser(UUID uuid) {
+            return new SQLUserUtils(uuid);
+        }
+
+        private final UUID uuid;
+
+        private SQLUserUtils(UUID uuid) {
+            this.uuid = uuid;
+        }
+
         /**
          * Save all player's data
          *
-         * @param uuid Player's Unique ID
          * @throws SQLException When something goes wrong
          */
-        public static void save(UUID uuid) throws SQLException {
+        public void save() throws SQLException {
             UserVoteData userVoteData = UserVoteData.getUser(uuid);
             PreparedStatement preparedStatement = voteRewardPlugin.getConnection().prepareStatement(
                     "UPDATE `users` " +
@@ -336,10 +357,9 @@ public class UserVoteData {
         /**
          * Reset all player's data
          *
-         * @param uuid Player's Unique ID
          * @throws SQLException When something goes wrong
          */
-        public static void reset(UUID uuid) throws SQLException {
+        public void reset() throws SQLException {
             UserVoteData userVoteData = UserVoteData.getUser(uuid);
             PreparedStatement preparedStatement = voteRewardPlugin.getConnection().prepareStatement(
                     "UPDATE `users` " +
@@ -358,10 +378,9 @@ public class UserVoteData {
         /**
          * Load all player's data
          *
-         * @param uuid Player's Unique ID
          * @throws SQLException When something goes wrong
          */
-        public static void load(UUID uuid) throws SQLException {
+        public void load() throws SQLException {
             UserVoteData userVoteData = UserVoteData.getUser(uuid);
             PreparedStatement preparedStatement = voteRewardPlugin.getConnection().prepareStatement("SELECT * FROM `users` WHERE `uuid` = '" + uuid.toString() + "'");
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -377,11 +396,10 @@ public class UserVoteData {
         /**
          * Check if player's exists
          *
-         * @param uuid Player's Unique ID
          * @return true if player exists and false when is not
          * @throws SQLException When something goes wrong
          */
-        public static boolean playerExists(UUID uuid) throws SQLException {
+        public boolean playerExists() throws SQLException {
             PreparedStatement ps = voteRewardPlugin.getConnection()
                     .prepareStatement("SELECT uuid FROM users WHERE uuid = ?");
             ps.setString(1, uuid.toString());
@@ -392,11 +410,10 @@ public class UserVoteData {
         /**
          * Setup the user data to the database
          *
-         * @param uuid Player's Unique ID
          * @throws SQLException When something goes wrong
          */
-        public static void setupUser(UUID uuid) throws SQLException {
-            if (!playerExists(uuid)) {
+        public void setupUser() throws SQLException {
+            if (!playerExists()) {
                 PreparedStatement preparedStatement = voteRewardPlugin.getConnection().prepareStatement(
                         "INSERT INTO `users` (`uuid`, `name`, `votes`, `time`, `voteparty`, `services`)" +
                                 " VALUES " +
@@ -404,7 +421,7 @@ public class UserVoteData {
                 preparedStatement.executeUpdate();
             }
             UserVoteData.getUserMap().put(uuid, new User(uuid));
-            load(uuid);
+            load();
         }
 
         /**
@@ -571,6 +588,7 @@ public class UserVoteData {
          * Setup the user
          */
         public void setupUser() {
+            UserVoteData userVoteData = UserVoteData.getUser(uuid);
             this.configuration.set("last-name", getVoter().getName());
             if (!playerExist()) {
                 this.configuration.set("total-votes", 0);
@@ -579,6 +597,10 @@ public class UserVoteData {
                 this.configuration.set("offline votes.service", Lists.newArrayList());
             }
             saveConfiguration();
+            userVoteData.getUser().setVotes(getVotes());
+            userVoteData.getUser().setLastVoted(getLastVote());
+            userVoteData.getUser().setVoteParties(getVoteParty());
+            userVoteData.getUser().setServices(getServices());
         }
 
         /**
@@ -594,10 +616,11 @@ public class UserVoteData {
          * Reset player
          */
         public void reset() {
-            this.configuration.set("total-votes", 0);
-            this.configuration.set("daily-votes", 0);
-            this.configuration.set("voteparty", 0);
-            this.configuration.set("offline votes.service", Lists.newArrayList());
+            UserVoteData userVoteData = UserVoteData.getUser(uuid);
+            userVoteData.setVotes(0);
+            userVoteData.setVoteParties(0);
+            userVoteData.setLastVoted(0);
+            userVoteData.setOfflineServices(Lists.newArrayList());
             saveConfiguration();
         }
 

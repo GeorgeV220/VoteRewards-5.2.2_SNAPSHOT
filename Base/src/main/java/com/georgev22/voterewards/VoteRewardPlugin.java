@@ -148,7 +148,7 @@ public class VoteRewardPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        Bukkit.getScheduler().getActiveWorkers().forEach(bukkitWorker -> Bukkit.getScheduler().cancelTasks(this));
+        Bukkit.getScheduler().cancelTasks(this);
         if (VoteOptions.COMMAND_VOTEREWARDS.isEnabled())
             this.unRegisterCommand("voterewards");
         if (VoteOptions.COMMAND_FAKEVOTE.isEnabled())
