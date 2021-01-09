@@ -89,7 +89,6 @@ public class VotePartyUtils {
                                     MessagesUtil.VOTEPARTY_UNCLAIM.msg(offlinePlayer.getPlayer());
                                 } else
                                     offlinePlayer.getPlayer().getInventory().addItem(crate(1));
-
                             }
                         } else {
                             chooseRandom(PartyOptions.RANDOM.isEnabled(), offlinePlayer);
@@ -106,9 +105,7 @@ public class VotePartyUtils {
                     fm.getConfig().getFileConfiguration().getLong("VoteParty.cooldown.seconds") * 20L);
 
         } else {
-
             for (OfflinePlayer offlinePlayer : players) {
-
                 if (PartyOptions.CRATE.isEnabled()) {
                     if (offlinePlayer.getPlayer() != null) {
                         if (isInLocation(offlinePlayer.getPlayer().getLocation())) {
@@ -124,9 +121,7 @@ public class VotePartyUtils {
                 }
 
             }
-
             players.clear();
-
         }
 
         dataFile.set("VoteParty-Votes", 0);

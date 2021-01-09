@@ -12,8 +12,8 @@ public class User {
     private int votes = 0;
     private long lastVoted = 0;
     private int voteParties = 0;
+    private int dailyVotes = 0;
     private List<String> services = new ArrayList<>();
-
 
     public User(UUID uuid) {
         this.uuid = uuid;
@@ -57,5 +57,13 @@ public class User {
 
     public List<String> getServices() {
         return services;
+    }
+
+    public void setDailyVotes(int votes) {
+        dailyVotes = votes;
+    }
+
+    public int getDailyVotes() {
+        return dailyVotes;
     }
 }

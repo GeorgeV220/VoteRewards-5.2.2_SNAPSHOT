@@ -1,4 +1,5 @@
 Options:
+  debug: false
   commands:
     rewards: true
     vote: true

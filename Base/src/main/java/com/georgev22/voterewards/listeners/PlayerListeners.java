@@ -35,7 +35,6 @@ public class PlayerListeners implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
-        UserVoteData.getUser(event.getPlayer().getUniqueId()).load();
         //HOLOGRAMS
         if (Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays")) {
             if (!HolographicDisplays.getHolograms().isEmpty()) {
@@ -47,19 +46,37 @@ public class PlayerListeners implements Listener {
             }
         }
 
-        UserVoteData userVoteData = UserVoteData.getUser(event.getPlayer().getUniqueId());
-        //OFFLINE VOTING
-        if (VoteOptions.OFFLINE.isEnabled() && !Bukkit.getPluginManager().isPluginEnabled("AuthMeReloaded")) {
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    for (String serviceName : userVoteData.getOfflineServices()) {
-                        VoteUtils.processVote(event.getPlayer(), serviceName);
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                UserVoteData userVoteData = UserVoteData.getUser(event.getPlayer().getUniqueId());
+                userVoteData.load(new UserVoteData.Callback() {
+                    @Override
+                    public void onSuccess() {
+                        if (VoteOptions.DEBUG.isEnabled()) {
+                            Utils.debug(m, "User " + event.getPlayer().getName() + " successfully loaded!");
+                        }
+                        //OFFLINE VOTING
+                        if (VoteOptions.OFFLINE.isEnabled() && !Bukkit.getPluginManager().isPluginEnabled("AuthMeReloaded")) {
+                            for (String serviceName : userVoteData.getOfflineServices()) {
+                                VoteUtils.processVote(event.getPlayer(), serviceName);
+                            }
+                            userVoteData.setOfflineServices(Lists.newArrayList());
+                        }
+                        userVoteData.save();
+
+                        if (!UserVoteData.getAllUsersMap().containsKey(event.getPlayer().getName())) {
+                            UserVoteData.getAllUsersMap().put(event.getPlayer().getName(), userVoteData.getVotes());
+                        }
                     }
-                    userVoteData.setOfflineServices(Lists.newArrayList());
-                }
-            }.runTaskAsynchronously(m);
-        }
+
+                    @Override
+                    public void onFailure(Throwable throwable) {
+                        throwable.printStackTrace();
+                    }
+                });
+            }
+        }.runTaskAsynchronously(m);
 
         //UPDATER
         if (VoteOptions.UPDATER.isEnabled()) {
@@ -69,14 +86,11 @@ public class PlayerListeners implements Listener {
         }
 
         m.reminderMap.put(event.getPlayer(), System.currentTimeMillis());
-
-        if (!UserVoteData.getAllUsersMap().containsKey(event.getPlayer().getName())) {
-            UserVoteData.getAllUsersMap().put(event.getPlayer().getName(), userVoteData.getVotes());
-        }
     }
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
+        UserVoteData.getUser(event.getPlayer().getUniqueId()).save();
         m.reminderMap.remove(event.getPlayer());
         UserVoteData.getUserMap().remove(event.getPlayer().getUniqueId());
     }

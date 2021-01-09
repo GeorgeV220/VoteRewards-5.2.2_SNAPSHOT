@@ -5,6 +5,8 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 public enum VoteOptions {
 
+    DEBUG("debug"),
+
     VOTE_TITLE("title.vote"),
 
     VOTEPARTY_TITLE("title.voteparty"),
@@ -12,6 +14,8 @@ public enum VoteOptions {
     UPDATER("updater"),
 
     DAILY("votes.daily.enabled"),
+
+    DAILY_HOURS("votes.daily.hours"),
 
     OFFLINE("votes.offline"),
 

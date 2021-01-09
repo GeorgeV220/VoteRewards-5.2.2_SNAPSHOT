@@ -10,6 +10,7 @@ import com.georgev22.xseries.messages.Titles;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -28,7 +29,6 @@ public class VoteUtils {
         UserVoteData userVoteData = UserVoteData.getUser(offlinePlayer.getUniqueId());
         userVoteData.setVotes(userVoteData.getVotes() + 1);
         userVoteData.setLastVoted(System.currentTimeMillis());
-        userVoteData.save();
 
         if (VoteOptions.VOTE_TITLE.isEnabled()) {
             Titles.sendTitle(offlinePlayer.getPlayer(),
@@ -119,11 +119,26 @@ public class VoteUtils {
      * @param serviceName   service name (dah)
      */
     public static void processOfflineVote(OfflinePlayer offlinePlayer, final String serviceName) {
-        UserVoteData userVoteData = UserVoteData.getUser(offlinePlayer.getUniqueId());
-        List<String> services = userVoteData.getOfflineServices();
-        services.add(serviceName);
-        userVoteData.setOfflineServices(services);
-        userVoteData.save();
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                UserVoteData userVoteData = UserVoteData.getUser(offlinePlayer.getUniqueId());
+                userVoteData.load(new UserVoteData.Callback() {
+                    @Override
+                    public void onSuccess() {
+                        List<String> services = userVoteData.getOfflineServices();
+                        services.add(serviceName);
+                        userVoteData.setOfflineServices(services);
+                        userVoteData.save();
+                    }
+
+                    @Override
+                    public void onFailure(Throwable throwable) {
+                        throwable.printStackTrace();
+                    }
+                });
+            }
+        }.runTaskAsynchronously(voteRewardPlugin);
     }
 
 }

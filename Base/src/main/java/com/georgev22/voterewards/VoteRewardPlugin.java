@@ -127,7 +127,7 @@ public class VoteRewardPlugin extends JavaPlugin {
                     Long reminderTimer = entry.getValue();
                     if (reminderTimer <= System.currentTimeMillis()) {
                         UserVoteData userVoteData = UserVoteData.getUser(player.getUniqueId());
-                        if (System.currentTimeMillis() >= userVoteData.getLastVote() + 24 * 60 * 60 * 1000) {
+                        if (System.currentTimeMillis() >= userVoteData.getLastVote() + (24 * 60 * 60 * 1000)) {
                             Map<String, String> placeholders = Maps.newHashMap();
                             placeholders.put("%player%", player.getName());
                             MessagesUtil.REMINDER.msg(player, placeholders, true);
@@ -138,12 +138,19 @@ public class VoteRewardPlugin extends JavaPlugin {
             }, 20, 20);
         }
 
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                UserVoteData.loadAllUsers();
-            }
-        }.runTaskAsynchronously(instance);
+        if (VoteOptions.DAILY.isEnabled()) {
+            Bukkit.getScheduler().runTaskTimerAsynchronously(instance, () -> {
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    UserVoteData userVoteData = UserVoteData.getUser(player.getUniqueId());
+                    if (System.currentTimeMillis() >= userVoteData.getLastVote() + ((int) VoteOptions.DAILY_HOURS.getValue() * 60 * 60 * 1000)) {
+                        if (userVoteData.getDailyVotes() != 0) {
+                            userVoteData.setDailyVotes(0);
+                        }
+                    }
+                }
+            }, 20, 20);
+        }
+
     }
 
     @Override
@@ -234,37 +241,31 @@ public class VoteRewardPlugin extends JavaPlugin {
             public void run() {
                 switch (getConfig().getString("Options.database")) {
                     case "MySQL":
+                        database = true;
                         try {
                             if (connection == null || connection.isClosed()) {
                                 MySQL mySQL = (MySQL) new DB(DatabaseType.MySQL).connect(getConfig().getString("MySQL.IP"),
                                         getConfig().getString("MySQL.Port"), getConfig().getString("MySQL.Database"),
                                         getConfig().getString("MySQL.User"), getConfig().getString("MySQL.Password"));
                                 connection = mySQL.openConnection();
-                                if (!connection.isClosed()) {
-                                    database = true;
-                                }
                                 createTable();
                                 Bukkit.getLogger().info("[VoteRewards] Database: MySQL");
                             }
                         } catch (Exception e) {
-                            database = false;
                             e.printStackTrace();
                         }
                         break;
                     case "SQLite":
+                        database = true;
                         try {
                             if (connection == null || connection.isClosed()) {
                                 SQLite sqLite = (SQLite) new DB(DatabaseType.SQLite).connect(getDataFolder(),
                                         getConfig().getString("SQLite.fileName"));
                                 connection = sqLite.openConnection();
-                                if (!connection.isClosed()) {
-                                    database = true;
-                                }
                                 createTable();
                                 Bukkit.getLogger().info("[VoteRewards] Database: SQLite");
                             }
                         } catch (Exception e) {
-                            database = false;
                             e.printStackTrace();
                         }
                         break;
@@ -273,6 +274,9 @@ public class VoteRewardPlugin extends JavaPlugin {
                         database = false;
                         break;
                 }
+
+                UserVoteData.loadAllUsers();
+
             }
         }.runTaskAsynchronously(this);
 
@@ -282,7 +286,7 @@ public class VoteRewardPlugin extends JavaPlugin {
      * Create the user table
      */
     public void createTable() throws SQLException {
-        String sqlCreate = "CREATE TABLE IF NOT EXISTS `users` (\n  `uuid` varchar(255) DEFAULT NULL,\n  `name` varchar(255) DEFAULT NULL,\n  `votes` int(255) DEFAULT NULL,\n  `time` varchar(255) DEFAULT NULL,\n  `voteparty` int(255) DEFAULT NULL,\n `services` varchar(1000) DEFAULT NULL\n)";
+        String sqlCreate = "CREATE TABLE IF NOT EXISTS `users` (\n  `uuid` varchar(255) DEFAULT NULL,\n  `name` varchar(255) DEFAULT NULL,\n  `votes` int(255) DEFAULT NULL,\n  `time` varchar(255) DEFAULT NULL,\n  `voteparty` int(255) DEFAULT NULL,\n  `daily` int(255) DEFAULT NULL,\n `services` varchar(10000) DEFAULT NULL\n)";
         PreparedStatement stmt = connection.prepareStatement(sqlCreate);
         stmt.execute();
     }

@@ -8,13 +8,13 @@ import com.georgev22.voterewards.utilities.Utils;
 import com.georgev22.voterewards.utilities.player.UserVoteData;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
-import java.util.Objects;
 
 public class VoteRewards extends BukkitCommand {
 
@@ -41,7 +41,7 @@ public class VoteRewards extends BukkitCommand {
                 Utils.msg(sender, "&c&l(!) &c/vr clear <player>");
                 return true;
             }
-            Player target = Bukkit.getPlayerExact(args[1]);
+            OfflinePlayer target = Bukkit.getOfflinePlayer(args[1]);
             UserVoteData userVoteData = UserVoteData.getUser(target.getUniqueId());
 
             if (userVoteData.playerExists()) {
@@ -58,13 +58,10 @@ public class VoteRewards extends BukkitCommand {
             Utils.msg(sender, "&a&l(!) &aPlugin reloaded!");
         } else if (args[0].equalsIgnoreCase("set")) {
             if (args.length < 3) {
-                Utils.msg(sender, "&c&l(!) &c/vr set <player> <votes|voteparty|time> <amount>");
+                Utils.msg(sender, "&c&l(!) &cThis feature has been disabled!");
                 return true;
             }
-            Player target = Bukkit.getPlayerExact(args[1]);
-            if (Objects.isNull(target.getPlayer())) {
-                return true;
-            }
+            /*OfflinePlayer target = Bukkit.getOfflinePlayer(args[1]);
             UserVoteData userVoteData = UserVoteData.getUser(target.getUniqueId());
             if (args[2].equalsIgnoreCase("votes")) {
                 userVoteData.setVotes(Integer.parseInt(args[3]));
@@ -76,6 +73,7 @@ public class VoteRewards extends BukkitCommand {
                 userVoteData.setLastVoted(Integer.parseInt(args[3]));
                 Utils.msg(sender, "&a&l(!) &aSuccessfully set " + target.getName() + " last time vote to " + args[3]);
             }
+            userVoteData.save();*/
             return true;
         } else if (args[0].equalsIgnoreCase("help")) {
             if (args.length == 1) {
