@@ -3,7 +3,6 @@ package com.georgev22.voterewards.listeners;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.options.VoteOptions;
-import com.georgev22.voterewards.utilities.player.UserVoteData;
 import com.georgev22.voterewards.utilities.player.VoteUtils;
 import com.georgev22.xseries.XSound;
 import com.google.common.collect.Maps;
@@ -18,7 +17,7 @@ import java.util.Map;
 
 /*
  *
- * This class handles votes going thru the server.
+ * This class handles votes going through the server.
  *
  */
 public class VotifierListener implements Listener {
@@ -29,8 +28,6 @@ public class VotifierListener implements Listener {
     public void onVote(VotifierEvent e) {
         final Vote vote = e.getVote();
         final OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(vote.getUsername());
-
-        UserVoteData.getAllUsersMap().replace(offlinePlayer.getName(), UserVoteData.getUser(offlinePlayer.getUniqueId()).getVotes());
 
         if (!offlinePlayer.isOnline()) {
             if (VoteOptions.OFFLINE.isEnabled()) {

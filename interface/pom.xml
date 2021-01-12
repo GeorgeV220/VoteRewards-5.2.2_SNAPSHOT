@@ -6,18 +6,16 @@
 
     <groupId>com.georgev22.voterewards</groupId>
     <artifactId>Interface</artifactId>
-    <version>4.0-Alpha</version>
-    <dependencies>
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>1.16.1-R0.1-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-    </dependencies>
+    <version>4.x</version>
     <packaging>jar</packaging>
 
     <name>Interface</name>
+
+    <parent>
+        <artifactId>VoteRewards</artifactId>
+        <groupId>com.georgev22</groupId>
+        <version>4.x</version>
+    </parent>
 
     <properties>
         <java.version>1.8</java.version>

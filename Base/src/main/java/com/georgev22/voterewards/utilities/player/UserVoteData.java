@@ -118,8 +118,8 @@ public class UserVoteData {
      * @param services
      */
     public void setOfflineServices(List<String> services) {
-        if (VoteOptions.DEBUG.isEnabled())
-            Utils.debug(voteRewardPlugin, "Services Debug", services.toString());
+        if (VoteOptions.DEBUG_VOTES_OFFLINE.isEnabled())
+            Utils.debug(voteRewardPlugin, "Offline Voting Debug", services.toString());
         user.setServices(services);
     }
 
@@ -260,10 +260,12 @@ public class UserVoteData {
      * @param callback
      */
     public void load(Callback callback) {
-        if (voteRewardPlugin.database)
+        if (voteRewardPlugin.database) {
             sqlUserUtils.load(callback);
-        else
+        } else {
             userUtils.setupUser();
+            callback.onSuccess();
+        }
     }
 
     /**
@@ -385,12 +387,13 @@ public class UserVoteData {
                             user.setServices(resultSet.getString("services").replace(" ", "").isEmpty() ? Lists.newArrayList() : new ArrayList<>(Arrays.asList(resultSet.getString("services").split(","))));
                             user.setVoteParties(resultSet.getInt("voteparty"));
                             user.setDailyVotes(resultSet.getInt("daily"));
-                            if (VoteOptions.DEBUG.isEnabled()) {
-                                Utils.debug(VoteRewardPlugin.getInstance(),
-                                        String.valueOf(user.getVotes()),
-                                        String.valueOf(user.getDailyVotes()),
-                                        String.valueOf(user.getLastVoted()),
-                                        String.valueOf(user.getVoteParties()));
+                            if (VoteOptions.DEBUG_LOAD.isEnabled()) {
+                                Utils.debug(voteRewardPlugin,
+                                        "User " + user.getPlayer().getName() + " successfully loaded!",
+                                        "Votes: " + user.getVotes(),
+                                        "Daily Votes: " + user.getDailyVotes(),
+                                        "Last Voted: " + user.getLastVoted(),
+                                        "Vote Parties: " + user.getVoteParties());
                             }
                         }
                         callback.onSuccess();
@@ -578,16 +581,24 @@ public class UserVoteData {
         public void setupUser() {
             this.configuration.set("last-name", getVoter().getName());
             if (!playerExists()) {
-                if (VoteOptions.DEBUG.isEnabled())
-                    Utils.debug(voteRewardPlugin, "Player " + getVoter().getName() + " doesn't exists!");
+                if (VoteOptions.DEBUG_LOAD.isEnabled())
+                    Utils.debug(voteRewardPlugin,
+                            "User " + getVoter().getName() + " doesn't exists!",
+                            "Creating new User");
                 user.setDailyVotes(0);
                 user.setVotes(0);
                 user.setLastVoted(0);
                 user.setVoteParties(0);
                 user.setServices(Lists.newArrayList());
             } else {
-                if (VoteOptions.DEBUG.isEnabled())
-                    Utils.debug(voteRewardPlugin, "Player " + getVoter().getName() + " exists!");
+                if (VoteOptions.DEBUG_LOAD.isEnabled()) {
+                    Utils.debug(voteRewardPlugin,
+                            "User " + user.getPlayer().getName() + " successfully loaded!",
+                            "Votes: " + user.getVotes(),
+                            "Daily Votes: " + user.getDailyVotes(),
+                            "Last Voted: " + user.getLastVoted(),
+                            "Vote Parties: " + user.getVoteParties());
+                }
                 user.setDailyVotes(getDailyVotes());
                 user.setVotes(getVotes());
                 user.setLastVoted(getLastVote());

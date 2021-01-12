@@ -13,7 +13,6 @@ import com.georgev22.voterewards.listeners.PlayerListeners;
 import com.georgev22.voterewards.listeners.VotifierListener;
 import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.Updater;
-import com.georgev22.voterewards.utilities.Utils;
 import com.georgev22.voterewards.utilities.options.VoteOptions;
 import com.georgev22.voterewards.utilities.player.UserVoteData;
 import com.google.common.collect.Maps;
@@ -28,6 +27,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -74,7 +74,6 @@ public class VoteRewardPlugin extends JavaPlugin {
             this.registerCommand("rewards", new Rewards());
         if (VoteOptions.COMMAND_VOTETOP.isEnabled())
             this.registerCommand("votetop", new VoteTop());
-
         if (VoteOptions.COMMAND_HOLOGRAM.isEnabled())
             this.registerCommand("hologram", new Holograms());
 
@@ -201,7 +200,9 @@ public class VoteRewardPlugin extends JavaPlugin {
      */
     private void registerCommand(final String commandName, final Command command) {
         try {
-            Object result = Utils.getPrivateField(this.getServer().getPluginManager(), "commandMap");
+            Field field = getServer().getPluginManager().getClass().getDeclaredField("commandMap");
+            field.setAccessible(true);
+            Object result = field.get(getServer().getPluginManager());
             SimpleCommandMap commandMap = (SimpleCommandMap) result;
             commandMap.register(commandName, command);
         } catch (Exception e) {
@@ -216,16 +217,18 @@ public class VoteRewardPlugin extends JavaPlugin {
      */
     private void unRegisterCommand(String commandName) {
         try {
-            Object result = Utils.getPrivateField(this.getServer().getPluginManager(), "commandMap");
+            Field field1 = getServer().getPluginManager().getClass().getDeclaredField("commandMap");
+            field1.setAccessible(true);
+            Object result = field1.get(getServer().getPluginManager());
             SimpleCommandMap commandMap = (SimpleCommandMap) result;
-            Object map = Utils.getPrivateField(commandMap, "knownCommands");
+            Field field = commandMap.getClass().getSuperclass().getDeclaredField("knownCommands");
+            field.setAccessible(true);
+            Object map = field.get(commandMap);
             HashMap<String, Command> knownCommands = (HashMap<String, Command>) map;
             Command command = commandMap.getCommand(commandName);
             knownCommands.remove(command.getName());
             for (String alias : command.getAliases()) {
-                if (knownCommands.containsKey(alias) && knownCommands.get(alias).toString().contains(this.getName())) {
-                    knownCommands.remove(alias);
-                }
+                knownCommands.remove(alias);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -276,6 +279,20 @@ public class VoteRewardPlugin extends JavaPlugin {
                 }
 
                 UserVoteData.loadAllUsers();
+
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    UserVoteData userVoteData = UserVoteData.getUser(player.getUniqueId());
+                    userVoteData.load(new UserVoteData.Callback() {
+                        @Override
+                        public void onSuccess() {
+                        }
+
+                        @Override
+                        public void onFailure(Throwable throwable) {
+                            throwable.printStackTrace();
+                        }
+                    });
+                }
 
             }
         }.runTaskAsynchronously(this);

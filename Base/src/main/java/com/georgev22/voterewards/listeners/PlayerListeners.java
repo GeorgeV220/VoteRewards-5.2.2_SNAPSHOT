@@ -12,6 +12,7 @@ import com.georgev22.voterewards.utilities.player.VoteUtils;
 import com.georgev22.xseries.XMaterial;
 import com.georgev22.xseries.XSound;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
+import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -23,11 +24,11 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.EnumSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 public class PlayerListeners implements Listener {
 
@@ -46,37 +47,34 @@ public class PlayerListeners implements Listener {
             }
         }
 
-        new BukkitRunnable() {
+        UserVoteData userVoteData = UserVoteData.getUser(event.getPlayer().getUniqueId());
+        final Stopwatch sw = Stopwatch.createStarted();
+        userVoteData.load(new UserVoteData.Callback() {
             @Override
-            public void run() {
-                UserVoteData userVoteData = UserVoteData.getUser(event.getPlayer().getUniqueId());
-                userVoteData.load(new UserVoteData.Callback() {
-                    @Override
-                    public void onSuccess() {
-                        if (VoteOptions.DEBUG.isEnabled()) {
-                            Utils.debug(m, "User " + event.getPlayer().getName() + " successfully loaded!");
-                        }
-                        //OFFLINE VOTING
-                        if (VoteOptions.OFFLINE.isEnabled() && !Bukkit.getPluginManager().isPluginEnabled("AuthMeReloaded")) {
-                            for (String serviceName : userVoteData.getOfflineServices()) {
-                                VoteUtils.processVote(event.getPlayer(), serviceName);
-                            }
-                            userVoteData.setOfflineServices(Lists.newArrayList());
-                        }
-                        userVoteData.save();
-
-                        if (!UserVoteData.getAllUsersMap().containsKey(event.getPlayer().getName())) {
-                            UserVoteData.getAllUsersMap().put(event.getPlayer().getName(), userVoteData.getVotes());
-                        }
+            public void onSuccess() {
+                //OFFLINE VOTING
+                if (VoteOptions.OFFLINE.isEnabled() && !Bukkit.getPluginManager().isPluginEnabled("AuthMeReloaded")) {
+                    for (String serviceName : userVoteData.getOfflineServices()) {
+                        VoteUtils.processVote(event.getPlayer(), serviceName);
                     }
+                    userVoteData.setOfflineServices(Lists.newArrayList());
+                }
+                userVoteData.save();
 
-                    @Override
-                    public void onFailure(Throwable throwable) {
-                        throwable.printStackTrace();
-                    }
-                });
+                if (!UserVoteData.getAllUsersMap().containsKey(event.getPlayer().getName())) {
+                    UserVoteData.getAllUsersMap().put(event.getPlayer().getName(), userVoteData.getVotes());
+                }
             }
-        }.runTaskAsynchronously(m);
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                throwable.printStackTrace();
+            }
+        });
+        final long elapsedMillis = sw.elapsed(TimeUnit.MILLISECONDS);
+        if (VoteOptions.DEBUG_LOAD.isEnabled()) {
+            Utils.debug(VoteRewardPlugin.getInstance(), "Elapsed time to load user data: " + elapsedMillis);
+        }
 
         //UPDATER
         if (VoteOptions.UPDATER.isEnabled()) {

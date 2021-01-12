@@ -10,8 +10,8 @@ import com.georgev22.xseries.messages.Titles;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.scheduler.BukkitRunnable;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -29,6 +29,7 @@ public class VoteUtils {
         UserVoteData userVoteData = UserVoteData.getUser(offlinePlayer.getUniqueId());
         userVoteData.setVotes(userVoteData.getVotes() + 1);
         userVoteData.setLastVoted(System.currentTimeMillis());
+        UserVoteData.getAllUsersMap().replace(offlinePlayer.getName(), UserVoteData.getUser(offlinePlayer.getUniqueId()).getVotes());
 
         if (VoteOptions.VOTE_TITLE.isEnabled()) {
             Titles.sendTitle(offlinePlayer.getPlayer(),
@@ -102,12 +103,30 @@ public class VoteUtils {
                         XSound.matchXSound(voteRewardPlugin.getConfig().getString("Sounds.Vote")).get().parseSound(), 1000, 1);
         }
 
+        if (VoteOptions.DAILY.isEnabled()) {
+            int votes = userVoteData.getDailyVotes();
+            for (String s2 : voteRewardPlugin.getConfig().getConfigurationSection("Rewards.Daily")
+                    .getKeys(false)) {
+                if (Integer.valueOf(s2).equals(votes)) {
+                    userVoteData.runCommands(voteRewardPlugin.getConfig()
+                            .getStringList("Rewards.Daily." + s2 + ".commands"));
+                }
+            }
+        }
+
         // VOTE PARTY START
         VotePartyUtils.getInstance().run(offlinePlayer);
 
         //HOLOGRAM UPDATE
         if (Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays"))
             HolographicDisplays.updateAll();
+
+        if (VoteOptions.DEBUG_VOTE_AFTER.isEnabled()) {
+            Utils.debug(voteRewardPlugin,
+                    "Vote for player " + offlinePlayer.getPlayer(),
+                    "Votes: " + userVoteData.getVotes(),
+                    "Last Voted: " + Instant.ofEpochMilli(userVoteData.getLastVote()));
+        }
     }
 
     /**
@@ -119,26 +138,21 @@ public class VoteUtils {
      * @param serviceName   service name (dah)
      */
     public static void processOfflineVote(OfflinePlayer offlinePlayer, final String serviceName) {
-        new BukkitRunnable() {
+        UserVoteData userVoteData = UserVoteData.getUser(offlinePlayer.getUniqueId());
+        userVoteData.load(new UserVoteData.Callback() {
             @Override
-            public void run() {
-                UserVoteData userVoteData = UserVoteData.getUser(offlinePlayer.getUniqueId());
-                userVoteData.load(new UserVoteData.Callback() {
-                    @Override
-                    public void onSuccess() {
-                        List<String> services = userVoteData.getOfflineServices();
-                        services.add(serviceName);
-                        userVoteData.setOfflineServices(services);
-                        userVoteData.save();
-                    }
-
-                    @Override
-                    public void onFailure(Throwable throwable) {
-                        throwable.printStackTrace();
-                    }
-                });
+            public void onSuccess() {
+                List<String> services = userVoteData.getOfflineServices();
+                services.add(serviceName);
+                userVoteData.setOfflineServices(services);
+                userVoteData.save();
             }
-        }.runTaskAsynchronously(voteRewardPlugin);
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                throwable.printStackTrace();
+            }
+        });
     }
 
 }

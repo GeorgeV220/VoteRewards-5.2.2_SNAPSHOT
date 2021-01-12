@@ -5,7 +5,27 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 public enum VoteOptions {
 
-    DEBUG("debug"),
+    DEBUG_VOTE_PRE("debug.vote.preVote"),
+
+    DEBUG_VOTE_AFTER("debug.vote.afterVote"),
+
+    DEBUG_LOAD("debug.load"),
+
+    DEBUG_SAVE("debug.save"),
+
+    DEBUG_VOTES_CUMULATIVE("debug.votes.cumulative"),
+
+    DEBUG_VOTES_DAILY("debug.votes.daily"),
+
+    DEBUG_VOTES_LUCKY("debug.votes.lucky"),
+
+    DEBUG_VOTES_REGULAR("debug.votes.regular"),
+
+    DEBUG_VOTES_WORLD("debug.votes.world"),
+
+    DEBUG_VOTES_PERMISSIONS("debug.votes.permissions"),
+
+    DEBUG_VOTES_OFFLINE("debug.votes.offline"),
 
     VOTE_TITLE("title.vote"),
 

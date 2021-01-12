@@ -533,8 +533,7 @@ public final class Utils {
         return (String[]) list.toArray();
     }
 
-    public static Object getPrivateField(Object object, String field) throws SecurityException,
-            NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
+    public static Object getPrivateField(Object object, String field) throws NoSuchFieldException, IllegalAccessException {
         Class<?> clazz = object.getClass();
         Field objectField = clazz.getDeclaredField(field);
         objectField.setAccessible(true);

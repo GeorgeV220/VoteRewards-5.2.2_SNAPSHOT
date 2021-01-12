@@ -1,6 +1,19 @@
 Options:
-  debug: false
-  commands:
+  debug: #Shows debug message
+    vote:
+      preVote: false
+      afterVote: false
+    load: false
+    save: false
+    votes:
+      cumulative: false
+      daily: false
+      lucky: false
+      regular: false
+      world: false
+      permissions: false
+      offline: false
+  commands: #Disable or enable plugin commands
     rewards: true
     vote: true
     votetop: true
@@ -8,34 +21,39 @@ Options:
     votes: true
     fakevote: true
     voteparty: true
-    hologram: false
+    hologram: true
   title:
-    vote: true
-  gui: false
+    vote: false #Shows a title message when the player votes
+  gui: false #LeaderHeads plugin is needed
   updater: true
   votetop:
     header: true
     footer: true
-    voters: 5
-  message: true
+    voters: 5 #How many players will show up in the list
+  message: true #Show a message when someone votes
   cumulative message: true #cumulative must be enabled
   votes:
-    world: false
-    disable services: false
-    daily:
+    world: false #Per world rewards
+    disable services: false #Disable 'Services' section if you are using per world rewards
+    daily: #Daily vote
       enabled: false
       hours: 12
     offline: false
-    permissions: false
+    permissions: false #TODO UPDATE THIS
     lucky numbers: 50
     lucky: false
-    cumulative: false
+    cumulative: false #Reward players if they reach X votes
   # File, MySQL, SQLite
+  # Select in what type you want your data to be stored
+  # File is recommended
   database: File
+  # Enable this if you want VoteParty
   voteparty: false
+  # Remind your players to vote again
   reminder:
     enabled: false
-    time: 120 #Every X seconds
+    time: 120
+  # Play a sound when the player votes
   sound: false
 
 Rewards:
@@ -112,6 +130,8 @@ Rewards:
         - 'eco give %player% 10000'
         - 'give %player% minecraft:nether_star 100'
 
+# Hologram examples
+# Suggest more placeholders on github
 Holograms:
   votetop:
     - 'VoteTop'
@@ -124,6 +144,7 @@ Holograms:
     - 'VoteParty progress bar'
     - '%bar%'
 
+# VoteParty settings
 VoteParty:
   votes: 2
   progress:
