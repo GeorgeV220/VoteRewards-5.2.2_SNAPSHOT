@@ -1,6 +1,7 @@
 package com.georgev22.voterewards.utilities;
 
 import com.georgev22.voterewards.VoteRewardPlugin;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -10,12 +11,12 @@ import java.net.URL;
 
 public class Updater {
 
-    private final VoteRewardPlugin m = VoteRewardPlugin.getInstance();
+    private final VoteRewardPlugin voteRewardPlugin = VoteRewardPlugin.getInstance();
 
     public Updater() {
-        new Thread(() -> {
+        Bukkit.getScheduler().runTaskAsynchronously(voteRewardPlugin, () -> {
             final String BASE_URL = "https://raw.githubusercontent.com/GeorgeV220/VoteRewards/master/version.md";
-            m.getLogger().info("Checking for Updates ... ");
+            voteRewardPlugin.getLogger().info("Checking for Updates ... ");
 
             String onlineVersion;
 
@@ -31,50 +32,49 @@ public class Updater {
 
             } catch (Exception ex) {
 
-                m.getLogger().warning("Failed to check for an update on Git.");
+                voteRewardPlugin.getLogger().warning("Failed to check for an update on Git.");
 
-                m.getLogger().warning("Either Git or you are offline or are slow to respond.");
+                voteRewardPlugin.getLogger().warning("Either Git or you are offline or are slow to respond.");
 
                 ex.printStackTrace();
 
                 return;
 
             }
-            if (!m.getDescription().getVersion().equalsIgnoreCase(onlineVersion)) {
+            if (!voteRewardPlugin.getDescription().getVersion().equalsIgnoreCase(onlineVersion)) {
                 if (onlineVersion.contains("Beta")) {
-                    m.getLogger().warning("New beta version availiable!");
+                    voteRewardPlugin.getLogger().warning("New beta version available!");
 
-                    m.getLogger().warning("Beta Version: " + onlineVersion + ". You are running version: "
-                            + m.getDescription().getVersion());
-                    m.getLogger().warning("Update at: https://www.mc-market.org/resources/9094/");
+                    voteRewardPlugin.getLogger().warning("Beta Version: " + onlineVersion + ". You are running version: "
+                            + voteRewardPlugin.getDescription().getVersion());
+                    voteRewardPlugin.getLogger().warning("Update at: https://github.com/GeorgeV220/VoteRewards/releases/");
                 } else if (onlineVersion.contains("Alpha")) {
-                    m.getLogger().warning("New Alpha version availiable!");
+                    voteRewardPlugin.getLogger().warning("New Alpha version available!");
 
-                    m.getLogger().warning("Alpha Version: " + onlineVersion + ". You are running version: "
-                            + m.getDescription().getVersion());
-                    m.getLogger().warning("Update at: https://www.mc-market.org/resources/9094/");
+                    voteRewardPlugin.getLogger().warning("Alpha Version: " + onlineVersion + ". You are running version: "
+                            + voteRewardPlugin.getDescription().getVersion());
+                    voteRewardPlugin.getLogger().warning("Update at: https://github.com/GeorgeV220/VoteRewards/releases/");
                 } else {
-                    m.getLogger().warning("New stable version availiable!");
+                    voteRewardPlugin.getLogger().warning("New stable version available!");
 
-                    m.getLogger().warning("Stable Version: " + onlineVersion + ". You are running version: "
-                            + m.getDescription().getVersion());
-                    m.getLogger().warning("Update at: https://www.mc-market.org/resources/9094/");
+                    voteRewardPlugin.getLogger().warning("Stable Version: " + onlineVersion + ". You are running version: "
+                            + voteRewardPlugin.getDescription().getVersion());
+                    voteRewardPlugin.getLogger().warning("Update at: https://github.com/GeorgeV220/VoteRewards/releases/");
                 }
             } else {
-                if (m.getDescription().getVersion().contains("Beta")) {
-                    m.getLogger().info("You are running the newest beta build.");
-                } else if (m.getDescription().getVersion().contains("Alpha")) {
-                    m.getLogger().info("You are running the newest alpha build.");
+                if (voteRewardPlugin.getDescription().getVersion().contains("Beta")) {
+                    voteRewardPlugin.getLogger().info("You are running the newest beta build.");
+                } else if (voteRewardPlugin.getDescription().getVersion().contains("Alpha")) {
+                    voteRewardPlugin.getLogger().info("You are running the newest alpha build.");
                 } else {
-                    m.getLogger().info("You are running the newest stable build.");
+                    voteRewardPlugin.getLogger().info("You are running the newest stable build.");
                 }
             }
-        }).start();
-
+        });
     }
 
     public Updater(Player player) {
-        new Thread(() -> {
+        Bukkit.getScheduler().runTaskAsynchronously(voteRewardPlugin, () -> {
             final String BASE_URL = "https://raw.githubusercontent.com/GeorgeV220/VoteRewards/master/version.md";
             Utils.msg(player, "&e&lUpdater &8» &6Checking for Updates ...");
 
@@ -99,36 +99,35 @@ public class Updater {
                 return;
 
             }
-            if (!m.getDescription().getVersion().equalsIgnoreCase(onlineVersion)) {
+            if (!voteRewardPlugin.getDescription().getVersion().equalsIgnoreCase(onlineVersion)) {
                 if (onlineVersion.contains("Beta")) {
-                    Utils.msg(player, "&e&lUpdater &8» &6New beta version availiable!");
+                    Utils.msg(player, "&e&lUpdater &8» &6New beta version available!");
                     Utils.msg(player, "&e&lUpdater &8» &6Beta Version: &c"
-                            + onlineVersion + ". &6You are running version: &c" + m.getDescription().getVersion());
-                    Utils.msg(player, "&e&lUpdater &8» &6Update at: https://www.mc-market.org/resources/9094/");
+                            + onlineVersion + ". &6You are running version: &c" + voteRewardPlugin.getDescription().getVersion());
+                    Utils.msg(player, "&e&lUpdater &8» &6Update at: https://github.com/GeorgeV220/VoteRewards/releases/");
                 } else if (onlineVersion.contains("Alpha")) {
-                    Utils.msg(player, "&e&lUpdater &8» &6New alpha version availiable!");
+                    Utils.msg(player, "&e&lUpdater &8» &6New alpha version available!");
                     Utils.msg(player, "&e&lUpdater &8» &6Alpha Version: &c"
-                            + onlineVersion + ". &6You are running version: &c" + m.getDescription().getVersion());
-                    Utils.msg(player, "&e&lUpdater &8» &6Update at: https://www.mc-market.org/resources/9094/");
+                            + onlineVersion + ". &6You are running version: &c" + voteRewardPlugin.getDescription().getVersion());
+                    Utils.msg(player, "&e&lUpdater &8» &6Update at: https://github.com/GeorgeV220/VoteRewards/releases/");
                 } else {
                     Utils.msg(player,
-                            "&e&lUpdater &8» &6New stable version availiable!");
+                            "&e&lUpdater &8» &6New stable version available!");
                     Utils.msg(player, "&e&lUpdater &8» &6Stable Version: &c"
-                            + onlineVersion + ". &6You are running version: &c" + m.getDescription().getVersion());
-                    Utils.msg(player, "&e&lUpdater &8» &6Update at: https://www.mc-market.org/resources/9094/");
+                            + onlineVersion + ". &6You are running version: &c" + voteRewardPlugin.getDescription().getVersion());
+                    Utils.msg(player, "&e&lUpdater &8» &6Update at: https://github.com/GeorgeV220/VoteRewards/releases/");
 
                 }
             } else {
-                if (m.getDescription().getVersion().contains("Beta")) {
+                if (voteRewardPlugin.getDescription().getVersion().contains("Beta")) {
                     Utils.msg(player, "&e&lUpdater &8» &6You are running the newest beta build.");
-                } else if (m.getDescription().getVersion().contains("Alpha")) {
+                } else if (voteRewardPlugin.getDescription().getVersion().contains("Alpha")) {
                     Utils.msg(player, "&e&lUpdater &8» &6You are running the newest alpha build.");
                 } else {
                     Utils.msg(player, "&e&lUpdater &8» &6You are running the newest stable build.");
                 }
             }
-        }).start();
-
+        });
     }
 
 }

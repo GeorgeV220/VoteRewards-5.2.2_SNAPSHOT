@@ -13,6 +13,7 @@ import com.georgev22.voterewards.listeners.PlayerListeners;
 import com.georgev22.voterewards.listeners.VotifierListener;
 import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.Updater;
+import com.georgev22.voterewards.utilities.Utils;
 import com.georgev22.voterewards.utilities.options.VoteOptions;
 import com.georgev22.voterewards.utilities.player.UserVoteData;
 import com.google.common.collect.Maps;
@@ -154,6 +155,10 @@ public class VoteRewardPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            UserVoteData userVoteData = UserVoteData.getUser(player.getUniqueId());
+            userVoteData.save(false);
+        }
         Bukkit.getScheduler().cancelTasks(this);
         if (VoteOptions.COMMAND_VOTEREWARDS.isEnabled())
             this.unRegisterCommand("voterewards");
@@ -221,7 +226,7 @@ public class VoteRewardPlugin extends JavaPlugin {
             field1.setAccessible(true);
             Object result = field1.get(getServer().getPluginManager());
             SimpleCommandMap commandMap = (SimpleCommandMap) result;
-            Field field = commandMap.getClass().getSuperclass().getDeclaredField("knownCommands");
+            Field field = Utils.isLegacy() ? commandMap.getClass().getDeclaredField("knownCommands") : commandMap.getClass().getSuperclass().getDeclaredField("knownCommands");
             field.setAccessible(true);
             Object map = field.get(commandMap);
             HashMap<String, Command> knownCommands = (HashMap<String, Command>) map;

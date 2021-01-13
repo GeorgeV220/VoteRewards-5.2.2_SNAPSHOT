@@ -1,5 +1,5 @@
 name: VoteRewards
-version: 4.2.2-DEV
+version: 4.3-Alpha
 main: com.georgev22.voterewards.VoteRewardPlugin
 api-version: 1.13
 prefix: VoteRewards

@@ -59,7 +59,7 @@ public class PlayerListeners implements Listener {
                     }
                     userVoteData.setOfflineServices(Lists.newArrayList());
                 }
-                userVoteData.save();
+                userVoteData.save(true);
 
                 if (!UserVoteData.getAllUsersMap().containsKey(event.getPlayer().getName())) {
                     UserVoteData.getAllUsersMap().put(event.getPlayer().getName(), userVoteData.getVotes());
@@ -88,7 +88,7 @@ public class PlayerListeners implements Listener {
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
-        UserVoteData.getUser(event.getPlayer().getUniqueId()).save();
+        UserVoteData.getUser(event.getPlayer().getUniqueId()).save(true);
         m.reminderMap.remove(event.getPlayer());
         UserVoteData.getUserMap().remove(event.getPlayer().getUniqueId());
     }

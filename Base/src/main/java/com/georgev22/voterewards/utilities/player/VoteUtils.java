@@ -12,6 +12,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -125,7 +126,7 @@ public class VoteUtils {
             Utils.debug(voteRewardPlugin,
                     "Vote for player " + offlinePlayer.getPlayer(),
                     "Votes: " + userVoteData.getVotes(),
-                    "Last Voted: " + Instant.ofEpochMilli(userVoteData.getLastVote()));
+                    "Last Voted: " + Instant.ofEpochMilli(userVoteData.getLastVote()).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())));
         }
     }
 
@@ -145,7 +146,7 @@ public class VoteUtils {
                 List<String> services = userVoteData.getOfflineServices();
                 services.add(serviceName);
                 userVoteData.setOfflineServices(services);
-                userVoteData.save();
+                userVoteData.save(true);
             }
 
             @Override

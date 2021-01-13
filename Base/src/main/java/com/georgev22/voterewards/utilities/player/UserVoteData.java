@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -271,18 +273,26 @@ public class UserVoteData {
     /**
      * Save all player's data
      */
-    public void save() {
+    public void save(boolean async) {
         if (voteRewardPlugin.database) {
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    try {
-                        sqlUserUtils.save();
-                    } catch (SQLException throwables) {
-                        throwables.printStackTrace();
+            if (async) {
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            sqlUserUtils.save();
+                        } catch (SQLException throwables) {
+                            throwables.printStackTrace();
+                        }
                     }
+                }.runTaskAsynchronously(voteRewardPlugin);
+            } else {
+                try {
+                    sqlUserUtils.save();
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
                 }
-            }.runTaskAsynchronously(voteRewardPlugin);
+            }
             return;
         }
         userUtils.saveConfiguration();
@@ -345,6 +355,14 @@ public class UserVoteData {
                             "`services` = '" + user.getServices().toString().replace("[", "").replace("]", "").replace(" ", "") + "' " +
                             "WHERE `uuid` = '" + uuid.toString() + "'");
             preparedStatement.executeUpdate();
+            if (VoteOptions.DEBUG_SAVE.isEnabled()) {
+                Utils.debug(voteRewardPlugin,
+                        "User " + user.getPlayer().getName() + " successfully saved!",
+                        "Votes: " + user.getVotes(),
+                        "Daily Votes: " + user.getDailyVotes(),
+                        "Last Voted: " + Instant.ofEpochMilli(user.getLastVoted()).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())),
+                        "Vote Parties: " + user.getVoteParties());
+            }
         }
 
         /**
@@ -392,7 +410,7 @@ public class UserVoteData {
                                         "User " + user.getPlayer().getName() + " successfully loaded!",
                                         "Votes: " + user.getVotes(),
                                         "Daily Votes: " + user.getDailyVotes(),
-                                        "Last Voted: " + user.getLastVoted(),
+                                        "Last Voted: " + Instant.ofEpochMilli(user.getLastVoted()).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())),
                                         "Vote Parties: " + user.getVoteParties());
                             }
                         }
@@ -537,6 +555,14 @@ public class UserVoteData {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            if (VoteOptions.DEBUG_SAVE.isEnabled()) {
+                Utils.debug(voteRewardPlugin,
+                        "User " + user.getPlayer().getName() + " successfully saved!",
+                        "Votes: " + user.getVotes(),
+                        "Daily Votes: " + user.getDailyVotes(),
+                        "Last Voted: " + Instant.ofEpochMilli(user.getLastVoted()).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())),
+                        "Vote Parties: " + user.getVoteParties());
+            }
         }
 
         /**
@@ -591,6 +617,11 @@ public class UserVoteData {
                 user.setVoteParties(0);
                 user.setServices(Lists.newArrayList());
             } else {
+                user.setDailyVotes(getDailyVotes());
+                user.setVotes(getVotes());
+                user.setLastVoted(getLastVote());
+                user.setVoteParties(getVoteParty());
+                user.setServices(getServices());
                 if (VoteOptions.DEBUG_LOAD.isEnabled()) {
                     Utils.debug(voteRewardPlugin,
                             "User " + user.getPlayer().getName() + " successfully loaded!",
@@ -599,11 +630,6 @@ public class UserVoteData {
                             "Last Voted: " + user.getLastVoted(),
                             "Vote Parties: " + user.getVoteParties());
                 }
-                user.setDailyVotes(getDailyVotes());
-                user.setVotes(getVotes());
-                user.setLastVoted(getLastVote());
-                user.setVoteParties(getVoteParty());
-                user.setServices(getServices());
             }
             saveConfiguration();
         }

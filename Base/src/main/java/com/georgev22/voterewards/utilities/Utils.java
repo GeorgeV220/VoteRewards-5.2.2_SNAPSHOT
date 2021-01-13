@@ -542,4 +542,9 @@ public final class Utils {
         return result;
     }
 
+    public static boolean isLegacy() {
+        String version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3] + ".";
+        return version.contains("1_8") || version.contains("1_9") || version.contains("1_11") || version.contains("1_12");
+    }
+
 }
