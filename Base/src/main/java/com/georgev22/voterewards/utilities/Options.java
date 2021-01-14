@@ -1,9 +1,11 @@
-package com.georgev22.voterewards.utilities.options;
+package com.georgev22.voterewards.utilities;
 
 import com.georgev22.voterewards.configmanager.FileManager;
 import org.bukkit.configuration.file.FileConfiguration;
 
-public enum VoteOptions {
+import java.util.List;
+
+public enum Options {
 
     DEBUG_VOTE_PRE("debug.vote.preVote"),
 
@@ -45,19 +47,19 @@ public enum VoteOptions {
 
     DISABLE_SERVICES("votes.disable services"),
 
-    LUCKY("votes.lucky"),
+    LUCKY("votes.lucky.enabled"),
+
+    LUCKY_NUMBERS("votes.lucky.numbers"),
 
     CUMULATIVE("votes.cumulative"),
 
     CUMULATIVE_MESSAGE("votes.cumulative message"),
 
-    VOTE_PARTY("voteparty"),
-
     REMINDER("reminder.enabled"),
 
     REMINDER_SEC("reminder.time"),
 
-    SOUND("sound"),
+    SOUND("sound.vote"),
 
     MESSAGE("message"),
 
@@ -83,10 +85,66 @@ public enum VoteOptions {
 
     COMMAND_HOLOGRAM("commands.hologram"),
 
+    DATABASE_HOST("database.DB.host"),
+
+    DATABASE_PORT("database.DB.port"),
+
+    DATABASE_USER("database.DB.user"),
+
+    DATABASE_PASSWORD("database.DB.password"),
+
+    DATABASE_DATABASE("database.DB.database"),
+
+    DATABASE_SQLITE("database.SQLite.file name"),
+
+    DATABASE_TYPE("database.type"),
+
+    VOTEPARTY("voteparty.enabled"),
+
+    VOTEPARTY_PARTICIPATE("voteparty.participate"),
+
+    VOTEPARTY_CRATE("voteparty.crate.enabled"),
+
+    VOTEPARTY_RANDOM("voteparty.random rewards"),
+
+    VOTEPARTY_COOLDOWN("voteparty.cooldown.enabled"),
+
+    VOTEPARTY_COOLDOWN_SECONDS("voteparty.cooldown.seconds"),
+
+    VOTEPARTY_SOUND_START("sound.voteparty"),
+
+    VOTEPARTY_SOUND_CRATE("sound.crate"),
+
+    VOTEPARTY_REGIONS("voteparty.regions"),
+
+    VOTEPARTY_VOTES("voteparty.votes"),
+
+    VOTEPARTY_BARS("voteparty.progress.bars"),
+
+    VOTEPARTY_COMPLETE_COLOR("voteparty.progress.complete color"),
+
+    VOTEPARTY_NOT_COMPLETE_COLOR("voteparty.progress.not complete color"),
+
+    VOTEPARTY_BAR_SYMBOL("voteparty.progress.bar symbol"),
+
+    VOTEPARTY_CRATE_ITEM("voteparty.crate.item"),
+
+    VOTEPARTY_CRATE_NAME("voteparty.crate.name"),
+
+    VOTEPARTY_CRATE_LORES("voteparty.crate.lores"),
+
+    VOTEPARTY_REWARDS("voteparty.rewards"),
+
+    SOUND_VOTE("sound.sounds.vote received"),
+
+    SOUND_CRATE_OPEN("sound.sounds.crate open"),
+
+    SOUND_VOTEPARTY_START("sound.sounds.voteparty start"),
+
     ;
     private final String pathName;
 
-    VoteOptions(final String pathName) {
+    Options(final String pathName) {
         this.pathName = pathName;
     }
 
@@ -100,4 +158,8 @@ public enum VoteOptions {
         return file.get("Options." + this.pathName, 0);
     }
 
+    public List<String> getStringList() {
+        final FileConfiguration file = FileManager.getInstance().getConfig().getFileConfiguration();
+        return file.getStringList("Options." + this.pathName);
+    }
 }

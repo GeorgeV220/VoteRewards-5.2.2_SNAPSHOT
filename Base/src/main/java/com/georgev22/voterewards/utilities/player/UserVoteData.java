@@ -1,8 +1,8 @@
 package com.georgev22.voterewards.utilities.player;
 
 import com.georgev22.voterewards.VoteRewardPlugin;
+import com.georgev22.voterewards.utilities.Options;
 import com.georgev22.voterewards.utilities.Utils;
-import com.georgev22.voterewards.utilities.options.VoteOptions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.bukkit.Bukkit;
@@ -13,7 +13,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;
@@ -53,7 +52,7 @@ public class UserVoteData {
      * Load all users
      */
     public static void loadAllUsers() {
-        if (voteRewardPlugin.database) {
+        if (voteRewardPlugin.database != null) {
             try {
                 allUsersMap.putAll(UserVoteData.SQLUserUtils.getAllUsers());
             } catch (SQLException throwables) {
@@ -120,7 +119,7 @@ public class UserVoteData {
      * @param services
      */
     public void setOfflineServices(List<String> services) {
-        if (VoteOptions.DEBUG_VOTES_OFFLINE.isEnabled())
+        if (Options.DEBUG_VOTES_OFFLINE.isEnabled())
             Utils.debug(voteRewardPlugin, "Offline Voting Debug", services.toString());
         user.setServices(services);
     }
@@ -262,7 +261,7 @@ public class UserVoteData {
      * @param callback
      */
     public void load(Callback callback) {
-        if (voteRewardPlugin.database) {
+        if (voteRewardPlugin.database != null) {
             sqlUserUtils.load(callback);
         } else {
             userUtils.setupUser();
@@ -274,7 +273,7 @@ public class UserVoteData {
      * Save all player's data
      */
     public void save(boolean async) {
-        if (voteRewardPlugin.database) {
+        if (voteRewardPlugin.database != null) {
             if (async) {
                 new BukkitRunnable() {
                     @Override
@@ -302,7 +301,7 @@ public class UserVoteData {
      * Reset player's stats
      */
     public void reset() {
-        if (voteRewardPlugin.database) {
+        if (voteRewardPlugin.database != null) {
             new BukkitRunnable() {
                 @Override
                 public void run() {
@@ -346,7 +345,7 @@ public class UserVoteData {
          * @throws SQLException When something goes wrong
          */
         public void save() throws SQLException {
-            PreparedStatement preparedStatement = voteRewardPlugin.getConnection().prepareStatement(
+            voteRewardPlugin.getDatabase().updatePreparedSQL(
                     "UPDATE `users` " +
                             "SET `votes` = '" + user.getVotes() + "', " +
                             "`time` = '" + user.getLastVoted() + "', " +
@@ -354,8 +353,7 @@ public class UserVoteData {
                             "`daily` = '" + user.getDailyVotes() + "', " +
                             "`services` = '" + user.getServices().toString().replace("[", "").replace("]", "").replace(" ", "") + "' " +
                             "WHERE `uuid` = '" + uuid.toString() + "'");
-            preparedStatement.executeUpdate();
-            if (VoteOptions.DEBUG_SAVE.isEnabled()) {
+            if (Options.DEBUG_SAVE.isEnabled()) {
                 Utils.debug(voteRewardPlugin,
                         "User " + user.getPlayer().getName() + " successfully saved!",
                         "Votes: " + user.getVotes(),
@@ -371,7 +369,7 @@ public class UserVoteData {
          * @throws SQLException When something goes wrong
          */
         public void reset() throws SQLException {
-            PreparedStatement preparedStatement = voteRewardPlugin.getConnection().prepareStatement(
+            voteRewardPlugin.getDatabase().updatePreparedSQL(
                     "UPDATE `users` " +
                             "SET `votes` = '" + 0 + "', " +
                             "`time` = '" + 0 + "', " +
@@ -384,7 +382,6 @@ public class UserVoteData {
             user.setServices(Lists.newArrayList());
             user.setVoteParties(0);
             user.setDailyVotes(0);
-            preparedStatement.executeUpdate();
         }
 
         /**
@@ -397,15 +394,14 @@ public class UserVoteData {
                 @Override
                 public void onSuccess() {
                     try {
-                        PreparedStatement preparedStatement = VoteRewardPlugin.getInstance().getConnection().prepareStatement("SELECT * FROM `users` WHERE `uuid` = '" + uuid.toString() + "'");
-                        ResultSet resultSet = preparedStatement.executeQuery();
+                        ResultSet resultSet = voteRewardPlugin.getDatabase().queryPreparedSQL("SELECT * FROM `users` WHERE `uuid` = '" + uuid.toString() + "'");
                         while (resultSet.next()) {
                             user.setVotes(resultSet.getInt("votes"));
                             user.setLastVoted(resultSet.getLong("time"));
                             user.setServices(resultSet.getString("services").replace(" ", "").isEmpty() ? Lists.newArrayList() : new ArrayList<>(Arrays.asList(resultSet.getString("services").split(","))));
                             user.setVoteParties(resultSet.getInt("voteparty"));
                             user.setDailyVotes(resultSet.getInt("daily"));
-                            if (VoteOptions.DEBUG_LOAD.isEnabled()) {
+                            if (Options.DEBUG_LOAD.isEnabled()) {
                                 Utils.debug(voteRewardPlugin,
                                         "User " + user.getPlayer().getName() + " successfully loaded!",
                                         "Votes: " + user.getVotes(),
@@ -442,11 +438,10 @@ public class UserVoteData {
         public void setupUser(Callback callback) {
             try {
                 if (!playerExists()) {
-                    PreparedStatement preparedStatement = voteRewardPlugin.getConnection().prepareStatement(
+                    voteRewardPlugin.getDatabase().updatePreparedSQL(
                             "INSERT INTO `users` (`uuid`, `name`, `votes`, `time`, `daily`, `voteparty`, `services`)" +
                                     " VALUES " +
                                     "('" + uuid.toString() + "', '" + Bukkit.getOfflinePlayer(uuid).getName() + "','0', '0', '0', '0', '" + Lists.newArrayList().toString().replace("[", "").replace("]", "").replace(" ", "") + "');");
-                    preparedStatement.executeUpdate();
                 }
                 callback.onSuccess();
             } catch (SQLException throwables) {
@@ -462,8 +457,7 @@ public class UserVoteData {
          */
         public static Map<String, Integer> getAllUsers() throws SQLException {
             Map<String, Integer> map = Maps.newHashMap();
-            PreparedStatement preparedStatement = voteRewardPlugin.getConnection().prepareStatement("SELECT * FROM `users`");
-            ResultSet resultSet = preparedStatement.executeQuery();
+            ResultSet resultSet = voteRewardPlugin.getDatabase().queryPreparedSQL("SELECT * FROM `users`");
             while (resultSet.next()) {
                 map.put(resultSet.getString("name"), resultSet.getInt("votes"));
             }
@@ -555,7 +549,7 @@ public class UserVoteData {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            if (VoteOptions.DEBUG_SAVE.isEnabled()) {
+            if (Options.DEBUG_SAVE.isEnabled()) {
                 Utils.debug(voteRewardPlugin,
                         "User " + user.getPlayer().getName() + " successfully saved!",
                         "Votes: " + user.getVotes(),
@@ -607,7 +601,7 @@ public class UserVoteData {
         public void setupUser() {
             this.configuration.set("last-name", getVoter().getName());
             if (!playerExists()) {
-                if (VoteOptions.DEBUG_LOAD.isEnabled())
+                if (Options.DEBUG_LOAD.isEnabled())
                     Utils.debug(voteRewardPlugin,
                             "User " + getVoter().getName() + " doesn't exists!",
                             "Creating new User");
@@ -622,7 +616,7 @@ public class UserVoteData {
                 user.setLastVoted(getLastVote());
                 user.setVoteParties(getVoteParty());
                 user.setServices(getServices());
-                if (VoteOptions.DEBUG_LOAD.isEnabled()) {
+                if (Options.DEBUG_LOAD.isEnabled()) {
                     Utils.debug(voteRewardPlugin,
                             "User " + user.getPlayer().getName() + " successfully loaded!",
                             "Votes: " + user.getVotes(),

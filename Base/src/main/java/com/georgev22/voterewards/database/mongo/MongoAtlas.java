@@ -1,4 +1,4 @@
-package com.georgev22.voterewards.database.mysql;
+package com.georgev22.voterewards.database.mongo;
 
 import com.georgev22.voterewards.database.Database;
 
@@ -8,13 +8,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Properties;
 
-public class MySQL extends Database {
-
-    private final String user, password, database, port, hostname;
+public class MongoAtlas extends Database {
 
     public static void main(String[] args) throws SQLException {
         //test
-        Database database = new MySQL("", "", "", "", "");
+        Database database = new MongoAtlas("", "", "", "", "");
         database.openConnection();
         ResultSet resultSet = database.queryPreparedSQL("SELECT * FROM users");
         while (resultSet.next()) {
@@ -22,15 +20,13 @@ public class MySQL extends Database {
         }
     }
 
-    public MySQL(String hostname, String port, String username, String password) {
-        this(hostname, port, null, username, password);
-    }
+    private final String user, password, database, port, hostname;
 
-    public MySQL(String hostname, String port, String database, String username, String password) {
+    public MongoAtlas(String hostname, String port, String database, String user, String password) {
         this.hostname = hostname;
         this.port = port;
         this.database = database;
-        this.user = username;
+        this.user = user;
         this.password = password;
     }
 
@@ -43,9 +39,10 @@ public class MySQL extends Database {
         final Properties prop = new Properties();
         prop.setProperty("user", user);
         prop.setProperty("password", password);
-        prop.setProperty("useSSL", "false");
-        prop.setProperty("autoReconnect", "true");
-        prop.setProperty("connectTimeout", String.valueOf(Integer.MAX_VALUE));
-        return connection = DriverManager.getConnection("jdbc:mysql://" + this.hostname + ":" + this.port + "/" + this.database, prop);
+        //prop.setProperty("database", database);
+        //prop.setProperty("useSSL", "false");
+        //prop.setProperty("autoReconnect", "true");
+        //prop.setProperty("connectTimeout", String.valueOf(Integer.MAX_VALUE));
+        return connection = DriverManager.getConnection("jdbc:mongodb://" + this.hostname + ":" + this.port + "/" + database, prop);
     }
 }

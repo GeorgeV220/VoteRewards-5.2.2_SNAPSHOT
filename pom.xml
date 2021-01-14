@@ -97,6 +97,24 @@
             <version>3.0.2</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongodb-jdbc</artifactId>
+            <version>1.0.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.22</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>28.2-jre</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <modules>

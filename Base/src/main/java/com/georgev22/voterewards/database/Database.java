@@ -1,9 +1,6 @@
 package com.georgev22.voterewards.database;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public abstract class Database {
 
@@ -13,7 +10,7 @@ public abstract class Database {
         this.connection = null;
     }
 
-    public abstract Connection openConnection() throws SQLException, ClassNotFoundException;
+    public abstract Connection openConnection() throws SQLException;
 
     public boolean checkConnection() throws SQLException {
         return connection != null && !connection.isClosed();
@@ -31,7 +28,27 @@ public abstract class Database {
         return true;
     }
 
-    public ResultSet querySQL(String query) throws SQLException, ClassNotFoundException {
+    public ResultSet queryPreparedSQL(String query) throws SQLException {
+        if (!checkConnection()) {
+            openConnection();
+        }
+
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+
+        return preparedStatement.executeQuery();
+    }
+
+    public int updatePreparedSQL(String query) throws SQLException {
+        if (!checkConnection()) {
+            openConnection();
+        }
+
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+
+        return preparedStatement.executeUpdate();
+    }
+
+    public ResultSet querySQL(String query) throws SQLException {
         if (!checkConnection()) {
             openConnection();
         }
@@ -41,7 +58,7 @@ public abstract class Database {
         return statement.executeQuery(query);
     }
 
-    public int updateSQL(String query) throws SQLException, ClassNotFoundException {
+    public int updateSQL(String query) throws SQLException {
         if (!checkConnection()) {
             openConnection();
         }

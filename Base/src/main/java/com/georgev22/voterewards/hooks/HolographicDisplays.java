@@ -3,8 +3,8 @@ package com.georgev22.voterewards.hooks;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.configmanager.CFG;
 import com.georgev22.voterewards.configmanager.FileManager;
+import com.georgev22.voterewards.utilities.Options;
 import com.georgev22.voterewards.utilities.Utils;
-import com.georgev22.voterewards.utilities.options.PartyOptions;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import com.gmail.filoghost.holographicdisplays.api.line.TextLine;
@@ -135,11 +135,11 @@ public class HolographicDisplays {
         map.put("%top-5%", Utils.getTopPlayer(4));
         map.put("%bar%", Utils.getProgressBar(
                 data.getInt("VoteParty-Votes"),
-                (int) PartyOptions.VOTES.getValue(),
-                (int) PartyOptions.BARS.getValue(),
-                (String) PartyOptions.BAR_SYMBOL.getValue(),
-                (String) PartyOptions.COMPLETE_COLOR.getValue(),
-                (String) PartyOptions.NOT_COMPLETE_COLOR.getValue()));
+                (int) Options.VOTEPARTY_VOTES.getValue(),
+                (int) Options.VOTEPARTY_BARS.getValue(),
+                (String) Options.VOTEPARTY_BAR_SYMBOL.getValue(),
+                (String) Options.VOTEPARTY_COMPLETE_COLOR.getValue(),
+                (String) Options.VOTEPARTY_NOT_COMPLETE_COLOR.getValue()));
         return map;
     }
 

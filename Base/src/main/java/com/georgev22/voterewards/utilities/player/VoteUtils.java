@@ -3,8 +3,8 @@ package com.georgev22.voterewards.utilities.player;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.hooks.HolographicDisplays;
 import com.georgev22.voterewards.utilities.MessagesUtil;
+import com.georgev22.voterewards.utilities.Options;
 import com.georgev22.voterewards.utilities.Utils;
-import com.georgev22.voterewards.utilities.options.VoteOptions;
 import com.georgev22.xseries.XSound;
 import com.georgev22.xseries.messages.Titles;
 import org.bukkit.Bukkit;
@@ -32,14 +32,14 @@ public class VoteUtils {
         userVoteData.setLastVoted(System.currentTimeMillis());
         UserVoteData.getAllUsersMap().replace(offlinePlayer.getName(), UserVoteData.getUser(offlinePlayer.getUniqueId()).getVotes());
 
-        if (VoteOptions.VOTE_TITLE.isEnabled()) {
+        if (Options.VOTE_TITLE.isEnabled()) {
             Titles.sendTitle(offlinePlayer.getPlayer(),
                     Utils.colorize(MessagesUtil.VOTE_TITLE.getMessages()[0]).replace("%player%", offlinePlayer.getName()),
                     Utils.colorize(MessagesUtil.VOTE_SUBTITLE.getMessages()[0]).replace("%player%", offlinePlayer.getName()));
         }
 
         // WORLD REWARDS (WITH SERVICES)
-        if (VoteOptions.WORLD.isEnabled()) {
+        if (Options.WORLD.isEnabled()) {
             if (voteRewardPlugin.getConfig().getString("Rewards.Worlds." + offlinePlayer.getPlayer().getWorld() + "." + serviceName) != null) {
                 userVoteData.runCommands(voteRewardPlugin.getConfig()
                         .getStringList("Rewards.Worlds." + offlinePlayer.getPlayer().getWorld() + "." + serviceName));
@@ -50,7 +50,7 @@ public class VoteUtils {
         }
 
         // SERVICE REWARDS
-        if (!VoteOptions.DISABLE_SERVICES.isEnabled()) {
+        if (!Options.DISABLE_SERVICES.isEnabled()) {
             if (voteRewardPlugin.getConfig().getString("Rewards.Services." + serviceName) != null) {
                 userVoteData.runCommands(voteRewardPlugin.getConfig()
                         .getStringList("Rewards.Services." + serviceName + ".commands"));
@@ -61,9 +61,9 @@ public class VoteUtils {
         }
 
         // LUCKY REWARDS
-        if (VoteOptions.LUCKY.isEnabled()) {
+        if (Options.LUCKY.isEnabled()) {
             ThreadLocalRandom random = ThreadLocalRandom.current();
-            int i = random.nextInt(voteRewardPlugin.getConfig().getInt("Options.votes.lucky numbers") + 1);
+            int i = random.nextInt((int) Options.LUCKY_NUMBERS.getValue() + 1);
             for (String s2 : voteRewardPlugin.getConfig().getConfigurationSection("Rewards.Lucky")
                     .getKeys(false)) {
                 if (Integer.valueOf(s2).equals(i)) {
@@ -74,7 +74,7 @@ public class VoteUtils {
         }
 
         // PERMISSIONS REWARDS
-        if (VoteOptions.PERMISSIONS.isEnabled()) {
+        if (Options.PERMISSIONS.isEnabled()) {
             final ConfigurationSection section = voteRewardPlugin.getConfig()
                     .getConfigurationSection("Rewards.Permission");
             for (String s2 : section.getKeys(false)) {
@@ -86,7 +86,7 @@ public class VoteUtils {
         }
 
         // CUMULATIVE REWARDS
-        if (VoteOptions.CUMULATIVE.isEnabled()) {
+        if (Options.CUMULATIVE.isEnabled()) {
             int votes = userVoteData.getVotes();
             for (String s2 : voteRewardPlugin.getConfig().getConfigurationSection("Rewards.Cumulative")
                     .getKeys(false)) {
@@ -98,13 +98,13 @@ public class VoteUtils {
         }
 
         // PLAY SOUND
-        if (VoteOptions.SOUND.isEnabled()) {
+        if (Options.SOUND.isEnabled()) {
             if (offlinePlayer.isOnline())
                 offlinePlayer.getPlayer().playSound(offlinePlayer.getPlayer().getLocation(),
-                        XSound.matchXSound(voteRewardPlugin.getConfig().getString("Sounds.Vote")).get().parseSound(), 1000, 1);
+                        XSound.matchXSound(String.valueOf(Options.SOUND_VOTE.getValue())).get().parseSound(), 1000, 1);
         }
 
-        if (VoteOptions.DAILY.isEnabled()) {
+        if (Options.DAILY.isEnabled()) {
             int votes = userVoteData.getDailyVotes();
             for (String s2 : voteRewardPlugin.getConfig().getConfigurationSection("Rewards.Daily")
                     .getKeys(false)) {
@@ -122,7 +122,7 @@ public class VoteUtils {
         if (Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays"))
             HolographicDisplays.updateAll();
 
-        if (VoteOptions.DEBUG_VOTE_AFTER.isEnabled()) {
+        if (Options.DEBUG_VOTE_AFTER.isEnabled()) {
             Utils.debug(voteRewardPlugin,
                     "Vote for player " + offlinePlayer.getPlayer(),
                     "Votes: " + userVoteData.getVotes(),

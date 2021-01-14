@@ -19,7 +19,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.lang.reflect.Field;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.text.NumberFormat;
 import java.util.*;
@@ -431,11 +430,10 @@ public final class Utils {
      */
     public static Map<String, Integer> getTopPlayersMap() {
         ConcurrentMap<String, Integer> top = Maps.newConcurrentMap();
-        if (m.database) {
+        if (m.database != null) {
             Bukkit.getScheduler().runTaskAsynchronously(m, () -> {
                 try {
-                    PreparedStatement s = m.getConnection().prepareStatement("SELECT * FROM `users`");
-                    ResultSet rs = s.executeQuery();
+                    ResultSet rs = m.getDatabase().queryPreparedSQL("SELECT * FROM `users`");
                     while (rs.next()) {
                         top.put(rs.getString("name"), rs.getInt("votes"));
                     }

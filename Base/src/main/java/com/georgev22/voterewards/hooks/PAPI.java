@@ -2,6 +2,7 @@ package com.georgev22.voterewards.hooks;
 
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.configmanager.FileManager;
+import com.georgev22.voterewards.utilities.Options;
 import com.georgev22.voterewards.utilities.Utils;
 import com.georgev22.voterewards.utilities.player.UserVoteData;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
@@ -56,11 +57,11 @@ public class PAPI extends PlaceholderExpansion {
             return String.valueOf(fm.getData().getFileConfiguration().getInt("VoteParty-Votes"));
         }
         if (identifier.equalsIgnoreCase("votes_until")) {
-            return String.valueOf(fm.getConfig().getFileConfiguration().getInt("VoteParty.votes", 2)
+            return String.valueOf((int) Options.VOTEPARTY_VOTES.getValue()
                     - fm.getData().getFileConfiguration().getInt("VoteParty-Votes", 0));
         }
         if (identifier.equalsIgnoreCase("votes_needed")) {
-            return String.valueOf(fm.getConfig().getFileConfiguration().getInt("VoteParty.votes", 2));
+            return String.valueOf(Options.VOTEPARTY_VOTES.getValue());
         }
 
         if (identifier.equalsIgnoreCase("top_voter")) {

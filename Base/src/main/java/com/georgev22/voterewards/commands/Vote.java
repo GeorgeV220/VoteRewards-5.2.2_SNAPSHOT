@@ -1,8 +1,8 @@
 package com.georgev22.voterewards.commands;
 
 import com.georgev22.voterewards.utilities.MessagesUtil;
+import com.georgev22.voterewards.utilities.Options;
 import com.georgev22.voterewards.utilities.Utils;
-import com.georgev22.voterewards.utilities.options.VoteOptions;
 import com.georgev22.voterewards.utilities.player.UserVoteData;
 import com.google.common.collect.Maps;
 import org.bukkit.command.CommandSender;
@@ -37,7 +37,7 @@ public class Vote extends BukkitCommand {
         placeholders.put("%votes%", String.valueOf(userVoteData.getVotes()));
         MessagesUtil.VOTE_COMMAND.msg(player, placeholders, true);
 
-        if (VoteOptions.CUMULATIVE.isEnabled() && VoteOptions.CUMULATIVE_MESSAGE.isEnabled()) {
+        if (Options.CUMULATIVE.isEnabled() && Options.CUMULATIVE_MESSAGE.isEnabled()) {
             placeholders.replace("%votes%", String.valueOf(userVoteData.votesUntilNextCumulativeVote()));
             MessagesUtil.VOTE_COMMAND_CUMULATIVE.msg(player, placeholders, true);
         }

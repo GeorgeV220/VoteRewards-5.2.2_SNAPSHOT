@@ -4,17 +4,17 @@ import com.georgev22.org.bstats.bukkit.MetricsLite;
 import com.georgev22.voterewards.commands.*;
 import com.georgev22.voterewards.configmanager.CFG;
 import com.georgev22.voterewards.configmanager.FileManager;
-import com.georgev22.voterewards.database.DB;
-import com.georgev22.voterewards.database.DatabaseType;
+import com.georgev22.voterewards.database.Database;
+import com.georgev22.voterewards.database.mongo.MongoAtlas;
 import com.georgev22.voterewards.database.mysql.MySQL;
 import com.georgev22.voterewards.database.sqlite.SQLite;
 import com.georgev22.voterewards.hooks.*;
 import com.georgev22.voterewards.listeners.PlayerListeners;
 import com.georgev22.voterewards.listeners.VotifierListener;
 import com.georgev22.voterewards.utilities.MessagesUtil;
+import com.georgev22.voterewards.utilities.Options;
 import com.georgev22.voterewards.utilities.Updater;
 import com.georgev22.voterewards.utilities.Utils;
-import com.georgev22.voterewards.utilities.options.VoteOptions;
 import com.georgev22.voterewards.utilities.player.UserVoteData;
 import com.google.common.collect.Maps;
 import org.bukkit.Bukkit;
@@ -26,11 +26,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.reflect.Field;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,7 +38,7 @@ public class VoteRewardPlugin extends JavaPlugin {
     private static VoteRewardPlugin instance = null;
 
     // Start Database
-    public boolean database = false;
+    public Database database = null;
     private Connection connection = null;
     // Stop Database
 
@@ -61,26 +59,30 @@ public class VoteRewardPlugin extends JavaPlugin {
 
         this.registerListeners(new VotifierListener(), new PlayerListeners());
 
-        if (VoteOptions.COMMAND_VOTEREWARDS.isEnabled())
+        if (Options.COMMAND_VOTEREWARDS.isEnabled())
             this.registerCommand("voterewards", new VoteRewards());
-        if (VoteOptions.COMMAND_FAKEVOTE.isEnabled())
+        if (Options.COMMAND_FAKEVOTE.isEnabled())
             this.registerCommand("fakevote", new FakeVote());
-        if (VoteOptions.COMMAND_VOTE.isEnabled())
+        if (Options.COMMAND_VOTE.isEnabled())
             this.registerCommand("vote", new Vote());
-        if (VoteOptions.COMMAND_VOTES.isEnabled())
+        if (Options.COMMAND_VOTES.isEnabled())
             this.registerCommand("votes", new Votes());
-        if (VoteOptions.COMMAND_VOTEPARTY.isEnabled())
+        if (Options.COMMAND_VOTEPARTY.isEnabled())
             this.registerCommand("voteparty", new VoteParty());
-        if (VoteOptions.COMMAND_REWARDS.isEnabled())
+        if (Options.COMMAND_REWARDS.isEnabled())
             this.registerCommand("rewards", new Rewards());
-        if (VoteOptions.COMMAND_VOTETOP.isEnabled())
+        if (Options.COMMAND_VOTETOP.isEnabled())
             this.registerCommand("votetop", new VoteTop());
-        if (VoteOptions.COMMAND_HOLOGRAM.isEnabled())
+        if (Options.COMMAND_HOLOGRAM.isEnabled())
             this.registerCommand("hologram", new Holograms());
 
-        // Start database
-        setupDatabase();
-        // Stop database
+        Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
+            try {
+                setupDatabase();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        });
 
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             new PAPI().register();
@@ -111,7 +113,7 @@ public class VoteRewardPlugin extends JavaPlugin {
             Bukkit.getLogger().info("[VoteRewards] Hooked into AuthMeReloaded!");
         }
 
-        if (VoteOptions.UPDATER.isEnabled()) {
+        if (Options.UPDATER.isEnabled()) {
             new Updater();
         }
 
@@ -120,7 +122,7 @@ public class VoteRewardPlugin extends JavaPlugin {
             Bukkit.getLogger().info("[VoteRewards] Metrics is enabled!");
         }
 
-        if (VoteOptions.REMINDER.isEnabled()) {
+        if (Options.REMINDER.isEnabled()) {
             Bukkit.getScheduler().runTaskTimerAsynchronously(instance, () -> {
                 for (Map.Entry<Player, Long> entry : reminderMap.entrySet()) {
                     Player player = entry.getKey();
@@ -132,17 +134,17 @@ public class VoteRewardPlugin extends JavaPlugin {
                             placeholders.put("%player%", player.getName());
                             MessagesUtil.REMINDER.msg(player, placeholders, true);
                         }
-                        reminderMap.replace(player, System.currentTimeMillis() + ((int) VoteOptions.REMINDER_SEC.getValue() * 1000));
+                        reminderMap.replace(player, System.currentTimeMillis() + ((int) Options.REMINDER_SEC.getValue() * 1000));
                     }
                 }
             }, 20, 20);
         }
 
-        if (VoteOptions.DAILY.isEnabled()) {
+        if (Options.DAILY.isEnabled()) {
             Bukkit.getScheduler().runTaskTimerAsynchronously(instance, () -> {
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     UserVoteData userVoteData = UserVoteData.getUser(player.getUniqueId());
-                    if (System.currentTimeMillis() >= userVoteData.getLastVote() + ((int) VoteOptions.DAILY_HOURS.getValue() * 60 * 60 * 1000)) {
+                    if (System.currentTimeMillis() >= userVoteData.getLastVote() + ((int) Options.DAILY_HOURS.getValue() * 60 * 60 * 1000)) {
                         if (userVoteData.getDailyVotes() != 0) {
                             userVoteData.setDailyVotes(0);
                         }
@@ -160,21 +162,21 @@ public class VoteRewardPlugin extends JavaPlugin {
             userVoteData.save(false);
         }
         Bukkit.getScheduler().cancelTasks(this);
-        if (VoteOptions.COMMAND_VOTEREWARDS.isEnabled())
+        if (Options.COMMAND_VOTEREWARDS.isEnabled())
             this.unRegisterCommand("voterewards");
-        if (VoteOptions.COMMAND_FAKEVOTE.isEnabled())
+        if (Options.COMMAND_FAKEVOTE.isEnabled())
             this.unRegisterCommand("fakevote");
-        if (VoteOptions.COMMAND_VOTE.isEnabled())
+        if (Options.COMMAND_VOTE.isEnabled())
             this.unRegisterCommand("vote");
-        if (VoteOptions.COMMAND_VOTES.isEnabled())
+        if (Options.COMMAND_VOTES.isEnabled())
             this.unRegisterCommand("votes");
-        if (VoteOptions.COMMAND_VOTEPARTY.isEnabled())
+        if (Options.COMMAND_VOTEPARTY.isEnabled())
             this.unRegisterCommand("voteparty");
-        if (VoteOptions.COMMAND_REWARDS.isEnabled())
+        if (Options.COMMAND_REWARDS.isEnabled())
             this.unRegisterCommand("rewards");
-        if (VoteOptions.COMMAND_VOTETOP.isEnabled())
+        if (Options.COMMAND_VOTETOP.isEnabled())
             this.unRegisterCommand("votetop");
-        if (VoteOptions.COMMAND_HOLOGRAM.isEnabled())
+        if (Options.COMMAND_HOLOGRAM.isEnabled())
             this.unRegisterCommand("hologram");
         if (connection != null) {
             try {
@@ -243,65 +245,66 @@ public class VoteRewardPlugin extends JavaPlugin {
     /**
      * Setup database Values: File, MySQL, SQLite
      */
-    private void setupDatabase() {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                switch (getConfig().getString("Options.database")) {
-                    case "MySQL":
-                        database = true;
-                        try {
-                            if (connection == null || connection.isClosed()) {
-                                MySQL mySQL = (MySQL) new DB(DatabaseType.MySQL).connect(getConfig().getString("MySQL.IP"),
-                                        getConfig().getString("MySQL.Port"), getConfig().getString("MySQL.Database"),
-                                        getConfig().getString("MySQL.User"), getConfig().getString("MySQL.Password"));
-                                connection = mySQL.openConnection();
-                                createTable();
-                                Bukkit.getLogger().info("[VoteRewards] Database: MySQL");
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        break;
-                    case "SQLite":
-                        database = true;
-                        try {
-                            if (connection == null || connection.isClosed()) {
-                                SQLite sqLite = (SQLite) new DB(DatabaseType.SQLite).connect(getDataFolder(),
-                                        getConfig().getString("SQLite.fileName"));
-                                connection = sqLite.openConnection();
-                                createTable();
-                                Bukkit.getLogger().info("[VoteRewards] Database: SQLite");
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        break;
-                    default:
-                        Bukkit.getLogger().info("[VoteRewards] Database: File");
-                        database = false;
-                        break;
+    private void setupDatabase() throws SQLException {
+        switch (String.valueOf(Options.DATABASE_TYPE.getValue())) {
+            case "MySQL":
+                if (connection == null || connection.isClosed()) {
+                    database = new MySQL(
+                            String.valueOf(Options.DATABASE_HOST.getValue()),
+                            String.valueOf(Options.DATABASE_PORT.getValue()),
+                            String.valueOf(Options.DATABASE_DATABASE.getValue()),
+                            String.valueOf(Options.DATABASE_USER.getValue()),
+                            String.valueOf(Options.DATABASE_PASSWORD.getValue()));
+                    connection = database.openConnection();
+                    createTable();
+                    Bukkit.getLogger().info("[VoteRewards] Database: MySQL");
                 }
-
-                UserVoteData.loadAllUsers();
-
-                for (Player player : Bukkit.getOnlinePlayers()) {
-                    UserVoteData userVoteData = UserVoteData.getUser(player.getUniqueId());
-                    userVoteData.load(new UserVoteData.Callback() {
-                        @Override
-                        public void onSuccess() {
-                        }
-
-                        @Override
-                        public void onFailure(Throwable throwable) {
-                            throwable.printStackTrace();
-                        }
-                    });
+                break;
+            case "MongoDBAtlas": {
+                if (connection == null || connection.isClosed()) {
+                    database = new MongoAtlas(
+                            String.valueOf(Options.DATABASE_HOST.getValue()),
+                            String.valueOf(Options.DATABASE_PORT.getValue()),
+                            String.valueOf(Options.DATABASE_DATABASE.getValue()),
+                            String.valueOf(Options.DATABASE_USER.getValue()),
+                            String.valueOf(Options.DATABASE_PASSWORD.getValue()));
+                    connection = database.openConnection();
+                    createTable();
+                    Bukkit.getLogger().info("[VoteRewards] Database: MongoDB Atlas");
                 }
-
+                break;
             }
-        }.runTaskAsynchronously(this);
+            case "SQLite":
+                if (connection == null || connection.isClosed()) {
+                    database = new SQLite(
+                            getDataFolder(),
+                            String.valueOf(Options.DATABASE_SQLITE.getValue()));
+                    connection = database.openConnection();
+                    createTable();
+                    Bukkit.getLogger().info("[VoteRewards] Database: SQLite");
+                }
+                break;
+            default:
+                Bukkit.getLogger().info("[VoteRewards] Database: File");
+                database = null;
+                break;
+        }
 
+        UserVoteData.loadAllUsers();
+
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            UserVoteData userVoteData = UserVoteData.getUser(player.getUniqueId());
+            userVoteData.load(new UserVoteData.Callback() {
+                @Override
+                public void onSuccess() {
+                }
+
+                @Override
+                public void onFailure(Throwable throwable) {
+                    throwable.printStackTrace();
+                }
+            });
+        }
     }
 
     /**
@@ -309,17 +312,20 @@ public class VoteRewardPlugin extends JavaPlugin {
      */
     public void createTable() throws SQLException {
         String sqlCreate = "CREATE TABLE IF NOT EXISTS `users` (\n  `uuid` varchar(255) DEFAULT NULL,\n  `name` varchar(255) DEFAULT NULL,\n  `votes` int(255) DEFAULT NULL,\n  `time` varchar(255) DEFAULT NULL,\n  `voteparty` int(255) DEFAULT NULL,\n  `daily` int(255) DEFAULT NULL,\n `services` varchar(10000) DEFAULT NULL\n)";
-        PreparedStatement stmt = connection.prepareStatement(sqlCreate);
-        stmt.execute();
+        database.queryPreparedSQL(sqlCreate);
     }
 
     /**
-     * Get MySQL, SQLite Connection
+     * Get Database open connection
      *
      * @return connection
      */
     public Connection getConnection() {
         return connection;
+    }
+
+    public Database getDatabase() {
+        return database;
     }
 
     @Override

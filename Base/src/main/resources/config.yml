@@ -30,7 +30,9 @@ Options:
     header: true
     footer: true
     voters: 5 #How many players will show up in the list
-  message: true #Show a message when someone votes
+  message:
+    vote: true
+    voteparty: true
   cumulative message: true #cumulative must be enabled
   votes:
     world: false #Per world rewards
@@ -39,22 +41,65 @@ Options:
       enabled: false
       hours: 12
     offline: false
-    permissions: false #TODO UPDATE THIS
-    lucky numbers: 50
-    lucky: false
+    permissions: false
+    lucky:
+      enabled: false
+      numbers: 50
     cumulative: false #Reward players if they reach X votes
-  # File, MySQL, SQLite
+  # File, MySQL, SQLite, MongoDBAtlas
   # Select in what type you want your data to be stored
   # File is recommended
-  database: File
-  # Enable this if you want VoteParty
-  voteparty: false
+  #DB section is for MySQL and MongoDBAtlas
+  #Default MySQL port: 3306
+  #Default MongoDBAtlas port: 27017
+  #MongoDBAtlas is not ready yet
+  database:
+    type: File
+    SQLite:
+      file name: voterewards
+    DB:
+      host: localhost
+      port: 3306
+      user: youruser
+      password: "yourpassword"
+      database: VoteRewards
+  # Settings about VoteParty
+  voteparty:
+    enabled: false
+    votes: 2 #Amount of votes in order to start a voteparty
+    progress: #Progress bar
+      bars: 10
+      complete color: "&a"
+      not complete color: "&c"
+      bar symbol: "|"
+    participate: true
+    regions: false
+    cooldown:
+      enabled: true
+      seconds: 5
+    crate:
+      enabled: true
+      item: PISTON
+      name: '&cVoteParty Crate'
+      lores:
+        - '&cPlace me'
+    random rewards: true
+    rewards:
+      - 'eco give %player% 6547'
+      - 'give %player% minecraft:nether_star 31'
   # Remind your players to vote again
   reminder:
     enabled: false
     time: 120
   # Play a sound when the player votes
-  sound: false
+  sound:
+    voteparty: false
+    vote: false
+    crate: false
+    sounds:
+      crate open: CHEST_OPEN
+      voteparty start: ENDERDRAGON_DEATH
+      vote received: NOTE_PIANO
 
 Rewards:
   Worlds: #By world name and service name (you can disable 'Services' if you want "disable_services: true". Only for the 'Services' section)
@@ -143,44 +188,3 @@ Holograms:
   progress:
     - 'VoteParty progress bar'
     - '%bar%'
-
-# VoteParty settings
-VoteParty:
-  votes: 2
-  progress:
-    bars: 10
-    complete color: "&a"
-    not complete color: "&c"
-    bar symbol: "|"
-  participate: true
-  sound: false
-  message: true
-  regions: false
-  cooldown:
-    enabled: true
-    seconds: 5
-  crate:
-    enabled: true
-    sound: false
-    item: PISTON
-    name: '&cVoteParty Crate'
-    lores:
-      - '&cPlace me'
-  random rewards: true
-  rewards:
-    - 'eco give %player% 6547'
-    - 'give %player% minecraft:nether_star 31'
-
-Sounds:
-  Crate: CHEST_OPEN
-  VotePartyStart: ENDERDRAGON_DEATH
-  Vote: NOTE_PIANO
-
-MySQL:
-  IP: localhost
-  Port: 3306
-  Database: VoteRewards
-  User: root
-  Password: ''
-SQLite:
-  fileName: voterewards
