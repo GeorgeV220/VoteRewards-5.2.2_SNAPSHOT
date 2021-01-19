@@ -5,7 +5,6 @@ import com.georgev22.voterewards.utilities.Utils;
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.model.VotifierEvent;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.entity.Player;
@@ -49,9 +48,8 @@ public class FakeVote extends BukkitCommand {
     }
 
     private void process(String userName, String serviceName) {
-        OfflinePlayer target = Bukkit.getOfflinePlayer(userName);
         Vote vote = new Vote();
-        vote.setUsername(target.getName());
+        vote.setUsername(userName);
         vote.setTimeStamp(String.valueOf(System.currentTimeMillis()));
         vote.setAddress("localhost");
         vote.setServiceName(serviceName);

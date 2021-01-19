@@ -18,11 +18,11 @@ public class SQLite extends Database {
     }
 
     @Override
-    public Connection openConnection() throws SQLException {
+    public Connection openConnection() throws SQLException, ClassNotFoundException {
         if (checkConnection()) {
             return connection;
         }
-
+        Class.forName("org.sqlite.JDBC");
         String connectionURL = "jdbc:sqlite:" + path.getPath() + "/" + this.fileName + ".db";
 
         connection = DriverManager.getConnection(connectionURL);

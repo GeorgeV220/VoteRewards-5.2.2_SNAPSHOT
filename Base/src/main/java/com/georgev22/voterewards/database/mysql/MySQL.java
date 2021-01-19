@@ -4,23 +4,12 @@ import com.georgev22.voterewards.database.Database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Properties;
 
 public class MySQL extends Database {
 
     private final String user, password, database, port, hostname;
-
-    public static void main(String[] args) throws SQLException {
-        //test
-        Database database = new MySQL("", "", "", "", "");
-        database.openConnection();
-        ResultSet resultSet = database.queryPreparedSQL("SELECT * FROM users");
-        while (resultSet.next()) {
-            System.out.println(resultSet.getString("name"));
-        }
-    }
 
     public MySQL(String hostname, String port, String username, String password) {
         this(hostname, port, null, username, password);
@@ -35,11 +24,12 @@ public class MySQL extends Database {
     }
 
     @Override
-    public Connection openConnection() throws SQLException {
+    public Connection openConnection() throws SQLException, ClassNotFoundException {
         if (checkConnection()) {
             return connection;
         }
 
+        Class.forName("com.mysql.jdbc.Driver");
         final Properties prop = new Properties();
         prop.setProperty("user", user);
         prop.setProperty("password", password);

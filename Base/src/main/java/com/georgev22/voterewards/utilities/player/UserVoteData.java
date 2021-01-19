@@ -1,10 +1,15 @@
 package com.georgev22.voterewards.utilities.player;
 
 import com.georgev22.voterewards.VoteRewardPlugin;
+import com.georgev22.voterewards.database.Type;
 import com.georgev22.voterewards.utilities.Options;
 import com.georgev22.voterewards.utilities.Utils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.mongodb.BasicDBObject;
+import com.mongodb.Block;
+import com.mongodb.client.FindIterable;
+import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -52,14 +57,16 @@ public class UserVoteData {
      * Load all users
      */
     public static void loadAllUsers() {
-        if (voteRewardPlugin.database != null) {
+        if (voteRewardPlugin.getDatabaseType().equals(Type.SQL)) {
             try {
                 allUsersMap.putAll(UserVoteData.SQLUserUtils.getAllUsers());
-            } catch (SQLException throwables) {
+            } catch (SQLException | ClassNotFoundException throwables) {
                 throwables.printStackTrace();
             }
-        } else {
+        } else if (voteRewardPlugin.getDatabaseType().equals(Type.FILE)) {
             allUsersMap.putAll(UserVoteData.UserUtils.getAllUsers());
+        } else if (voteRewardPlugin.getDatabaseType().equals(Type.MONGO)) {
+            allUsersMap.putAll(MongoDBUtils.getAllUsers());
         }
     }
 
@@ -79,11 +86,13 @@ public class UserVoteData {
     private final User user;
     private final UserUtils userUtils;
     private final SQLUserUtils sqlUserUtils;
+    private final MongoDBUtils mongoDBUtils;
 
     private UserVoteData(User user) {
         this.user = user;
         this.userUtils = UserUtils.getUser(user.getUniqueID());
         this.sqlUserUtils = SQLUserUtils.getUser(user.getUniqueID());
+        this.mongoDBUtils = MongoDBUtils.getUser(user.getUniqueID());
     }
 
     /**
@@ -261,11 +270,13 @@ public class UserVoteData {
      * @param callback
      */
     public void load(Callback callback) {
-        if (voteRewardPlugin.database != null) {
+        if (voteRewardPlugin.getDatabaseType().equals(Type.SQL)) {
             sqlUserUtils.load(callback);
-        } else {
+        } else if (voteRewardPlugin.getDatabaseType().equals(Type.FILE)) {
             userUtils.setupUser();
             callback.onSuccess();
+        } else if (voteRewardPlugin.getDatabaseType().equals(Type.MONGO)) {
+            mongoDBUtils.load(callback);
         }
     }
 
@@ -273,14 +284,14 @@ public class UserVoteData {
      * Save all player's data
      */
     public void save(boolean async) {
-        if (voteRewardPlugin.database != null) {
+        if (voteRewardPlugin.getDatabaseType().equals(Type.SQL)) {
             if (async) {
                 new BukkitRunnable() {
                     @Override
                     public void run() {
                         try {
                             sqlUserUtils.save();
-                        } catch (SQLException throwables) {
+                        } catch (SQLException | ClassNotFoundException throwables) {
                             throwables.printStackTrace();
                         }
                     }
@@ -288,33 +299,52 @@ public class UserVoteData {
             } else {
                 try {
                     sqlUserUtils.save();
-                } catch (SQLException throwables) {
+                } catch (SQLException | ClassNotFoundException throwables) {
                     throwables.printStackTrace();
                 }
             }
-            return;
+        } else if (voteRewardPlugin.getDatabaseType().equals(Type.FILE)) {
+            userUtils.saveConfiguration();
+        } else if (voteRewardPlugin.getDatabaseType().equals(Type.MONGO)) {
+            if (async) {
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        mongoDBUtils.save();
+                    }
+                }.runTaskAsynchronously(voteRewardPlugin);
+            } else {
+                mongoDBUtils.save();
+            }
+
         }
-        userUtils.saveConfiguration();
     }
 
     /**
      * Reset player's stats
      */
     public void reset() {
-        if (voteRewardPlugin.database != null) {
+        if (voteRewardPlugin.getDatabaseType().equals(Type.SQL)) {
             new BukkitRunnable() {
                 @Override
                 public void run() {
                     try {
                         sqlUserUtils.reset();
-                    } catch (SQLException throwables) {
+                    } catch (SQLException | ClassNotFoundException throwables) {
                         throwables.printStackTrace();
                     }
                 }
             }.runTaskAsynchronously(voteRewardPlugin);
-            return;
+        } else if (voteRewardPlugin.getDatabaseType().equals(Type.FILE)) {
+            userUtils.reset();
+        } else if (voteRewardPlugin.getDatabaseType().equals(Type.MONGO)) {
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    mongoDBUtils.reset();
+                }
+            }.runTaskAsynchronously(voteRewardPlugin);
         }
-        userUtils.reset();
     }
 
     /**
@@ -336,7 +366,7 @@ public class UserVoteData {
 
         private SQLUserUtils(UUID uuid) {
             this.uuid = uuid;
-            this.user = userMap.get(uuid);
+            this.user = userMap.get(uuid) == null ? UserVoteData.getUser(uuid).getUser() : userMap.get(uuid);
         }
 
         /**
@@ -344,7 +374,7 @@ public class UserVoteData {
          *
          * @throws SQLException When something goes wrong
          */
-        public void save() throws SQLException {
+        public void save() throws SQLException, ClassNotFoundException {
             voteRewardPlugin.getDatabase().updatePreparedSQL(
                     "UPDATE `users` " +
                             "SET `votes` = '" + user.getVotes() + "', " +
@@ -368,26 +398,17 @@ public class UserVoteData {
          *
          * @throws SQLException When something goes wrong
          */
-        public void reset() throws SQLException {
-            voteRewardPlugin.getDatabase().updatePreparedSQL(
-                    "UPDATE `users` " +
-                            "SET `votes` = '" + 0 + "', " +
-                            "`time` = '" + 0 + "', " +
-                            "`voteparty` = '" + 0 + "', " +
-                            "`daily` = '" + 0 + "', " +
-                            "`services` = '" + Lists.newArrayList().toString().replace("[", "").replace("]", "").replace(" ", "") + "' " +
-                            "WHERE `uuid` = '" + uuid.toString() + "'");
+        public void reset() throws SQLException, ClassNotFoundException {
             user.setVotes(0);
             user.setLastVoted(0);
             user.setServices(Lists.newArrayList());
             user.setVoteParties(0);
             user.setDailyVotes(0);
+            save();
         }
 
         /**
          * Load all player's data
-         *
-         * @throws SQLException When something goes wrong
          */
         public void load(Callback callback) {
             setupUser(new Callback() {
@@ -411,7 +432,7 @@ public class UserVoteData {
                             }
                         }
                         callback.onSuccess();
-                    } catch (SQLException throwables) {
+                    } catch (SQLException | ClassNotFoundException throwables) {
                         callback.onFailure(throwables.getCause());
                     }
                 }
@@ -444,7 +465,7 @@ public class UserVoteData {
                                     "('" + uuid.toString() + "', '" + Bukkit.getOfflinePlayer(uuid).getName() + "','0', '0', '0', '0', '" + Lists.newArrayList().toString().replace("[", "").replace("]", "").replace(" ", "") + "');");
                 }
                 callback.onSuccess();
-            } catch (SQLException throwables) {
+            } catch (SQLException | ClassNotFoundException throwables) {
                 callback.onFailure(throwables.getCause());
             }
         }
@@ -455,7 +476,7 @@ public class UserVoteData {
          * @return all the players from the database
          * @throws SQLException When something goes wrong
          */
-        public static Map<String, Integer> getAllUsers() throws SQLException {
+        public static Map<String, Integer> getAllUsers() throws SQLException, ClassNotFoundException {
             Map<String, Integer> map = Maps.newHashMap();
             ResultSet resultSet = voteRewardPlugin.getDatabase().queryPreparedSQL("SELECT * FROM `users`");
             while (resultSet.next()) {
@@ -463,6 +484,134 @@ public class UserVoteData {
             }
             return map;
         }
+    }
+
+    /**
+     * All Mongo Utils for the user
+     * Everything here must run asynchronously
+     * Expect shits to happened
+     */
+    public static class MongoDBUtils {
+
+        private final User user;
+        private final UUID uuid;
+
+        /**
+         * Returns a copy of this MongoDBUtils class for a specific user.
+         *
+         * @param uuid
+         * @return a copy of this MongoDBUtils class for a specific user.
+         */
+        public static MongoDBUtils getUser(final UUID uuid) {
+            return new MongoDBUtils(uuid);
+        }
+
+        private MongoDBUtils(UUID uuid) {
+            this.uuid = uuid;
+            this.user = userMap.get(uuid) == null ? UserVoteData.getUser(uuid).getUser() : userMap.get(uuid);
+        }
+
+        /**
+         * Save all player's data
+         */
+        public void save() {
+            BasicDBObject query = new BasicDBObject();
+            query.put("uuid", user.getUniqueID().toString());
+
+            BasicDBObject updateObject = new BasicDBObject();
+            updateObject.put("$set", new BasicDBObject()
+                    .append("uuid", user.getUniqueID().toString())
+                    .append("name", user.getPlayer().getName())
+                    .append("votes", user.getVotes())
+                    .append("voteparty", user.getVoteParties())
+                    .append("daily", user.getDailyVotes())
+                    .append("last-vote", user.getLastVoted())
+                    .append("services", user.getServices()));
+
+            voteRewardPlugin.getMongoDB().getCollection().updateOne(query, updateObject);
+        }
+
+        /**
+         * Load player data
+         *
+         * @param callback
+         */
+        public void load(Callback callback) {
+            setupUser(new Callback() {
+                @Override
+                public void onSuccess() {
+                    BasicDBObject searchQuery = new BasicDBObject();
+                    searchQuery.put("uuid", uuid.toString());
+                    FindIterable<Document> findIterable = voteRewardPlugin.getMongoDB().getCollection().find(searchQuery);
+                    Document document = findIterable.first();
+                    user.setVotes(document.getInteger("votes"));
+                    user.setDailyVotes(document.getInteger("daily"));
+                    user.setVoteParties(document.getInteger("voteparty"));
+                    user.setLastVoted(document.getLong("last-vote"));
+                    user.setServices(document.getList("services", String.class));
+                    callback.onSuccess();
+                }
+
+                @Override
+                public void onFailure(Throwable throwable) {
+                    callback.onFailure(throwable.getCause());
+                }
+            });
+        }
+
+        /**
+         * Setup the user
+         *
+         * @param callback
+         */
+        public void setupUser(Callback callback) {
+            if (!playerExists()) {
+                voteRewardPlugin.getMongoDB().getCollection().insertOne(new Document()
+                        .append("uuid", user.getUniqueID().toString())
+                        .append("name", user.getPlayer().getName())
+                        .append("votes", 0)
+                        .append("voteparty", 0)
+                        .append("daily", 0)
+                        .append("last-vote", (long) 0)
+                        .append("services", Lists.newArrayList()));
+            }
+            callback.onSuccess();
+        }
+
+        /**
+         * Check if the player exists
+         *
+         * @return true if player exists or false when is not
+         */
+        public boolean playerExists() {
+            return getAllUsersMap().containsKey(Bukkit.getOfflinePlayer(user.getUniqueID()).getName());
+        }
+
+        /**
+         * Reset player stats
+         */
+        public void reset() {
+            user.setVotes(0);
+            user.setLastVoted(0);
+            user.setServices(Lists.newArrayList());
+            user.setVoteParties(0);
+            user.setDailyVotes(0);
+            save();
+        }
+
+
+        /**
+         * Get all players from the database
+         *
+         * @return all the players from the database
+         */
+        public static Map<String, Integer> getAllUsers() {
+            Map<String, Integer> map = Maps.newHashMap();
+            FindIterable<Document> iterable = voteRewardPlugin.getMongoDB().getCollection().find();
+            iterable.forEach((Block<Document>) document -> map.put(document.getString("name"), document.getInteger("votes")));
+            return map;
+        }
+
     }
 
 
@@ -638,7 +787,7 @@ public class UserVoteData {
         }
 
         /**
-         * Reset player
+         * Reset player stats
          */
         public void reset() {
             user.setVotes(0);

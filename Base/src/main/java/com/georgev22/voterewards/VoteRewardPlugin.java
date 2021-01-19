@@ -1,11 +1,14 @@
 package com.georgev22.voterewards;
 
+import com.georgev22.me.lucko.helper.maven.LibraryLoader;
+import com.georgev22.me.lucko.helper.maven.MavenLibrary;
 import com.georgev22.org.bstats.bukkit.MetricsLite;
 import com.georgev22.voterewards.commands.*;
 import com.georgev22.voterewards.configmanager.CFG;
 import com.georgev22.voterewards.configmanager.FileManager;
 import com.georgev22.voterewards.database.Database;
-import com.georgev22.voterewards.database.mongo.MongoAtlas;
+import com.georgev22.voterewards.database.Type;
+import com.georgev22.voterewards.database.mongo.MongoDB;
 import com.georgev22.voterewards.database.mysql.MySQL;
 import com.georgev22.voterewards.database.sqlite.SQLite;
 import com.georgev22.voterewards.hooks.*;
@@ -33,13 +36,19 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+@MavenLibrary(groupId = "org.mongodb", artifactId = "mongo-java-driver", version = "3.12.7")
+@MavenLibrary(groupId = "mysql", artifactId = "mysql-connector-java", version = "8.0.22")
+@MavenLibrary(groupId = "org.xerial", artifactId = "sqlite-jdbc", version = "3.34.0")
+@MavenLibrary(groupId = "com.google.guava", artifactId = "guava", version = "28.2-jre")
 public class VoteRewardPlugin extends JavaPlugin {
 
     private static VoteRewardPlugin instance = null;
 
     // Start Database
-    public Database database = null;
+    private Database database = null;
+    private Type databaseType = null;
     private Connection connection = null;
+    private MongoDB mongoDB = null;
     // Stop Database
 
     /**
@@ -47,6 +56,11 @@ public class VoteRewardPlugin extends JavaPlugin {
      */
     public static VoteRewardPlugin getInstance() {
         return instance == null ? instance = VoteRewardPlugin.getPlugin(VoteRewardPlugin.class) : instance;
+    }
+
+    @Override
+    public void onLoad() {
+        LibraryLoader.loadAll(this);
     }
 
     @Override
@@ -79,7 +93,7 @@ public class VoteRewardPlugin extends JavaPlugin {
         Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
             try {
                 setupDatabase();
-            } catch (SQLException throwables) {
+            } catch (SQLException | ClassNotFoundException throwables) {
                 throwables.printStackTrace();
             }
         });
@@ -245,9 +259,9 @@ public class VoteRewardPlugin extends JavaPlugin {
     /**
      * Setup database Values: File, MySQL, SQLite
      */
-    private void setupDatabase() throws SQLException {
+    private void setupDatabase() throws SQLException, ClassNotFoundException {
         switch (String.valueOf(Options.DATABASE_TYPE.getValue())) {
-            case "MySQL":
+            case "MySQL": {
                 if (connection == null || connection.isClosed()) {
                     database = new MySQL(
                             String.valueOf(Options.DATABASE_HOST.getValue()),
@@ -255,39 +269,43 @@ public class VoteRewardPlugin extends JavaPlugin {
                             String.valueOf(Options.DATABASE_DATABASE.getValue()),
                             String.valueOf(Options.DATABASE_USER.getValue()),
                             String.valueOf(Options.DATABASE_PASSWORD.getValue()));
+                    databaseType = Type.SQL;
                     connection = database.openConnection();
-                    createTable();
+                    database.createTable();
                     Bukkit.getLogger().info("[VoteRewards] Database: MySQL");
                 }
                 break;
-            case "MongoDBAtlas": {
-                if (connection == null || connection.isClosed()) {
-                    database = new MongoAtlas(
-                            String.valueOf(Options.DATABASE_HOST.getValue()),
-                            String.valueOf(Options.DATABASE_PORT.getValue()),
-                            String.valueOf(Options.DATABASE_DATABASE.getValue()),
-                            String.valueOf(Options.DATABASE_USER.getValue()),
-                            String.valueOf(Options.DATABASE_PASSWORD.getValue()));
-                    connection = database.openConnection();
-                    createTable();
-                    Bukkit.getLogger().info("[VoteRewards] Database: MongoDB Atlas");
-                }
-                break;
             }
-            case "SQLite":
+            case "SQLite": {
                 if (connection == null || connection.isClosed()) {
                     database = new SQLite(
                             getDataFolder(),
                             String.valueOf(Options.DATABASE_SQLITE.getValue()));
+                    databaseType = Type.SQL;
                     connection = database.openConnection();
-                    createTable();
+                    database.createTable();
                     Bukkit.getLogger().info("[VoteRewards] Database: SQLite");
                 }
                 break;
-            default:
+            }
+            case "MongoDB": {
+                mongoDB = new MongoDB(
+                        String.valueOf(Options.DATABASE_MONGO_HOST.getValue()),
+                        (Integer) Options.DATABASE_MONGO_PORT.getValue(),
+                        String.valueOf(Options.DATABASE_MONGO_USER.getValue()),
+                        String.valueOf(Options.DATABASE_MONGO_PASSWORD.getValue()),
+                        String.valueOf(Options.DATABASE_MONGO_DATABASE.getValue()),
+                        String.valueOf(Options.DATABASE_MONGO_COLLECTION.getValue()));
+                databaseType = Type.MONGO;
+                Bukkit.getLogger().info("[VoteRewards] Database: MongoDB");
+                break;
+            }
+            default: {
                 Bukkit.getLogger().info("[VoteRewards] Database: File");
                 database = null;
+                databaseType = Type.FILE;
                 break;
+            }
         }
 
         UserVoteData.loadAllUsers();
@@ -308,14 +326,6 @@ public class VoteRewardPlugin extends JavaPlugin {
     }
 
     /**
-     * Create the user table
-     */
-    public void createTable() throws SQLException {
-        String sqlCreate = "CREATE TABLE IF NOT EXISTS `users` (\n  `uuid` varchar(255) DEFAULT NULL,\n  `name` varchar(255) DEFAULT NULL,\n  `votes` int(255) DEFAULT NULL,\n  `time` varchar(255) DEFAULT NULL,\n  `voteparty` int(255) DEFAULT NULL,\n  `daily` int(255) DEFAULT NULL,\n `services` varchar(10000) DEFAULT NULL\n)";
-        database.queryPreparedSQL(sqlCreate);
-    }
-
-    /**
      * Get Database open connection
      *
      * @return connection
@@ -326,6 +336,14 @@ public class VoteRewardPlugin extends JavaPlugin {
 
     public Database getDatabase() {
         return database;
+    }
+
+    public Type getDatabaseType() {
+        return databaseType;
+    }
+
+    public MongoDB getMongoDB() {
+        return mongoDB;
     }
 
     @Override
