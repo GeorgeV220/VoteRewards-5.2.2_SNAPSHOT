@@ -85,17 +85,29 @@ public enum Options {
 
     COMMAND_HOLOGRAM("commands.hologram"),
 
-    DATABASE_HOST("database.DB.host"),
+    DATABASE_HOST("database.SQL.host"),
 
-    DATABASE_PORT("database.DB.port"),
+    DATABASE_PORT("database.SQL.port"),
 
-    DATABASE_USER("database.DB.user"),
+    DATABASE_USER("database.SQL.user"),
 
-    DATABASE_PASSWORD("database.DB.password"),
+    DATABASE_PASSWORD("database.SQL.password"),
 
-    DATABASE_DATABASE("database.DB.database"),
+    DATABASE_DATABASE("database.SQL.database"),
 
     DATABASE_SQLITE("database.SQLite.file name"),
+
+    DATABASE_MONGO_HOST("database.MongoDB.host"),
+
+    DATABASE_MONGO_PORT("database.MongoDB.port"),
+
+    DATABASE_MONGO_USER("database.MongoDB.user"),
+
+    DATABASE_MONGO_PASSWORD("database.MongoDB.password"),
+
+    DATABASE_MONGO_DATABASE("database.MongoDB.database"),
+
+    DATABASE_MONGO_COLLECTION("database.MongoDB.collection"),
 
     DATABASE_TYPE("database.type"),
 

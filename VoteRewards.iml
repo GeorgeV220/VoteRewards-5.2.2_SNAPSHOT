@@ -44,12 +44,6 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: io.netty:netty-codec:4.1.32.Final" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.gmail.filoghost.holographicdisplays:holographicdisplays-api:2.4.4" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.google.code.findbugs:jsr305:3.0.2" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.mongodb:mongodb-jdbc:1.0.1" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.mongodb:mongodb-driver-sync:3.12.7" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.mongodb:bson:3.12.7" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.mongodb:mongodb-driver-core:3.12.7" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.mongodb:mongodb-driver:3.12.7" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.commons:commons-lang3:3.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: mysql:mysql-connector-java:8.0.22" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.google.protobuf:protobuf-java:3.11.4" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.google.guava:guava:28.2-jre" level="project" />
@@ -58,5 +52,7 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.checkerframework:checker-qual:2.10.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.google.errorprone:error_prone_annotations:2.3.4" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.google.j2objc:j2objc-annotations:1.3" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.mongodb:mongo-java-driver:3.12.7" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.xerial:sqlite-jdbc:3.34.0" level="project" />
   </component>
 </module>

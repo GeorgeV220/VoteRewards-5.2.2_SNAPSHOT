@@ -46,23 +46,28 @@ Options:
       enabled: false
       numbers: 50
     cumulative: false #Reward players if they reach X votes
-  # File, MySQL, SQLite, MongoDBAtlas
+  # File, MySQL, SQLite, MongoDB
   # Select in what type you want your data to be stored
   # File is recommended
-  #DB section is for MySQL and MongoDBAtlas
+  #SQL section is for MySQL
   #Default MySQL port: 3306
-  #Default MongoDBAtlas port: 27017
-  #MongoDBAtlas is not ready yet
   database:
     type: File
     SQLite:
       file name: voterewards
-    DB:
+    SQL:
       host: localhost
       port: 3306
       user: youruser
       password: "yourpassword"
       database: VoteRewards
+    MongoDB:
+      host: "localhost"
+      port: 27017
+      user: youruser
+      password: "yourpassword"
+      database: "voterewards"
+      collection: "users"
   # Settings about VoteParty
   voteparty:
     enabled: false

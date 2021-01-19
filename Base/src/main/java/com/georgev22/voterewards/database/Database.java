@@ -10,7 +10,7 @@ public abstract class Database {
         this.connection = null;
     }
 
-    public abstract Connection openConnection() throws SQLException;
+    public abstract Connection openConnection() throws SQLException, ClassNotFoundException;
 
     public boolean checkConnection() throws SQLException {
         return connection != null && !connection.isClosed();
@@ -28,7 +28,7 @@ public abstract class Database {
         return true;
     }
 
-    public ResultSet queryPreparedSQL(String query) throws SQLException {
+    public ResultSet queryPreparedSQL(String query) throws SQLException, ClassNotFoundException {
         if (!checkConnection()) {
             openConnection();
         }
@@ -38,7 +38,7 @@ public abstract class Database {
         return preparedStatement.executeQuery();
     }
 
-    public int updatePreparedSQL(String query) throws SQLException {
+    public int updatePreparedSQL(String query) throws SQLException, ClassNotFoundException {
         if (!checkConnection()) {
             openConnection();
         }
@@ -48,7 +48,7 @@ public abstract class Database {
         return preparedStatement.executeUpdate();
     }
 
-    public ResultSet querySQL(String query) throws SQLException {
+    public ResultSet querySQL(String query) throws SQLException, ClassNotFoundException {
         if (!checkConnection()) {
             openConnection();
         }
@@ -58,7 +58,7 @@ public abstract class Database {
         return statement.executeQuery(query);
     }
 
-    public int updateSQL(String query) throws SQLException {
+    public int updateSQL(String query) throws SQLException, ClassNotFoundException {
         if (!checkConnection()) {
             openConnection();
         }
@@ -66,5 +66,13 @@ public abstract class Database {
         Statement statement = connection.createStatement();
 
         return statement.executeUpdate(query);
+    }
+
+    /**
+     * Create the user table
+     */
+    public void createTable() throws SQLException, ClassNotFoundException {
+        String sqlCreate = "CREATE TABLE IF NOT EXISTS `users` (\n  `uuid` varchar(255) DEFAULT NULL,\n  `name` varchar(255) DEFAULT NULL,\n  `votes` int(255) DEFAULT NULL,\n  `time` varchar(255) DEFAULT NULL,\n  `voteparty` int(255) DEFAULT NULL,\n  `daily` int(255) DEFAULT NULL,\n `services` varchar(10000) DEFAULT NULL\n)";
+        updatePreparedSQL(sqlCreate);
     }
 }

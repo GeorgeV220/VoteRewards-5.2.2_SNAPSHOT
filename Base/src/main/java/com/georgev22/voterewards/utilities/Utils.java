@@ -1,6 +1,7 @@
 package com.georgev22.voterewards.utilities;
 
 import com.georgev22.voterewards.VoteRewardPlugin;
+import com.georgev22.voterewards.database.Type;
 import com.georgev22.voterewards.utilities.player.UserVoteData;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -356,18 +357,9 @@ public final class Utils {
     /* ----------------------------------------------------------------- */
 
     public static void debug(final JavaPlugin plugin, final Map<String, String> map, String... messages) {
-        Utils.printMsg("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
-        Utils.printMsg("=");
-        final String name, desc;
-        name = plugin.getDescription().getName() + " ";
-        desc = plugin.getDescription().getVersion();
-        Utils.printMsg("           " + name + desc);
-        Utils.printMsg("=");
         for (final String msg : messages) {
-            Utils.printMsg(placeHolder(msg, map, false));
+            Utils.printMsg(placeHolder("[VoteRewards] [Debug] [Version: " + plugin.getDescription().getVersion() + "] " + msg, map, false));
         }
-        Utils.printMsg("=");
-        Utils.printMsg("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
     }
 
     public static void debug(final JavaPlugin plugin, String... messages) {
@@ -430,7 +422,7 @@ public final class Utils {
      */
     public static Map<String, Integer> getTopPlayersMap() {
         ConcurrentMap<String, Integer> top = Maps.newConcurrentMap();
-        if (m.database != null) {
+        if (m.getDatabaseType().equals(Type.SQL)) {
             Bukkit.getScheduler().runTaskAsynchronously(m, () -> {
                 try {
                     ResultSet rs = m.getDatabase().queryPreparedSQL("SELECT * FROM `users`");
