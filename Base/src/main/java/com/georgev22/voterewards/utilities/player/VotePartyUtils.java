@@ -1,15 +1,11 @@
 package com.georgev22.voterewards.utilities.player;
 
+import com.georgev22.externals.xseries.XMaterial;
+import com.georgev22.externals.xseries.XSound;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.configmanager.CFG;
 import com.georgev22.voterewards.configmanager.FileManager;
-import com.georgev22.voterewards.utilities.MessagesUtil;
-import com.georgev22.voterewards.utilities.Options;
-import com.georgev22.voterewards.utilities.Regions;
-import com.georgev22.voterewards.utilities.Utils;
-import com.georgev22.xseries.XMaterial;
-import com.georgev22.xseries.XSound;
-import com.google.common.collect.Maps;
+import com.georgev22.voterewards.utilities.*;
 import com.google.common.collect.Sets;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -20,7 +16,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Random;
+import java.util.Set;
 
 public class VotePartyUtils {
 
@@ -49,9 +48,9 @@ public class VotePartyUtils {
         int maxVotes = (int) Options.VOTEPARTY_VOTES.getValue();
         int currentVotes = dataFile.getInt("VoteParty-Votes", 0);
 
-        final Map<String, String> placeholders = Maps.newHashMap();
+        final ObjectMap<String, String> placeholders = new ObjectMap<>();
         if (maxVotes - currentVotes > 0) {
-            placeholders.put("%votes%", Utils.formatNumber(maxVotes - currentVotes));
+            placeholders.append("%votes%", Utils.formatNumber(maxVotes - currentVotes));
             MessagesUtil.VOTEPARTY_VOTES_NEED.msgAll(placeholders, true);
             placeholders.clear();
         }
@@ -67,7 +66,7 @@ public class VotePartyUtils {
 
         }
         if (Options.VOTEPARTY_COOLDOWN.isEnabled()) {
-            placeholders.put("%secs%",
+            placeholders.append("%secs%",
                     String.valueOf(Options.VOTEPARTY_COOLDOWN_SECONDS.getValue()));
             MessagesUtil.VOTEPARTY_START.msgAll(placeholders, true);
             placeholders.clear();
@@ -100,7 +99,7 @@ public class VotePartyUtils {
                     }
                     players.clear();
                 }
-            }.runTaskLaterAsynchronously(voteRewardPlugin, (long) Options.VOTEPARTY_COOLDOWN_SECONDS.getValue() * 20L);
+            }.runTaskLaterAsynchronously(voteRewardPlugin, (int) Options.VOTEPARTY_COOLDOWN_SECONDS.getValue() * 20L);
 
         } else {
             for (OfflinePlayer offlinePlayer : players) {
@@ -148,10 +147,10 @@ public class VotePartyUtils {
     public void start() {
         final FileManager fm = FileManager.getInstance();
 
-        final Map<String, String> placeholders = Maps.newHashMap();
+        final ObjectMap<String, String> placeholders = new ObjectMap<>();
 
         if (Options.VOTEPARTY_COOLDOWN.isEnabled()) {
-            placeholders.put("%secs%",
+            placeholders.append("%secs%",
                     String.valueOf(Options.VOTEPARTY_COOLDOWN_SECONDS.getValue()));
             MessagesUtil.VOTEPARTY_START.msgAll(placeholders, true);
             placeholders.clear();

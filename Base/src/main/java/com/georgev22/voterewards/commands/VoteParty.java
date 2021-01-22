@@ -3,18 +3,17 @@ package com.georgev22.voterewards.commands;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.configmanager.FileManager;
 import com.georgev22.voterewards.utilities.MessagesUtil;
+import com.georgev22.voterewards.utilities.ObjectMap;
 import com.georgev22.voterewards.utilities.Options;
 import com.georgev22.voterewards.utilities.Utils;
 import com.georgev22.voterewards.utilities.player.UserVoteData;
 import com.georgev22.voterewards.utilities.player.VotePartyUtils;
-import com.google.common.collect.Maps;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
-import java.util.Map;
 
 public class VoteParty extends BukkitCommand {
 
@@ -31,7 +30,7 @@ public class VoteParty extends BukkitCommand {
 
     public boolean execute(final CommandSender sender, final String label, final String[] args) {
         if (!testPermission(sender)) return true;
-        final Map<String, String> placeholders = Maps.newHashMap();
+        final ObjectMap<String, String> placeholders = new ObjectMap<>();
         final FileManager fm = FileManager.getInstance();
         if (args.length != 0) {
             if (args[0].equalsIgnoreCase("start")) {
@@ -53,7 +52,7 @@ public class VoteParty extends BukkitCommand {
                 if (userVoteData.getVoteParty() > 0) {
                     ((Player) sender).getInventory()
                             .addItem(VotePartyUtils.getInstance().crate(userVoteData.getVoteParty()));
-                    placeholders.put("%crates%", String.valueOf(userVoteData.getVoteParty()));
+                    placeholders.append("%crates%", String.valueOf(userVoteData.getVoteParty()));
                     userVoteData.setVoteParties(0);
                     MessagesUtil.VOTEPARTY_CLAIM.msg(sender, placeholders, true);
                     placeholders.clear();
@@ -78,7 +77,7 @@ public class VoteParty extends BukkitCommand {
                     }
                     if (args.length == 2) {
                         target.getInventory().addItem(VotePartyUtils.getInstance().crate(1));
-                        placeholders.put("%amount%", "1");
+                        placeholders.append("%amount%", "1");
                         MessagesUtil.VOTEPARTY_GIVE.msg(target, placeholders, true);
                         placeholders.clear();
                         return true;
@@ -91,7 +90,7 @@ public class VoteParty extends BukkitCommand {
                 }
                 if (args.length == 1) {
                     ((Player) sender).getInventory().addItem(VotePartyUtils.getInstance().crate(1));
-                    placeholders.put("%amount%", "1");
+                    placeholders.append("%amount%", "1");
                     MessagesUtil.VOTEPARTY_GIVE.msg(sender, placeholders, true);
                     placeholders.clear();
                     return true;
@@ -103,7 +102,7 @@ public class VoteParty extends BukkitCommand {
                 }
                 if (args.length == 2) {
                     target.getInventory().addItem(VotePartyUtils.getInstance().crate(1));
-                    placeholders.put("%amount%", "1");
+                    placeholders.append("%amount%", "1");
                     MessagesUtil.VOTEPARTY_GIVE.msg(target, placeholders, true);
                     placeholders.clear();
                     return true;
@@ -113,17 +112,18 @@ public class VoteParty extends BukkitCommand {
                     return true;
                 }
                 ((Player) sender).getInventory().addItem(VotePartyUtils.getInstance().crate(Integer.parseInt(args[2])));
-                placeholders.put("%amount%", args[2]);
+                placeholders.append("%amount%", args[2]);
                 MessagesUtil.VOTEPARTY_GIVE.msg(target, placeholders, true);
                 placeholders.clear();
                 return true;
             }
             return true;
         }
-        placeholders.put("%votes%", String.valueOf((int) Options.VOTEPARTY_VOTES.getValue()
-                - fm.getData().getFileConfiguration().getInt("VoteParty-Votes")));
-        placeholders.put("%current%", String.valueOf(fm.getData().getFileConfiguration().getInt("VoteParty-Votes")));
-        placeholders.put("%need%", String.valueOf((int) Options.VOTEPARTY_VOTES.getValue()));
+        placeholders
+                .append("%votes%", String.valueOf((int) Options.VOTEPARTY_VOTES.getValue()
+                        - fm.getData().getFileConfiguration().getInt("VoteParty-Votes")))
+                .append("%current%", String.valueOf(fm.getData().getFileConfiguration().getInt("VoteParty-Votes")))
+                .append("%need%", String.valueOf((int) Options.VOTEPARTY_VOTES.getValue()));
         MessagesUtil.VOTEPARTY.msg(sender, placeholders, true);
         placeholders.clear();
         return true;

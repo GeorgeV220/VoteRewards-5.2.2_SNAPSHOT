@@ -1,69 +1,57 @@
 package com.georgev22.voterewards.utilities.player;
 
+import com.georgev22.voterewards.utilities.ObjectMap;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
-public class User {
-    private final UUID uuid;
-    private int votes = 0;
-    private long lastVoted = 0;
-    private int voteParties = 0;
-    private int dailyVotes = 0;
-    private List<String> services = new ArrayList<>();
+public class User extends ObjectMap {
 
+    private final UUID uuid;
+
+    /**
+     * Creates an User instance.
+     */
     public User(UUID uuid) {
+        this.uuid = uuid;
+        put("uuid", uuid.toString());
+    }
+
+    /**
+     * Creates a User instance initialized with the given map.
+     * <p>
+     * You must add UUID to your map
+     *
+     * @param uuid User Unique ID
+     * @param map  initial map
+     * @see {@link User#User(UUID)}
+     */
+    public User(UUID uuid, final Map<String, Object> map) {
+        super(map);
         this.uuid = uuid;
     }
 
-    public OfflinePlayer getPlayer() {
-        return Bukkit.getOfflinePlayer(uuid);
-    }
-
+    /**
+     * Returns User's Unique ID
+     *
+     * @return User's Unique ID
+     */
     public UUID getUniqueID() {
         return uuid;
     }
 
-    public void setVotes(int votes) {
-        this.votes = votes;
-    }
-
-    public void setServices(List<String> services) {
-        this.services = services;
-    }
-
-    public void setVoteParties(int voteParties) {
-        this.voteParties = voteParties;
-    }
-
-    public void setLastVoted(long lastVoted) {
-        this.lastVoted = lastVoted;
-    }
-
-    public int getVotes() {
-        return votes;
-    }
-
-    public long getLastVoted() {
-        return lastVoted;
-    }
-
-    public int getVoteParties() {
-        return voteParties;
-    }
-
-    public List<String> getServices() {
-        return services;
-    }
-
-    public void setDailyVotes(int votes) {
-        dailyVotes = votes;
-    }
-
-    public int getDailyVotes() {
-        return dailyVotes;
+    /**
+     * Gets the player, regardless if they are offline or
+     * online.
+     * <p>
+     * This will return an object even if the player does not exist. To this
+     * method, all players will exist.
+     *
+     * @return an offline player
+     */
+    public OfflinePlayer getPlayer() {
+        return Bukkit.getOfflinePlayer(getUniqueID());
     }
 }

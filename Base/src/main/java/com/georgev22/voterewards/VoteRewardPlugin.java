@@ -1,8 +1,7 @@
 package com.georgev22.voterewards;
 
-import com.georgev22.me.lucko.helper.maven.LibraryLoader;
-import com.georgev22.me.lucko.helper.maven.MavenLibrary;
-import com.georgev22.org.bstats.bukkit.MetricsLite;
+import com.georgev22.externals.me.lucko.helper.maven.LibraryLoader;
+import com.georgev22.externals.me.lucko.helper.maven.MavenLibrary;
 import com.georgev22.voterewards.commands.*;
 import com.georgev22.voterewards.configmanager.CFG;
 import com.georgev22.voterewards.configmanager.FileManager;
@@ -14,12 +13,9 @@ import com.georgev22.voterewards.database.sqlite.SQLite;
 import com.georgev22.voterewards.hooks.*;
 import com.georgev22.voterewards.listeners.PlayerListeners;
 import com.georgev22.voterewards.listeners.VotifierListener;
-import com.georgev22.voterewards.utilities.MessagesUtil;
-import com.georgev22.voterewards.utilities.Options;
-import com.georgev22.voterewards.utilities.Updater;
-import com.georgev22.voterewards.utilities.Utils;
+import com.georgev22.voterewards.utilities.*;
 import com.georgev22.voterewards.utilities.player.UserVoteData;
-import com.google.common.collect.Maps;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -44,12 +40,10 @@ public class VoteRewardPlugin extends JavaPlugin {
 
     private static VoteRewardPlugin instance = null;
 
-    // Start Database
     private Database database = null;
     private Type databaseType = null;
     private Connection connection = null;
     private MongoDB mongoDB = null;
-    // Stop Database
 
     /**
      * Return the VoteRewardPlugin instance
@@ -60,7 +54,7 @@ public class VoteRewardPlugin extends JavaPlugin {
 
     @Override
     public void onLoad() {
-        LibraryLoader.loadAll(this);
+        new LibraryLoader(this).loadAll(this);
     }
 
     @Override
@@ -131,9 +125,9 @@ public class VoteRewardPlugin extends JavaPlugin {
             new Updater();
         }
 
-        MetricsLite metrics = new MetricsLite(this);
+        Metrics metrics = new Metrics(this, 3179);
         if (metrics.isEnabled()) {
-            Bukkit.getLogger().info("[VoteRewards] Metrics is enabled!");
+            Bukkit.getLogger().info("[VoteRewards] Metrics are enabled!");
         }
 
         if (Options.REMINDER.isEnabled()) {
@@ -144,8 +138,8 @@ public class VoteRewardPlugin extends JavaPlugin {
                     if (reminderTimer <= System.currentTimeMillis()) {
                         UserVoteData userVoteData = UserVoteData.getUser(player.getUniqueId());
                         if (System.currentTimeMillis() >= userVoteData.getLastVote() + (24 * 60 * 60 * 1000)) {
-                            Map<String, String> placeholders = Maps.newHashMap();
-                            placeholders.put("%player%", player.getName());
+                            ObjectMap<String, String> placeholders = new ObjectMap<>();
+                            placeholders.append("%player%", player.getName());
                             MessagesUtil.REMINDER.msg(player, placeholders, true);
                         }
                         reminderMap.replace(player, System.currentTimeMillis() + ((int) Options.REMINDER_SEC.getValue() * 1000));
@@ -198,6 +192,9 @@ public class VoteRewardPlugin extends JavaPlugin {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+        }
+        if (mongoDB != null) {
+            mongoDB.getMongoClient().close();
         }
     }
 
@@ -315,6 +312,7 @@ public class VoteRewardPlugin extends JavaPlugin {
             userVoteData.load(new UserVoteData.Callback() {
                 @Override
                 public void onSuccess() {
+                    Utils.debug(VoteRewardPlugin.getInstance(), "Successfully loaded all users from " + databaseType.name());
                 }
 
                 @Override
@@ -334,14 +332,32 @@ public class VoteRewardPlugin extends JavaPlugin {
         return connection;
     }
 
+    /**
+     * Get Database class instance
+     *
+     * @return {@link Database} class instance
+     */
     public Database getDatabase() {
         return database;
     }
 
+    /**
+     * Return Database Type
+     *
+     * @return Database Type
+     */
     public Type getDatabaseType() {
         return databaseType;
     }
 
+    /**
+     * Return MongoDB instance when
+     * MongoDB is in use.
+     * <p>
+     * Returns null if MongoDB is not in use
+     *
+     * @return {@link MongoDB} instance
+     */
     public MongoDB getMongoDB() {
         return mongoDB;
     }
@@ -354,9 +370,9 @@ public class VoteRewardPlugin extends JavaPlugin {
     /**
      * Creates the reminder map
      *
-     * @return a new, empty {@code ConcurrentMap}
+     * @return a new, empty {@link ObjectMap#ObjectMap()}
      */
-    public final Map<Player, Long> reminderMap = Maps.newConcurrentMap();
+    public final ObjectMap<Player, Long> reminderMap = new ObjectMap<>();
 
 
 }

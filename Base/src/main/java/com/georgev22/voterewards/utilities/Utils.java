@@ -1,10 +1,8 @@
 package com.georgev22.voterewards.utilities;
 
 import com.georgev22.voterewards.VoteRewardPlugin;
-import com.georgev22.voterewards.database.Type;
 import com.georgev22.voterewards.utilities.player.UserVoteData;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.primitives.Doubles;
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
@@ -14,17 +12,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
 import java.lang.reflect.Field;
-import java.sql.ResultSet;
 import java.text.NumberFormat;
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -238,9 +232,9 @@ public final class Utils {
         if (map == null) {
             return str;
         }
-        for (final Entry<String, String> entr : map.entrySet()) {
-            str = ignoreCase ? replaceIgnoreCase(str, entr.getKey(), entr.getValue())
-                    : str.replace(entr.getKey(), entr.getValue());
+        for (final Entry<String, String> entry : map.entrySet()) {
+            str = ignoreCase ? replaceIgnoreCase(str, entry.getKey(), entry.getValue())
+                    : str.replace(entry.getKey(), entry.getValue());
         }
         return str;
     }
@@ -415,44 +409,11 @@ public final class Utils {
         return sb.toString();
     }
 
-    /**
-     * Add all players in a map
-     *
-     * @return Map
-     */
-    public static Map<String, Integer> getTopPlayersMap() {
-        ConcurrentMap<String, Integer> top = Maps.newConcurrentMap();
-        if (m.getDatabaseType().equals(Type.SQL)) {
-            Bukkit.getScheduler().runTaskAsynchronously(m, () -> {
-                try {
-                    ResultSet rs = m.getDatabase().queryPreparedSQL("SELECT * FROM `users`");
-                    while (rs.next()) {
-                        top.put(rs.getString("name"), rs.getInt("votes"));
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
-
-        } else {
-            File[] files = new File(VoteRewardPlugin.getInstance().getDataFolder(), "userdata").listFiles();
-
-            for (File file : Objects.requireNonNull(files)) {
-                FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
-                if (cfg.get("last-name") == null)
-                    continue;
-                top.put(cfg.getString("last-name"), cfg.getInt("total-votes"));
-            }
-        }
-        return top;
-    }
-
-    public static Map<String, Integer> getTopPlayers(int limit) {
+    public static ObjectMap<String, Integer> getTopPlayers(int limit) {
         return UserVoteData.getAllUsersMap().entrySet().stream()
                 .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())).limit(limit).collect(Collectors.toMap(
-                        Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
+                        Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue, ObjectMap::new));
     }
-
 
     public static String getTopPlayer(int number) {
         try {

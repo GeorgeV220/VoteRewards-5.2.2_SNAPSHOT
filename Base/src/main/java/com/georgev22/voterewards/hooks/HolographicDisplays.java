@@ -3,18 +3,17 @@ package com.georgev22.voterewards.hooks;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.configmanager.CFG;
 import com.georgev22.voterewards.configmanager.FileManager;
+import com.georgev22.voterewards.utilities.ObjectMap;
 import com.georgev22.voterewards.utilities.Options;
 import com.georgev22.voterewards.utilities.Utils;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import com.gmail.filoghost.holographicdisplays.api.line.TextLine;
-import com.google.common.collect.Maps;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
-import java.util.Map;
 
 /**
  * @author GeorgeV22
@@ -25,13 +24,13 @@ public class HolographicDisplays {
     private final static CFG dataCFG = fileManager.getData();
     private final static FileConfiguration data = dataCFG.getFileConfiguration();
     private final static VoteRewardPlugin m = VoteRewardPlugin.getInstance();
-    private static final Map<String, Hologram> hologramMap = Maps.newHashMap();
+    private static final ObjectMap<String, Hologram> hologramMap = new ObjectMap<>();
 
     public static Hologram create(String name, Location location, String type, boolean save) {
         Hologram hologram = getHologramMap().get(name);
         if (hologram == null) {
             hologram = HologramsAPI.createHologram(VoteRewardPlugin.getInstance(), location);
-            getHologramMap().put(name, hologram);
+            getHologramMap().append(name, hologram);
         }
 
         for (String line : fileManager.getConfig().getFileConfiguration().getStringList("Holograms." + type)) {
@@ -97,7 +96,7 @@ public class HolographicDisplays {
         return getHologramMap().get(name) != null;
     }
 
-    public static Hologram updateHologram(Hologram hologram, String[] lines, Map<String, String> placeholders) {
+    public static Hologram updateHologram(Hologram hologram, String[] lines, ObjectMap<String, String> placeholders) {
         int i = 0;
         for (final String key : lines) {
             for (String placeholder : placeholders.keySet()) {
@@ -122,24 +121,24 @@ public class HolographicDisplays {
         }
     }
 
-    public static Map<String, Hologram> getHologramMap() {
+    public static ObjectMap<String, Hologram> getHologramMap() {
         return hologramMap;
     }
 
-    public static Map<String, String> getPlaceholderMap() {
-        final Map<String, String> map = Maps.newHashMap();
-        map.put("%top-1%", Utils.getTopPlayer(0));
-        map.put("%top-2%", Utils.getTopPlayer(1));
-        map.put("%top-3%", Utils.getTopPlayer(2));
-        map.put("%top-4%", Utils.getTopPlayer(3));
-        map.put("%top-5%", Utils.getTopPlayer(4));
-        map.put("%bar%", Utils.getProgressBar(
-                data.getInt("VoteParty-Votes"),
-                (int) Options.VOTEPARTY_VOTES.getValue(),
-                (int) Options.VOTEPARTY_BARS.getValue(),
-                (String) Options.VOTEPARTY_BAR_SYMBOL.getValue(),
-                (String) Options.VOTEPARTY_COMPLETE_COLOR.getValue(),
-                (String) Options.VOTEPARTY_NOT_COMPLETE_COLOR.getValue()));
+    public static ObjectMap<String, String> getPlaceholderMap() {
+        final ObjectMap<String, String> map = new ObjectMap<>();
+        map.append("top-1", Utils.getTopPlayer(0))
+                .append("%top-2%", Utils.getTopPlayer(1))
+                .append("%top-3%", Utils.getTopPlayer(2))
+                .append("%top-4%", Utils.getTopPlayer(3))
+                .append("%top-5%", Utils.getTopPlayer(4))
+                .append("%bar%", Utils.getProgressBar(
+                        data.getInt("VoteParty-Votes"),
+                        (int) Options.VOTEPARTY_VOTES.getValue(),
+                        (int) Options.VOTEPARTY_BARS.getValue(),
+                        (String) Options.VOTEPARTY_BAR_SYMBOL.getValue(),
+                        (String) Options.VOTEPARTY_COMPLETE_COLOR.getValue(),
+                        (String) Options.VOTEPARTY_NOT_COMPLETE_COLOR.getValue()));
         return map;
     }
 

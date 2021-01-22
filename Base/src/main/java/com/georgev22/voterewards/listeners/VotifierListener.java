@@ -1,19 +1,17 @@
 package com.georgev22.voterewards.listeners;
 
+import com.georgev22.externals.xseries.XSound;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.utilities.MessagesUtil;
+import com.georgev22.voterewards.utilities.ObjectMap;
 import com.georgev22.voterewards.utilities.Options;
 import com.georgev22.voterewards.utilities.player.VoteUtils;
-import com.georgev22.xseries.XSound;
-import com.google.common.collect.Maps;
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.model.VotifierEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-
-import java.util.Map;
 
 /*
  *
@@ -37,15 +35,14 @@ public class VotifierListener implements Listener {
         }
 
         VoteUtils.processVote(offlinePlayer, vote.getUsername());
-        Map<String, String> placeholders = Maps.newHashMap();
-        placeholders.put("%player%", vote.getUsername());
-        placeholders.put("%servicename%", vote.getServiceName());
+        ObjectMap<String, String> placeholders = new ObjectMap<>();
+        placeholders.append("%player%", vote.getUsername()).append("%servicename%", vote.getServiceName());
         if (Options.MESSAGE.isEnabled())
             MessagesUtil.VOTE.msgAll(placeholders, true);
 
         placeholders.clear();
         if (Options.SOUND.isEnabled()) {
-            offlinePlayer.getPlayer().playSound(offlinePlayer.getPlayer().getLocation(), XSound.matchXSound(String.valueOf(Options.SOUND_VOTE)).get().parseSound(), 1000, 1);
+            offlinePlayer.getPlayer().playSound(offlinePlayer.getPlayer().getLocation(), XSound.matchXSound(String.valueOf(Options.SOUND_VOTE.getValue())).get().parseSound(), 1000, 1);
         }
     }
 

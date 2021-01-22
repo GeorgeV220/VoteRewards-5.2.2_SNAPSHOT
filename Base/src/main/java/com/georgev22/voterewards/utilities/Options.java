@@ -95,6 +95,8 @@ public enum Options {
 
     DATABASE_DATABASE("database.SQL.database"),
 
+    DATABASE_TABLE_NAME("database.SQL.table name"),
+
     DATABASE_SQLITE("database.SQLite.file name"),
 
     DATABASE_MONGO_HOST("database.MongoDB.host"),

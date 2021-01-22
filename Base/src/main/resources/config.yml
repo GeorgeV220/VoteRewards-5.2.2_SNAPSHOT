@@ -51,6 +51,7 @@ Options:
   # File is recommended
   #SQL section is for MySQL
   #Default MySQL port: 3306
+  #Default MongoDB port: 27017
   database:
     type: File
     SQLite:
@@ -61,13 +62,14 @@ Options:
       user: youruser
       password: "yourpassword"
       database: VoteRewards
+      table name: "voterewards_users"
     MongoDB:
       host: "localhost"
       port: 27017
       user: youruser
       password: "yourpassword"
       database: "voterewards"
-      collection: "users"
+      collection: "voterewards_users"
   # Settings about VoteParty
   voteparty:
     enabled: false

@@ -23,7 +23,7 @@
  *  SOFTWARE.
  */
 
-package com.georgev22.me.lucko.helper.maven;
+package com.georgev22.externals.me.lucko.helper.maven;
 
 import javax.annotation.Nonnull;
 import java.lang.annotation.*;

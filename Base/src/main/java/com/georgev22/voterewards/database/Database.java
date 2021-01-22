@@ -1,5 +1,7 @@
 package com.georgev22.voterewards.database;
 
+import com.georgev22.voterewards.utilities.Options;
+
 import java.sql.*;
 
 public abstract class Database {
@@ -72,7 +74,7 @@ public abstract class Database {
      * Create the user table
      */
     public void createTable() throws SQLException, ClassNotFoundException {
-        String sqlCreate = "CREATE TABLE IF NOT EXISTS `users` (\n  `uuid` varchar(255) DEFAULT NULL,\n  `name` varchar(255) DEFAULT NULL,\n  `votes` int(255) DEFAULT NULL,\n  `time` varchar(255) DEFAULT NULL,\n  `voteparty` int(255) DEFAULT NULL,\n  `daily` int(255) DEFAULT NULL,\n `services` varchar(10000) DEFAULT NULL\n)";
+        String sqlCreate = "CREATE TABLE IF NOT EXISTS `" + Options.DATABASE_TABLE_NAME.getValue() + "` (\n  `uuid` varchar(255) DEFAULT NULL,\n  `name` varchar(255) DEFAULT NULL,\n  `votes` int(255) DEFAULT NULL,\n  `time` varchar(255) DEFAULT NULL,\n  `voteparty` int(255) DEFAULT NULL,\n  `daily` int(255) DEFAULT NULL,\n `services` varchar(10000) DEFAULT NULL\n)";
         updatePreparedSQL(sqlCreate);
     }
 }

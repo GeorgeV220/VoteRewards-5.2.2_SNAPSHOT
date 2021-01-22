@@ -19,9 +19,9 @@
  * FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.georgev22.xseries.messages;
+package com.georgev22.externals.xseries.messages;
 
-import com.georgev22.xseries.ReflectionUtils;
+import com.georgev22.externals.xseries.ReflectionUtils;
 import com.google.common.base.Strings;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;

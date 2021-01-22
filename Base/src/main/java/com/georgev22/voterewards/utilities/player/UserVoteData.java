@@ -2,10 +2,10 @@ package com.georgev22.voterewards.utilities.player;
 
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.database.Type;
+import com.georgev22.voterewards.utilities.ObjectMap;
 import com.georgev22.voterewards.utilities.Options;
 import com.georgev22.voterewards.utilities.Utils;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.mongodb.BasicDBObject;
 import com.mongodb.Block;
 import com.mongodb.client.FindIterable;
@@ -23,14 +23,13 @@ import java.sql.SQLException;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Used to handle all user's votes and anything related to them.
  */
 public class UserVoteData {
 
-    private static final Map<UUID, User> userMap = Maps.newHashMap();
+    private static final ObjectMap<UUID, User> userMap = new ObjectMap<>();
     private static final VoteRewardPlugin voteRewardPlugin = VoteRewardPlugin.getInstance();
 
     /**
@@ -38,18 +37,18 @@ public class UserVoteData {
      *
      * @return all loaded users
      */
-    public static Map<UUID, User> getUserMap() {
+    public static ObjectMap<UUID, User> getUserMap() {
         return userMap;
     }
 
-    private static final Map<String, Integer> allUsersMap = Maps.newConcurrentMap();
+    private static final ObjectMap<String, Integer> allUsersMap = new ObjectMap<>();
 
     /**
      * Returns all the players in a map
      *
      * @return all the players
      */
-    public static Map<String, Integer> getAllUsersMap() {
+    public static ObjectMap<String, Integer> getAllUsersMap() {
         return allUsersMap;
     }
 
@@ -68,6 +67,7 @@ public class UserVoteData {
         } else if (voteRewardPlugin.getDatabaseType().equals(Type.MONGO)) {
             allUsersMap.putAll(MongoDBUtils.getAllUsers());
         }
+        Utils.debug(voteRewardPlugin, getAllUsersMap().toString());
     }
 
     /**
@@ -78,21 +78,25 @@ public class UserVoteData {
      */
     public static UserVoteData getUser(UUID uuid) {
         if (userMap.get(uuid) == null) {
-            userMap.put(uuid, new User(uuid));
+            userMap.append(uuid, new User(uuid));
         }
         return new UserVoteData(userMap.get(uuid));
     }
 
     private final User user;
-    private final UserUtils userUtils;
-    private final SQLUserUtils sqlUserUtils;
-    private final MongoDBUtils mongoDBUtils;
+    private UserUtils userUtils;
+    private SQLUserUtils sqlUserUtils;
+    private MongoDBUtils mongoDBUtils;
 
     private UserVoteData(User user) {
         this.user = user;
-        this.userUtils = UserUtils.getUser(user.getUniqueID());
-        this.sqlUserUtils = SQLUserUtils.getUser(user.getUniqueID());
-        this.mongoDBUtils = MongoDBUtils.getUser(user.getUniqueID());
+        if (voteRewardPlugin.getDatabaseType().equals(Type.SQL)) {
+            this.sqlUserUtils = SQLUserUtils.getUser(user.getUniqueID());
+        } else if (voteRewardPlugin.getDatabaseType().equals(Type.FILE)) {
+            this.userUtils = UserUtils.getUser(user.getUniqueID());
+        } else if (voteRewardPlugin.getDatabaseType().equals(Type.MONGO)) {
+            this.mongoDBUtils = MongoDBUtils.getUser(user.getUniqueID());
+        }
     }
 
     /**
@@ -101,7 +105,7 @@ public class UserVoteData {
      * @param votes
      */
     public void setVotes(int votes) {
-        user.setVotes(votes);
+        user.append("votes", votes);
     }
 
     /**
@@ -110,7 +114,7 @@ public class UserVoteData {
      * @param lastVoted
      */
     public void setLastVoted(long lastVoted) {
-        user.setLastVoted(lastVoted);
+        user.append("last", lastVoted);
     }
 
     /**
@@ -119,7 +123,7 @@ public class UserVoteData {
      * @param voteParties
      */
     public void setVoteParties(int voteParties) {
-        user.setVoteParties(voteParties);
+        user.append("voteparty", voteParties);
     }
 
     /**
@@ -130,7 +134,7 @@ public class UserVoteData {
     public void setOfflineServices(List<String> services) {
         if (Options.DEBUG_VOTES_OFFLINE.isEnabled())
             Utils.debug(voteRewardPlugin, "Offline Voting Debug", services.toString());
-        user.setServices(services);
+        user.append("services", services);
     }
 
     /**
@@ -139,7 +143,7 @@ public class UserVoteData {
      * @param votes
      */
     public void setDailyVotes(int votes) {
-        user.setDailyVotes(votes);
+        user.append("daily", votes);
     }
 
     /**
@@ -148,7 +152,7 @@ public class UserVoteData {
      * @return user daily votes
      */
     public int getDailyVotes() {
-        return user.getDailyVotes();
+        return user.getInteger("daily");
     }
 
     /**
@@ -158,7 +162,7 @@ public class UserVoteData {
      * @return player total votes
      */
     public int getVotes() {
-        return user.getVotes();
+        return user.getInteger("votes");
     }
 
     /**
@@ -168,7 +172,7 @@ public class UserVoteData {
      * @return player virtual crates
      */
     public int getVoteParty() {
-        return user.getVoteParties();
+        return user.getInteger("voteparty");
     }
 
     /**
@@ -178,7 +182,7 @@ public class UserVoteData {
      * @return the last time when the player voted
      */
     public long getLastVote() {
-        return user.getLastVoted();
+        return user.getLong("last", 0L);
     }
 
     /**
@@ -188,7 +192,7 @@ public class UserVoteData {
      * @return services
      */
     public List<String> getOfflineServices() {
-        return user.getServices();
+        return user.getList("services", String.class);
     }
 
     /**
@@ -376,20 +380,20 @@ public class UserVoteData {
          */
         public void save() throws SQLException, ClassNotFoundException {
             voteRewardPlugin.getDatabase().updatePreparedSQL(
-                    "UPDATE `users` " +
-                            "SET `votes` = '" + user.getVotes() + "', " +
-                            "`time` = '" + user.getLastVoted() + "', " +
-                            "`voteparty` = '" + user.getVoteParties() + "', " +
-                            "`daily` = '" + user.getDailyVotes() + "', " +
-                            "`services` = '" + user.getServices().toString().replace("[", "").replace("]", "").replace(" ", "") + "' " +
+                    "UPDATE `" + Options.DATABASE_TABLE_NAME.getValue() + "` " +
+                            "SET `votes` = '" + user.getInteger("votes") + "', " +
+                            "`time` = '" + user.getLong("last", 0L) + "', " +
+                            "`voteparty` = '" + user.getInteger("voteparty") + "', " +
+                            "`daily` = '" + user.getInteger("daily") + "', " +
+                            "`services` = '" + user.getList("services", String.class).toString().replace("[", "").replace("]", "").replace(" ", "") + "' " +
                             "WHERE `uuid` = '" + uuid.toString() + "'");
             if (Options.DEBUG_SAVE.isEnabled()) {
                 Utils.debug(voteRewardPlugin,
                         "User " + user.getPlayer().getName() + " successfully saved!",
-                        "Votes: " + user.getVotes(),
-                        "Daily Votes: " + user.getDailyVotes(),
-                        "Last Voted: " + Instant.ofEpochMilli(user.getLastVoted()).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())),
-                        "Vote Parties: " + user.getVoteParties());
+                        "Votes: " + user.getInteger("votes"),
+                        "Daily Votes: " + user.getInteger("daily"),
+                        "Last Voted: " + Instant.ofEpochMilli(user.getLong("last", 0L)).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())),
+                        "Vote Parties: " + user.getInteger("voteparty"));
             }
         }
 
@@ -399,11 +403,11 @@ public class UserVoteData {
          * @throws SQLException When something goes wrong
          */
         public void reset() throws SQLException, ClassNotFoundException {
-            user.setVotes(0);
-            user.setLastVoted(0);
-            user.setServices(Lists.newArrayList());
-            user.setVoteParties(0);
-            user.setDailyVotes(0);
+            user.append("votes", 0)
+                    .append("last", 0L)
+                    .append("services", Lists.newArrayList())
+                    .append("voteparty", 0)
+                    .append("daily", 0);
             save();
         }
 
@@ -415,20 +419,20 @@ public class UserVoteData {
                 @Override
                 public void onSuccess() {
                     try {
-                        ResultSet resultSet = voteRewardPlugin.getDatabase().queryPreparedSQL("SELECT * FROM `users` WHERE `uuid` = '" + uuid.toString() + "'");
+                        ResultSet resultSet = voteRewardPlugin.getDatabase().queryPreparedSQL("SELECT * FROM `" + Options.DATABASE_TABLE_NAME.getValue() + "` WHERE `uuid` = '" + uuid.toString() + "'");
                         while (resultSet.next()) {
-                            user.setVotes(resultSet.getInt("votes"));
-                            user.setLastVoted(resultSet.getLong("time"));
-                            user.setServices(resultSet.getString("services").replace(" ", "").isEmpty() ? Lists.newArrayList() : new ArrayList<>(Arrays.asList(resultSet.getString("services").split(","))));
-                            user.setVoteParties(resultSet.getInt("voteparty"));
-                            user.setDailyVotes(resultSet.getInt("daily"));
+                            user.append("votes", resultSet.getInt("votes"))
+                                    .append("last", resultSet.getLong("time"))
+                                    .append("services", resultSet.getString("services").replace(" ", "").isEmpty() ? Lists.newArrayList() : new ArrayList<>(Arrays.asList(resultSet.getString("services").split(","))))
+                                    .append("voteparty", resultSet.getInt("voteparty"))
+                                    .append("daily", resultSet.getInt("daily"));
                             if (Options.DEBUG_LOAD.isEnabled()) {
                                 Utils.debug(voteRewardPlugin,
                                         "User " + user.getPlayer().getName() + " successfully loaded!",
-                                        "Votes: " + user.getVotes(),
-                                        "Daily Votes: " + user.getDailyVotes(),
-                                        "Last Voted: " + Instant.ofEpochMilli(user.getLastVoted()).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())),
-                                        "Vote Parties: " + user.getVoteParties());
+                                        "Votes: " + user.getInteger("votes", 0),
+                                        "Daily Votes: " + user.getInteger("daily", 0),
+                                        "Last Voted: " + Instant.ofEpochMilli(user.getLong("last", 0L)).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())),
+                                        "Vote Parties: " + user.getInteger("voteparty"));
                             }
                         }
                         callback.onSuccess();
@@ -460,7 +464,7 @@ public class UserVoteData {
             try {
                 if (!playerExists()) {
                     voteRewardPlugin.getDatabase().updatePreparedSQL(
-                            "INSERT INTO `users` (`uuid`, `name`, `votes`, `time`, `daily`, `voteparty`, `services`)" +
+                            "INSERT INTO `" + Options.DATABASE_TABLE_NAME.getValue() + "` (`uuid`, `name`, `votes`, `time`, `daily`, `voteparty`, `services`)" +
                                     " VALUES " +
                                     "('" + uuid.toString() + "', '" + Bukkit.getOfflinePlayer(uuid).getName() + "','0', '0', '0', '0', '" + Lists.newArrayList().toString().replace("[", "").replace("]", "").replace(" ", "") + "');");
                 }
@@ -476,11 +480,11 @@ public class UserVoteData {
          * @return all the players from the database
          * @throws SQLException When something goes wrong
          */
-        public static Map<String, Integer> getAllUsers() throws SQLException, ClassNotFoundException {
-            Map<String, Integer> map = Maps.newHashMap();
-            ResultSet resultSet = voteRewardPlugin.getDatabase().queryPreparedSQL("SELECT * FROM `users`");
+        public static ObjectMap<String, Integer> getAllUsers() throws SQLException, ClassNotFoundException {
+            ObjectMap<String, Integer> map = new ObjectMap<>();
+            ResultSet resultSet = voteRewardPlugin.getDatabase().queryPreparedSQL("SELECT * FROM `" + Options.DATABASE_TABLE_NAME.getValue() + "`");
             while (resultSet.next()) {
-                map.put(resultSet.getString("name"), resultSet.getInt("votes"));
+                map.append(resultSet.getString("name"), resultSet.getInt("votes"));
             }
             return map;
         }
@@ -516,17 +520,17 @@ public class UserVoteData {
          */
         public void save() {
             BasicDBObject query = new BasicDBObject();
-            query.put("uuid", user.getUniqueID().toString());
+            query.append("uuid", user.getUniqueID().toString());
 
             BasicDBObject updateObject = new BasicDBObject();
-            updateObject.put("$set", new BasicDBObject()
+            updateObject.append("$set", new BasicDBObject()
                     .append("uuid", user.getUniqueID().toString())
                     .append("name", user.getPlayer().getName())
-                    .append("votes", user.getVotes())
-                    .append("voteparty", user.getVoteParties())
-                    .append("daily", user.getDailyVotes())
-                    .append("last-vote", user.getLastVoted())
-                    .append("services", user.getServices()));
+                    .append("votes", user.getInteger("votes", 0))
+                    .append("voteparty", user.getInteger("voteparty", 0))
+                    .append("daily", user.getInteger("daily", 0))
+                    .append("last-vote", user.getLong("last", 0L))
+                    .append("services", user.getList("services", String.class)));
 
             voteRewardPlugin.getMongoDB().getCollection().updateOne(query, updateObject);
         }
@@ -541,14 +545,14 @@ public class UserVoteData {
                 @Override
                 public void onSuccess() {
                     BasicDBObject searchQuery = new BasicDBObject();
-                    searchQuery.put("uuid", uuid.toString());
+                    searchQuery.append("uuid", uuid.toString());
                     FindIterable<Document> findIterable = voteRewardPlugin.getMongoDB().getCollection().find(searchQuery);
                     Document document = findIterable.first();
-                    user.setVotes(document.getInteger("votes"));
-                    user.setDailyVotes(document.getInteger("daily"));
-                    user.setVoteParties(document.getInteger("voteparty"));
-                    user.setLastVoted(document.getLong("last-vote"));
-                    user.setServices(document.getList("services", String.class));
+                    user.append("votes", document.getInteger("votes"))
+                            .append("daily", document.getInteger("daily"))
+                            .append("voteparty", document.getInteger("voteparty"))
+                            .append("last", document.getLong("last-vote"))
+                            .append("services", document.getList("services", String.class));
                     callback.onSuccess();
                 }
 
@@ -591,11 +595,11 @@ public class UserVoteData {
          * Reset player stats
          */
         public void reset() {
-            user.setVotes(0);
-            user.setLastVoted(0);
-            user.setServices(Lists.newArrayList());
-            user.setVoteParties(0);
-            user.setDailyVotes(0);
+            user.append("votes", 0)
+                    .append("last", 0L)
+                    .append("services", Lists.newArrayList())
+                    .append("voteparty", 0)
+                    .append("daily", 0);
             save();
         }
 
@@ -605,10 +609,10 @@ public class UserVoteData {
          *
          * @return all the players from the database
          */
-        public static Map<String, Integer> getAllUsers() {
-            Map<String, Integer> map = Maps.newHashMap();
+        public static ObjectMap<String, Integer> getAllUsers() {
+            ObjectMap<String, Integer> map = new ObjectMap<>();
             FindIterable<Document> iterable = voteRewardPlugin.getMongoDB().getCollection().find();
-            iterable.forEach((Block<Document>) document -> map.put(document.getString("name"), document.getInteger("votes")));
+            iterable.forEach((Block<Document>) document -> map.append(document.getString("name"), document.getInteger("votes")));
             return map;
         }
 
@@ -635,8 +639,8 @@ public class UserVoteData {
          *
          * @return all the users on userdata/ folder
          */
-        public static Map<String, Integer> getAllUsers() {
-            Map<String, Integer> map = new ConcurrentHashMap<>();
+        public static ObjectMap<String, Integer> getAllUsers() {
+            ObjectMap<String, Integer> map = new ObjectMap<>();
 
             File[] files = new File(VoteRewardPlugin.getInstance().getDataFolder(), "userdata").listFiles();
 
@@ -644,7 +648,7 @@ public class UserVoteData {
                 FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
                 if (cfg.get("last-name") == null)
                     continue;
-                map.put(cfg.getString("last-name"), cfg.getInt("total-votes"));
+                map.append(cfg.getString("last-name"), cfg.getInt("total-votes"));
             }
 
             return map;
@@ -688,11 +692,11 @@ public class UserVoteData {
          * Save the configuration
          */
         public void saveConfiguration() {
-            this.configuration.set("total-votes", user.getVotes());
-            this.configuration.set("daily-votes", user.getDailyVotes());
-            this.configuration.set("voteparty", user.getVoteParties());
-            this.configuration.set("last-vote", user.getLastVoted());
-            this.configuration.set("offline vote.services", user.getServices());
+            this.configuration.set("total-votes", user.getInteger("votes", 0));
+            this.configuration.set("daily-votes", user.getInteger("daily", 0));
+            this.configuration.set("voteparty", user.getInteger("voteparty", 0));
+            this.configuration.set("last-vote", user.getLong("last", 0L));
+            this.configuration.set("offline vote.services", user.getList("services", String.class));
             try {
                 this.configuration.save(file);
             } catch (IOException e) {
@@ -701,10 +705,10 @@ public class UserVoteData {
             if (Options.DEBUG_SAVE.isEnabled()) {
                 Utils.debug(voteRewardPlugin,
                         "User " + user.getPlayer().getName() + " successfully saved!",
-                        "Votes: " + user.getVotes(),
-                        "Daily Votes: " + user.getDailyVotes(),
-                        "Last Voted: " + Instant.ofEpochMilli(user.getLastVoted()).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())),
-                        "Vote Parties: " + user.getVoteParties());
+                        "Votes: " + user.getInteger("votes", 0),
+                        "Daily Votes: " + user.getInteger("daily", 0),
+                        "Last Voted: " + Instant.ofEpochMilli(user.getLong("last", 0L)).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())),
+                        "Vote Parties: " + user.getInteger("voteparty", 0));
             }
         }
 
@@ -754,24 +758,24 @@ public class UserVoteData {
                     Utils.debug(voteRewardPlugin,
                             "User " + getVoter().getName() + " doesn't exists!",
                             "Creating new User");
-                user.setDailyVotes(0);
-                user.setVotes(0);
-                user.setLastVoted(0);
-                user.setVoteParties(0);
-                user.setServices(Lists.newArrayList());
+                user.append("votes", 0)
+                        .append("last", 0)
+                        .append("services", Lists.newArrayList())
+                        .append("voteparty", 0)
+                        .append("daily", 0);
             } else {
-                user.setDailyVotes(getDailyVotes());
-                user.setVotes(getVotes());
-                user.setLastVoted(getLastVote());
-                user.setVoteParties(getVoteParty());
-                user.setServices(getServices());
+                user.append("votes", getVotes())
+                        .append("last", getLastVote())
+                        .append("services", getServices())
+                        .append("voteparty", getVoteParty())
+                        .append("daily", getDailyVotes());
                 if (Options.DEBUG_LOAD.isEnabled()) {
                     Utils.debug(voteRewardPlugin,
                             "User " + user.getPlayer().getName() + " successfully loaded!",
-                            "Votes: " + user.getVotes(),
-                            "Daily Votes: " + user.getDailyVotes(),
-                            "Last Voted: " + user.getLastVoted(),
-                            "Vote Parties: " + user.getVoteParties());
+                            "Votes: " + user.getInteger("votes", 0),
+                            "Daily Votes: " + user.getInteger("daily", 0),
+                            "Last Voted: " + Instant.ofEpochMilli(user.getLong("last", 0L)).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())),
+                            "Vote Parties: " + user.getInteger("voteparty", 0));
                 }
             }
             saveConfiguration();
@@ -790,11 +794,11 @@ public class UserVoteData {
          * Reset player stats
          */
         public void reset() {
-            user.setVotes(0);
-            user.setVoteParties(0);
-            user.setLastVoted(0);
-            user.setServices(Lists.newArrayList());
-            user.setDailyVotes(0);
+            user.append("votes", 0)
+                    .append("last", 0)
+                    .append("services", Lists.newArrayList())
+                    .append("voteparty", 0)
+                    .append("daily", 0);
             saveConfiguration();
         }
 

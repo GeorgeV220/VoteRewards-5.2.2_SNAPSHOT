@@ -23,25 +23,20 @@
  *  SOFTWARE.
  */
 
-package com.georgev22.me.lucko.helper.maven;
+package com.georgev22.externals.me.lucko.helper.maven;
 
 import javax.annotation.Nonnull;
 import java.lang.annotation.*;
 
 /**
- * Represents a maven repository.
+ * Annotation to indicate the required libraries for a class.
  */
 @Documented
-@Target(ElementType.LOCAL_VARIABLE)
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Repository {
+public @interface MavenLibraries {
 
-    /**
-     * Gets the base url of the repository.
-     *
-     * @return the base url of the repository
-     */
     @Nonnull
-    String url();
+    MavenLibrary[] value() default {};
 
 }

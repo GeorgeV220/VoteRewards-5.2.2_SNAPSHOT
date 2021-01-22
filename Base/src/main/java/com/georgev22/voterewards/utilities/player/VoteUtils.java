@@ -1,12 +1,12 @@
 package com.georgev22.voterewards.utilities.player;
 
+import com.georgev22.externals.xseries.XSound;
+import com.georgev22.externals.xseries.messages.Titles;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.hooks.HolographicDisplays;
 import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.Options;
 import com.georgev22.voterewards.utilities.Utils;
-import com.georgev22.xseries.XSound;
-import com.georgev22.xseries.messages.Titles;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;

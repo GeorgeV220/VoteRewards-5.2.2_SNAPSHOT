@@ -1,5 +1,7 @@
 package com.georgev22.voterewards.listeners;
 
+import com.georgev22.externals.xseries.XMaterial;
+import com.georgev22.externals.xseries.XSound;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.hooks.HolographicDisplays;
 import com.georgev22.voterewards.utilities.Options;
@@ -8,8 +10,6 @@ import com.georgev22.voterewards.utilities.Utils;
 import com.georgev22.voterewards.utilities.player.UserVoteData;
 import com.georgev22.voterewards.utilities.player.VotePartyUtils;
 import com.georgev22.voterewards.utilities.player.VoteUtils;
-import com.georgev22.xseries.XMaterial;
-import com.georgev22.xseries.XSound;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 
 public class PlayerListeners implements Listener {
 
-    private final VoteRewardPlugin m = VoteRewardPlugin.getInstance();
+    private final VoteRewardPlugin voteRewardPlugin = VoteRewardPlugin.getInstance();
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
@@ -60,9 +60,7 @@ public class PlayerListeners implements Listener {
                 }
                 userVoteData.save(true);
 
-                if (!UserVoteData.getAllUsersMap().containsKey(event.getPlayer().getName())) {
-                    UserVoteData.getAllUsersMap().put(event.getPlayer().getName(), userVoteData.getVotes());
-                }
+                UserVoteData.getAllUsersMap().append(event.getPlayer().getName(), userVoteData.getVotes());
             }
 
             @Override
@@ -82,13 +80,13 @@ public class PlayerListeners implements Listener {
             }
         }
 
-        m.reminderMap.put(event.getPlayer(), System.currentTimeMillis());
+        voteRewardPlugin.reminderMap.append(event.getPlayer(), System.currentTimeMillis());
     }
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         UserVoteData.getUser(event.getPlayer().getUniqueId()).save(true);
-        m.reminderMap.remove(event.getPlayer());
+        voteRewardPlugin.reminderMap.remove(event.getPlayer());
         UserVoteData.getUserMap().remove(event.getPlayer().getUniqueId());
     }
 
@@ -138,7 +136,7 @@ public class PlayerListeners implements Listener {
         VotePartyUtils.getInstance().chooseRandom(Options.VOTEPARTY_RANDOM.isEnabled(), p);
 
         if (Options.VOTEPARTY_SOUND_CRATE.isEnabled()) {
-            p.playSound(p.getLocation(), XSound.matchXSound(String.valueOf(Options.SOUND_VOTEPARTY_START)).get().parseSound(), 1000, 1);
+            p.playSound(p.getLocation(), XSound.matchXSound(String.valueOf(Options.SOUND_VOTEPARTY_START.getValue())).get().parseSound(), 1000, 1);
         }
 
         event.setCancelled(true);

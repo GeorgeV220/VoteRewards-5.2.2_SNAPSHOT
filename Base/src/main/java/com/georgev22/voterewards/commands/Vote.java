@@ -1,16 +1,15 @@
 package com.georgev22.voterewards.commands;
 
 import com.georgev22.voterewards.utilities.MessagesUtil;
+import com.georgev22.voterewards.utilities.ObjectMap;
 import com.georgev22.voterewards.utilities.Options;
 import com.georgev22.voterewards.utilities.Utils;
 import com.georgev22.voterewards.utilities.player.UserVoteData;
-import com.google.common.collect.Maps;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
-import java.util.Map;
 
 public class Vote extends BukkitCommand {
 
@@ -32,13 +31,13 @@ public class Vote extends BukkitCommand {
         }
 
         Player player = (Player) sender;
-        Map<String, String> placeholders = Maps.newHashMap();
+        ObjectMap<String, String> placeholders = new ObjectMap<>();
         UserVoteData userVoteData = UserVoteData.getUser(player.getUniqueId());
-        placeholders.put("%votes%", String.valueOf(userVoteData.getVotes()));
+        placeholders.append("%votes%", String.valueOf(userVoteData.getVotes()));
         MessagesUtil.VOTE_COMMAND.msg(player, placeholders, true);
 
         if (Options.CUMULATIVE.isEnabled() && Options.CUMULATIVE_MESSAGE.isEnabled()) {
-            placeholders.replace("%votes%", String.valueOf(userVoteData.votesUntilNextCumulativeVote()));
+            placeholders.append("%votes%", String.valueOf(userVoteData.votesUntilNextCumulativeVote()));
             MessagesUtil.VOTE_COMMAND_CUMULATIVE.msg(player, placeholders, true);
         }
 

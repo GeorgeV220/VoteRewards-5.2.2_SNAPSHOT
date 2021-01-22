@@ -22,9 +22,9 @@ public class SQLite extends Database {
         if (checkConnection()) {
             return connection;
         }
+
         Class.forName("org.sqlite.JDBC");
         String connectionURL = "jdbc:sqlite:" + path.getPath() + "/" + this.fileName + ".db";
-
         connection = DriverManager.getConnection(connectionURL);
         connection.createStatement().setQueryTimeout(Integer.MAX_VALUE);
         return connection;
