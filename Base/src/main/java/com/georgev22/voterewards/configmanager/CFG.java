@@ -90,7 +90,7 @@ public final class CFG {
     }
 
     /**
-     * @return the file -> The {@link FileConfiguration}.
+     * @return the file - The {@link FileConfiguration}.
      */
     public FileConfiguration getFileConfiguration() {
         return this.fileConfiguration;
