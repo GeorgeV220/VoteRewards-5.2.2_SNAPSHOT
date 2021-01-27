@@ -6,8 +6,8 @@
 
     <groupId>com.georgev22</groupId>
     <artifactId>VoteRewards</artifactId>
-    <version>4.x</version>
-    <packaging>pom</packaging>
+    <version>4.3.2</version>
+    <packaging>jar</packaging>
 
     <name>VoteRewards</name>
 
@@ -17,16 +17,72 @@
     </properties>
 
     <build>
-        <defaultGoal>clean package</defaultGoal>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.7.0</version>
+                <version>3.8.1</version>
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.4</version>
+                <configuration>
+                    <relocations>
+                        <relocation>
+                            <pattern>org.bstats</pattern>
+                            <shadedPattern>com.georgev22.bstats</shadedPattern>
+                        </relocation>
+                    </relocations>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/**</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.6</version>
+                <executions>
+                    <execution>
+                        <id>copy-to-testserver</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>/Users/georgev22/Spigot/plugins/</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.build.directory}</directory>
+                                    <includes>
+                                        <include>${project.name}-${project.version}.jar</include>
+                                    </includes>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
         <resources>
@@ -39,12 +95,16 @@
 
     <repositories>
         <repository>
-            <id>papermc</id>
+            <id>papermc-repo</id>
             <url>https://papermc.io/repo/repository/maven-public/</url>
         </repository>
         <repository>
             <id>sonatype</id>
             <url>https://oss.sonatype.org/content/groups/public/</url>
+        </repository>
+        <repository>
+            <id>georgev22</id>
+            <url>https://artifactory.georgev22.com/artifactory/libs-release/</url>
         </repository>
         <repository>
             <id>placeholderapi</id>
@@ -67,6 +127,35 @@
             <version>1.16.4-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.georgev22</groupId>
+            <artifactId>Externals</artifactId>
+            <version>1.0</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.georgev22</groupId>
+            <artifactId>Interfaces</artifactId>
+            <version>1.0</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.georgev22</groupId>
+            <artifactId>LegacyWorldEdit</artifactId>
+            <version>1.0</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.georgev22</groupId>
+            <artifactId>NewWorldEdit</artifactId>
+            <version>1.0</version>
+            <scope>compile</scope>
+        </dependency>
+
         <dependency>
             <groupId>me.clip</groupId>
             <artifactId>placeholderapi</artifactId>
@@ -127,13 +216,20 @@
             <version>1.8</version>
             <scope>compile</scope>
         </dependency>
-    </dependencies>
 
-    <modules>
-        <module>Externals</module>
-        <module>Base</module>
-        <module>legacyworldedit</module>
-        <module>newworldedit</module>
-        <module>interface</module>
-    </modules>
+        <dependency>
+            <groupId>be.maximvdw</groupId>
+            <artifactId>placeholderapi</artifactId>
+            <version>${project.version}</version>
+            <scope>system</scope>
+            <systemPath>${pom.basedir}/libs/MVdWPlaceholderAPI.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>me.robin</groupId>
+            <artifactId>leaderheads</artifactId>
+            <version>${project.version}</version>
+            <scope>system</scope>
+            <systemPath>${pom.basedir}/libs/LeaderHeadsAPI.jar</systemPath>
+        </dependency>
+    </dependencies>
 </project>

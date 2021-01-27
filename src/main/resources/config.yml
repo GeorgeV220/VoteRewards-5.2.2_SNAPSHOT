@@ -1,0 +1,197 @@
+Options:
+  debug: #Shows debug message
+    vote:
+      preVote: false
+      afterVote: false
+    load: false
+    save: false
+    votes:
+      cumulative: false
+      daily: false
+      lucky: false
+      regular: false
+      world: false
+      permissions: false
+      offline: false
+  commands: #Disable or enable plugin commands
+    rewards: true
+    vote: true
+    votetop: true
+    voterewards: true
+    votes: true
+    fakevote: true
+    voteparty: true
+    hologram: true
+  title:
+    vote: false #Shows a title message when the player votes
+  gui: false #LeaderHeads plugin is needed
+  updater: true
+  votetop:
+    header: true
+    footer: true
+    voters: 5 #How many players will show up in the list
+  message:
+    vote: true
+    voteparty: true
+  cumulative message: true #cumulative must be enabled
+  votes:
+    world: false #Per world rewards
+    disable services: false #Disable 'Services' section if you are using per world rewards
+    daily: #Daily vote
+      enabled: false
+      hours: 12
+    offline: false
+    permissions: false
+    lucky:
+      enabled: false
+      numbers: 50
+    cumulative: false #Reward players if they reach X votes
+  # File, MySQL, SQLite, MongoDB
+  # Select in what type you want your data to be stored
+  # File is recommended
+  #SQL section is for MySQL
+  #Default MySQL port: 3306
+  #Default MongoDB port: 27017
+  database:
+    type: File
+    SQLite:
+      file name: voterewards
+    SQL:
+      host: localhost
+      port: 3306
+      user: youruser
+      password: "yourpassword"
+      database: VoteRewards
+      table name: "voterewards_users"
+    MongoDB:
+      host: "localhost"
+      port: 27017
+      user: youruser
+      password: "yourpassword"
+      database: "voterewards"
+      collection: "voterewards_users"
+  # Settings about VoteParty
+  voteparty:
+    enabled: false
+    votes: 2 #Amount of votes in order to start a voteparty
+    progress: #Progress bar
+      bars: 10
+      complete color: "&a"
+      not complete color: "&c"
+      bar symbol: "|"
+    participate: true
+    regions: false
+    cooldown:
+      enabled: true
+      seconds: 5
+    crate:
+      enabled: true
+      item: PISTON
+      name: '&cVoteParty Crate'
+      lores:
+        - '&cPlace me'
+    random rewards: true
+    rewards:
+      - 'eco give %player% 6547'
+      - 'give %player% minecraft:nether_star 31'
+  # Remind your players to vote again
+  reminder:
+    enabled: false
+    time: 120
+  # Play a sound when the player votes
+  sound:
+    voteparty: false
+    vote: false
+    crate: false
+    sounds:
+      crate open: CHEST_OPEN
+      voteparty start: ENDERDRAGON_DEATH
+      vote received: NOTE_PIANO
+
+Rewards:
+  Worlds: #By world name and service name (you can disable 'Services' if you want "disable_services: true". Only for the 'Services' section)
+    world:
+      # default is used if a service name is not listed here. If default is missing, no service will be selected.
+      default:
+        - 'eco give %player% 500'
+        - 'broadcast %player% voted for the server!'
+        - 'msg %player% you got special rewards cause you are in the OverWorld'
+
+      # If Minecraft-MP is the service name. This is case insensitive.
+      Minecraft-MP:
+        - 'eco give %player% 600'
+        - 'broadcast %player% voted for the server in Minecraft-MP!'
+
+    world_nether:
+      # default is used if a service name is not listed here. If default is missing, no service will be selected.
+      default:
+        - 'give %player% nether_star'
+        - 'broadcast %player% voted for the server!'
+        - 'msg %player% you got special rewards cause you are in the Nether'
+
+      # If Minecraft-MP is the service name. This is case insensitive.
+      Minecraft-MP:
+        - 'give %player% nether_star 5'
+        - 'broadcast %player% voted for the server in Minecraft-MP!'
+        - 'msg %player% you got special rewards cause you are in the Nether'
+
+  Services: # By service name (you can disable it if you use per world rewards)
+    # default is used if a service name is not listed here. If default is missing, no service will be selected.
+    default:
+      commands:
+        - 'eco give %player% 400'
+        - 'broadcast %player% voted for the server!'
+    # If Minecraft-MP is the service name. This is case insensitive.
+    Minecraft-MP:
+      commands:
+        - 'eco give %player% 600'
+        - 'broadcast %player% voted for the server in Minecraft-MP!'
+
+  # How many times a player voted in a day
+  Daily:
+    '10':
+      commands:
+        - 'eco give %player% 1000'
+        - 'broadcast %player% voted in 10 sites and get 1000$'
+
+  # How many times a player voted in the server, in total.
+  Cumulative:
+    '10':
+      commands:
+        - broadcast %player% Voted 10 times
+
+  # Lucky vote (0-X) set lucky numbers. Higher values than 50 can be very difficult to get rewards
+  Lucky:
+    '10':
+      commands:
+        - eco give %player% 1000
+        - broadcast %player% was lucky and get 1000$
+    '17':
+      commands:
+        - eco give %player% 3000
+        - broadcast %player% was lucky and get 1000$
+
+  # Permission based rewards (eg: voterewards.rewards.starter , voterewards.rewards.vip )
+  Permission:
+    starter:
+      commands:
+        - 'give %player% minecraft:nether_star 50'
+        - 'eco give %player% 5000'
+    vip:
+      commands:
+        - 'eco give %player% 10000'
+        - 'give %player% minecraft:nether_star 100'
+
+# Hologram examples
+# Suggest more placeholders on github
+Holograms:
+  votetop:
+    - 'VoteTop'
+    - '%top-1%'
+    - '%top-2%'
+    - '%top-3%'
+    - '%top-4%'
+    - '%top-5%'
+  progress:
+    - 'VoteParty progress bar'
+    - '%bar%'
