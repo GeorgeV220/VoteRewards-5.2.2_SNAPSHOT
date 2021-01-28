@@ -382,7 +382,7 @@ public class UserVoteData {
          * @throws ClassNotFoundException When class not found
          */
         public void save() throws SQLException, ClassNotFoundException {
-            voteRewardPlugin.getDatabase().updatePreparedSQL(
+            voteRewardPlugin.getDatabase().updateSQL(
                     "UPDATE `" + Options.DATABASE_TABLE_NAME.getValue() + "` " +
                             "SET `votes` = '" + user.getInteger("votes") + "', " +
                             "`time` = '" + user.getLong("last", 0L) + "', " +
@@ -425,7 +425,7 @@ public class UserVoteData {
                 @Override
                 public void onSuccess() {
                     try {
-                        ResultSet resultSet = voteRewardPlugin.getDatabase().queryPreparedSQL("SELECT * FROM `" + Options.DATABASE_TABLE_NAME.getValue() + "` WHERE `uuid` = '" + uuid.toString() + "'");
+                        ResultSet resultSet = voteRewardPlugin.getDatabase().querySQL("SELECT * FROM `" + Options.DATABASE_TABLE_NAME.getValue() + "` WHERE `uuid` = '" + uuid.toString() + "'");
                         while (resultSet.next()) {
                             user.append("votes", resultSet.getInt("votes"))
                                     .append("last", resultSet.getLong("time"))
@@ -471,7 +471,7 @@ public class UserVoteData {
         public void setupUser(Callback callback) {
             try {
                 if (!playerExists()) {
-                    voteRewardPlugin.getDatabase().updatePreparedSQL(
+                    voteRewardPlugin.getDatabase().updateSQL(
                             "INSERT INTO `" + Options.DATABASE_TABLE_NAME.getValue() + "` (`uuid`, `name`, `votes`, `time`, `daily`, `voteparty`, `services`)" +
                                     " VALUES " +
                                     "('" + uuid.toString() + "', '" + Bukkit.getOfflinePlayer(uuid).getName() + "','0', '0', '0', '0', '" + Lists.newArrayList().toString().replace("[", "").replace("]", "").replace(" ", "") + "');");
@@ -491,7 +491,7 @@ public class UserVoteData {
          */
         public static ObjectMap<String, Integer> getAllUsers() throws SQLException, ClassNotFoundException {
             ObjectMap<String, Integer> map = new ObjectMap<>();
-            ResultSet resultSet = voteRewardPlugin.getDatabase().queryPreparedSQL("SELECT * FROM `" + Options.DATABASE_TABLE_NAME.getValue() + "`");
+            ResultSet resultSet = voteRewardPlugin.getDatabase().querySQL("SELECT * FROM `" + Options.DATABASE_TABLE_NAME.getValue() + "`");
             while (resultSet.next()) {
                 map.append(resultSet.getString("name"), resultSet.getInt("votes"));
             }

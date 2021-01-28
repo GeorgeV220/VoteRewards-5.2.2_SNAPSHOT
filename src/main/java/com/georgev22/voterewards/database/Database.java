@@ -35,9 +35,7 @@ public abstract class Database {
             openConnection();
         }
 
-        PreparedStatement preparedStatement = connection.prepareStatement(query);
-
-        return preparedStatement.executeQuery();
+        return connection.prepareStatement(query).executeQuery();
     }
 
     public int updatePreparedSQL(String query) throws SQLException, ClassNotFoundException {
@@ -45,9 +43,7 @@ public abstract class Database {
             openConnection();
         }
 
-        PreparedStatement preparedStatement = connection.prepareStatement(query);
-
-        return preparedStatement.executeUpdate();
+        return connection.prepareStatement(query).executeUpdate();
     }
 
     public ResultSet querySQL(String query) throws SQLException, ClassNotFoundException {
@@ -55,9 +51,7 @@ public abstract class Database {
             openConnection();
         }
 
-        Statement statement = connection.createStatement();
-
-        return statement.executeQuery(query);
+        return connection.createStatement().executeQuery(query);
     }
 
     public int updateSQL(String query) throws SQLException, ClassNotFoundException {
@@ -65,9 +59,7 @@ public abstract class Database {
             openConnection();
         }
 
-        Statement statement = connection.createStatement();
-
-        return statement.executeUpdate(query);
+        return connection.createStatement().executeUpdate(query);
     }
 
     /**
@@ -77,7 +69,6 @@ public abstract class Database {
      * @throws ClassNotFoundException When class is not found
      */
     public void createTable() throws SQLException, ClassNotFoundException {
-        String sqlCreate = "CREATE TABLE IF NOT EXISTS `" + Options.DATABASE_TABLE_NAME.getValue() + "` (\n  `uuid` varchar(255) DEFAULT NULL,\n  `name` varchar(255) DEFAULT NULL,\n  `votes` int(255) DEFAULT NULL,\n  `time` varchar(255) DEFAULT NULL,\n  `voteparty` int(255) DEFAULT NULL,\n  `daily` int(255) DEFAULT NULL,\n `services` varchar(10000) DEFAULT NULL\n)";
-        updatePreparedSQL(sqlCreate);
+        updateSQL("CREATE TABLE IF NOT EXISTS `" + Options.DATABASE_TABLE_NAME.getValue() + "` (\n  `uuid` varchar(255) DEFAULT NULL,\n  `name` varchar(255) DEFAULT NULL,\n  `votes` int(255) DEFAULT NULL,\n  `time` varchar(255) DEFAULT NULL,\n  `voteparty` int(255) DEFAULT NULL,\n  `daily` int(255) DEFAULT NULL,\n `services` varchar(10000) DEFAULT NULL\n)");
     }
 }
