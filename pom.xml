@@ -6,7 +6,7 @@
 
     <groupId>com.georgev22</groupId>
     <artifactId>VoteRewards</artifactId>
-    <version>4.3.2</version>
+    <version>${revision}</version>
     <packaging>jar</packaging>
 
     <name>VoteRewards</name>
@@ -14,15 +14,31 @@
     <properties>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <baseRevision>4.3.3</baseRevision>
+        <revision>v${baseRevision}</revision>
     </properties>
 
     <distributionManagement>
         <repository>
             <id>central</id>
             <name>GeorgeV22-releases</name>
-            <url>https://artifactory.georgev22.com:443/artifactory/libs-release</url>
+            <url>https://artifactory.georgev22.com/artifactory/libs-release</url>
         </repository>
     </distributionManagement>
+
+    <profiles>
+        <profile>
+            <id>jenkins</id>
+            <activation>
+                <property>
+                    <name>env.BUILD_NUMBER</name>
+                </property>
+            </activation>
+            <properties>
+                <revision>v${baseRevision}-b${env.BUILD_NUMBER}</revision>
+            </properties>
+        </profile>
+    </profiles>
 
     <build>
         <plugins>
@@ -38,6 +54,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
+
                 <version>3.2.4</version>
                 <configuration>
                     <relocations>
@@ -89,6 +106,7 @@
             <id>georgev22-release</id>
             <url>https://artifactory.georgev22.com/artifactory/libs-release/</url>
         </repository>
+
         <repository>
             <id>georgev22-snapshot</id>
             <url>https://artifactory.georgev22.com/artifactory/libs-snapshot/</url>
@@ -149,6 +167,7 @@
             <version>2.10.5</version>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>fr.xephi</groupId>
             <artifactId>authme</artifactId>
@@ -203,6 +222,7 @@
             <version>1.8</version>
             <scope>compile</scope>
         </dependency>
+
 
         <dependency>
             <groupId>be.maximvdw</groupId>
