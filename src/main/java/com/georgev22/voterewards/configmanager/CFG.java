@@ -1,5 +1,7 @@
 package com.georgev22.voterewards.configmanager;
 
+import com.georgev22.voterewards.utilities.Options;
+import com.georgev22.voterewards.utilities.Utils;
 import com.google.common.collect.Sets;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -46,14 +48,22 @@ public final class CFG {
      */
     public void setup() {
         if (!this.plugin.getDataFolder().exists()) {
-            this.plugin.getDataFolder().mkdir();
+            if (this.plugin.getDataFolder().mkdir()) {
+                if (Options.DEBUG_CREATE.isEnabled()) {
+                    Utils.debug(plugin, "Folder " + this.plugin.getDataFolder().getName() + " has been created!");
+                }
+            }
         }
 
         this.file = new File(this.plugin.getDataFolder(), this.fileName);
 
         if (!this.file.exists()) {
             try {
-                this.file.createNewFile();
+                if (this.file.createNewFile()) {
+                    if (Options.DEBUG_CREATE.isEnabled()) {
+                        Utils.debug(plugin, "File " + this.file.getName() + " has been created!");
+                    }
+                }
             } catch (final IOException e) {
                 e.printStackTrace();
             }

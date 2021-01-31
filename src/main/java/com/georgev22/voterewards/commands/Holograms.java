@@ -12,6 +12,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
@@ -35,7 +36,7 @@ public class Holograms extends BukkitCommand {
     }
 
     @Override
-    public boolean execute(CommandSender sender, String commandLabel, String[] args) {
+    public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, String[] args) {
         if (!testPermission(sender)) return true;
         if (!Bukkit.getServer().getPluginManager().isPluginEnabled("HolographicDisplays")) {
             Utils.msg(sender, "&c&l(!) &cHolographicDisplays is not enabled!");

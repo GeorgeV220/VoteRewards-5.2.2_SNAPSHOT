@@ -10,6 +10,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -26,7 +27,7 @@ public class VoteTop extends BukkitCommand {
         this.setAliases(Arrays.asList("vtop", "vrtop", "vvtop"));
     }
 
-    public boolean execute(final CommandSender sender, final String label, final String[] args) {
+    public boolean execute(@NotNull final CommandSender sender, @NotNull final String label, final String[] args) {
         if (!testPermission(sender)) return true;
         FileManager fm = FileManager.getInstance();
         FileConfiguration conf = fm.getConfig().getFileConfiguration();

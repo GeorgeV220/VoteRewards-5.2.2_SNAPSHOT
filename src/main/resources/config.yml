@@ -5,6 +5,7 @@ Options:
       afterVote: false
     load: false
     save: false
+    create: false
     votes:
       cumulative: false
       daily: false

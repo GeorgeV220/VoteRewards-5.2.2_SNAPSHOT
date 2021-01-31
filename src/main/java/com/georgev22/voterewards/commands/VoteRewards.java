@@ -13,6 +13,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
@@ -27,7 +28,7 @@ public class VoteRewards extends BukkitCommand {
         this.setAliases(Arrays.asList("vr", "votereward", "voter", "vrewards"));
     }
 
-    public boolean execute(final CommandSender sender, final String label, final String[] args) {
+    public boolean execute(@NotNull final CommandSender sender, @NotNull final String label, final String[] args) {
         if (!testPermission(sender)) return true;
         if (args.length == 0) {
             Utils.msg(sender, "&c&l(!) &cCommands &c&l(!)");
@@ -61,7 +62,7 @@ public class VoteRewards extends BukkitCommand {
                 Utils.msg(sender, "&c&l(!) &cThis feature has been disabled!");
                 return true;
             }
-            /*OfflinePlayer target = Bukkit.getOfflinePlayer(args[1]);
+            OfflinePlayer target = Bukkit.getOfflinePlayer(args[1]);
             UserVoteData userVoteData = UserVoteData.getUser(target.getUniqueId());
             if (args[2].equalsIgnoreCase("votes")) {
                 userVoteData.setVotes(Integer.parseInt(args[3]));
@@ -70,10 +71,13 @@ public class VoteRewards extends BukkitCommand {
                 userVoteData.setVoteParties(Integer.parseInt(args[3]));
                 Utils.msg(sender, "&a&l(!) &aSuccessfully set " + target.getName() + " voteparty crates to " + args[3]);
             } else if (args[2].equalsIgnoreCase("time")) {
-                userVoteData.setLastVoted(Integer.parseInt(args[3]));
+                userVoteData.setLastVoted(Long.parseLong(args[3]));
                 Utils.msg(sender, "&a&l(!) &aSuccessfully set " + target.getName() + " last time vote to " + args[3]);
+            } else if (args[2].equalsIgnoreCase("dailyvotes")) {
+                userVoteData.setDailyVotes(Integer.parseInt(args[3]));
+                Utils.msg(sender, "&a&l(!) &aSuccessfully set " + target.getName() + " daily votes to " + args[3]);
             }
-            userVoteData.save();*/
+            userVoteData.save(true);
             return true;
         } else if (args[0].equalsIgnoreCase("help")) {
             if (args.length == 1) {

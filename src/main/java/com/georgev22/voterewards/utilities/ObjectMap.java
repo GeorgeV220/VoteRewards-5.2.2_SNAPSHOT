@@ -1,14 +1,14 @@
 package com.georgev22.voterewards.utilities;
 
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import static com.georgev22.voterewards.utilities.Assertions.notNull;
 import static java.lang.String.format;
 
-public class ObjectMap<K, V> extends ConcurrentHashMap<K, V> {
+public class ObjectMap<K, V> extends LinkedHashMap<K, V> {
 
     /**
      * Creates a new empty {@link ObjectMap} instance.

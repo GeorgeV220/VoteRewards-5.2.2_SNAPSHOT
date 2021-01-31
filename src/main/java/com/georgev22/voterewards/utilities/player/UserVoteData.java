@@ -673,15 +673,23 @@ public class UserVoteData {
         private UserUtils(final UUID uuid) {
             this.uuid = uuid;
 
-            new File(VoteRewardPlugin.getInstance().getDataFolder(),
-                    "userdata").mkdirs();
+            if (new File(VoteRewardPlugin.getInstance().getDataFolder(),
+                    "userdata").mkdirs()) {
+                if (Options.DEBUG_CREATE.isEnabled()) {
+                    Utils.debug(voteRewardPlugin, "Folder userdata has been created!");
+                }
+            }
 
             this.file = new File(VoteRewardPlugin.getInstance().getDataFolder(),
                     "userdata" + File.separator + uuid.toString() + ".yml");
 
             if (!this.file.exists()) {
                 try {
-                    this.file.createNewFile();
+                    if (this.file.createNewFile()) {
+                        if (Options.DEBUG_CREATE.isEnabled()) {
+                            Utils.debug(voteRewardPlugin, "File " + file.getName() + " for the user " + Bukkit.getOfflinePlayer(uuid).getName() + " has been created!");
+                        }
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

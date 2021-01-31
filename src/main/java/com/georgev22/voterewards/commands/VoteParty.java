@@ -12,6 +12,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
@@ -28,7 +29,7 @@ public class VoteParty extends BukkitCommand {
         this.setAliases(Arrays.asList("vvp", "vp", "vrvp"));
     }
 
-    public boolean execute(final CommandSender sender, final String label, final String[] args) {
+    public boolean execute(@NotNull final CommandSender sender, @NotNull final String label, final String[] args) {
         if (!testPermission(sender)) return true;
         final ObjectMap<String, String> placeholders = new ObjectMap<>();
         final FileManager fm = FileManager.getInstance();

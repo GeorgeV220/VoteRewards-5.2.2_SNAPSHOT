@@ -15,6 +15,8 @@ public enum Options {
 
     DEBUG_SAVE("debug.save"),
 
+    DEBUG_CREATE("debug.create"),
+
     DEBUG_VOTES_CUMULATIVE("debug.votes.cumulative"),
 
     DEBUG_VOTES_DAILY("debug.votes.daily"),

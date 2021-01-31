@@ -318,7 +318,8 @@ public class VoteRewardPlugin extends JavaPlugin {
             userVoteData.load(new UserVoteData.Callback() {
                 @Override
                 public void onSuccess() {
-                    Utils.debug(VoteRewardPlugin.getInstance(), "Successfully loaded all users from " + databaseType.name());
+                    if (Options.DEBUG_LOAD.isEnabled())
+                        Utils.debug(VoteRewardPlugin.getInstance(), "Successfully loaded all users from " + databaseType.name());
                 }
 
                 @Override

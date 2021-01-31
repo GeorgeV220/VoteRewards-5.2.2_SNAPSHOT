@@ -62,8 +62,9 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.mongodb:mongo-java-driver:3.12.7" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.xerial:sqlite-jdbc:3.34.0" level="project" />
     <orderEntry type="library" name="Maven: org.bstats:bstats-bukkit:1.8" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jetbrains:annotations:16.0.1" level="project" />
     <orderEntry type="module-library">
-      <library name="Maven: be.maximvdw:placeholderapi:v4.3.3">
+      <library name="Maven: be.maximvdw:placeholderapi:1.0">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/libs/MVdWPlaceholderAPI.jar!/" />
         </CLASSES>
@@ -72,7 +73,7 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library">
-      <library name="Maven: me.robin:leaderheads:v4.3.3">
+      <library name="Maven: me.robin:leaderheads:1.0">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/libs/LeaderHeadsAPI.jar!/" />
         </CLASSES>
