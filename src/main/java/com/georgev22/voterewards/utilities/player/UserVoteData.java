@@ -2,9 +2,11 @@ package com.georgev22.voterewards.utilities.player;
 
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.database.Type;
-import com.georgev22.voterewards.utilities.ObjectMap;
 import com.georgev22.voterewards.utilities.Options;
 import com.georgev22.voterewards.utilities.Utils;
+import com.georgev22.voterewards.utilities.maps.ConcurrentObjectMap;
+import com.georgev22.voterewards.utilities.maps.LinkedObjectMap;
+import com.georgev22.voterewards.utilities.maps.ObjectMap;
 import com.google.common.collect.Lists;
 import com.mongodb.BasicDBObject;
 import com.mongodb.Block;
@@ -29,7 +31,7 @@ import java.util.*;
  */
 public class UserVoteData {
 
-    private static final ObjectMap<UUID, User> userMap = new ObjectMap<>();
+    private static final ConcurrentObjectMap<UUID, User> userMap = new ConcurrentObjectMap<>();
     private static final VoteRewardPlugin voteRewardPlugin = VoteRewardPlugin.getInstance();
 
     /**
@@ -37,18 +39,18 @@ public class UserVoteData {
      *
      * @return all loaded users
      */
-    public static ObjectMap<UUID, User> getUserMap() {
+    public static ConcurrentObjectMap<UUID, User> getUserMap() {
         return userMap;
     }
 
-    private static final ObjectMap<String, Integer> allUsersMap = new ObjectMap<>();
+    private static final LinkedObjectMap<String, Integer> allUsersMap = new LinkedObjectMap<>();
 
     /**
      * Returns all the players in a map
      *
      * @return all the players
      */
-    public static ObjectMap<String, Integer> getAllUsersMap() {
+    public static LinkedObjectMap<String, Integer> getAllUsersMap() {
         return allUsersMap;
     }
 
@@ -490,7 +492,7 @@ public class UserVoteData {
          * @throws ClassNotFoundException When the class is not found
          */
         public static ObjectMap<String, Integer> getAllUsers() throws SQLException, ClassNotFoundException {
-            ObjectMap<String, Integer> map = new ObjectMap<>();
+            ObjectMap<String, Integer> map = new LinkedObjectMap<>();
             ResultSet resultSet = voteRewardPlugin.getDatabase().querySQL("SELECT * FROM `" + Options.DATABASE_TABLE_NAME.getValue() + "`");
             while (resultSet.next()) {
                 map.append(resultSet.getString("name"), resultSet.getInt("votes"));
@@ -619,7 +621,7 @@ public class UserVoteData {
          * @return all the players from the database
          */
         public static ObjectMap<String, Integer> getAllUsers() {
-            ObjectMap<String, Integer> map = new ObjectMap<>();
+            ObjectMap<String, Integer> map = new LinkedObjectMap<>();
             FindIterable<Document> iterable = voteRewardPlugin.getMongoDB().getCollection().find();
             iterable.forEach((Block<Document>) document -> map.append(document.getString("name"), document.getInteger("votes")));
             return map;
@@ -649,12 +651,12 @@ public class UserVoteData {
          * @return all the users on userdata/ folder
          */
         public static ObjectMap<String, Integer> getAllUsers() {
-            ObjectMap<String, Integer> map = new ObjectMap<>();
+            ObjectMap<String, Integer> map = new LinkedObjectMap<>();
 
             File[] files = new File(VoteRewardPlugin.getInstance().getDataFolder(), "userdata").listFiles();
 
             if (files == null) {
-                return new ObjectMap<>();
+                return map;
             }
 
             for (File file : files) {

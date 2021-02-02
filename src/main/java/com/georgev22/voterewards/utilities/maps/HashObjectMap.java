@@ -1,46 +1,46 @@
-package com.georgev22.voterewards.utilities;
+package com.georgev22.voterewards.utilities.maps;
 
 import java.util.Date;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static com.georgev22.voterewards.utilities.Assertions.notNull;
 import static java.lang.String.format;
 
-public class ObjectMap<K, V> extends LinkedHashMap<K, V> {
+public class HashObjectMap<K, V> extends HashMap<K, V> implements ObjectMap<K, V> {
 
     /**
-     * Creates a new empty {@link ObjectMap} instance.
+     * Creates a new empty {@link HashObjectMap} instance.
      *
-     * @return a new empty {@link ObjectMap} instance.
+     * @return a new empty {@link HashObjectMap} instance.
      */
-    public static ObjectMap newObjectMap() {
-        return new ObjectMap();
+    public static HashObjectMap newObjectMap() {
+        return new HashObjectMap();
     }
 
     /**
-     * Creates a {@link ObjectMap} instance with the same mappings as the specified map.
+     * Creates a {@link HashObjectMap} instance with the same mappings as the specified map.
      *
      * @param map the mappings to be placed in the new map
-     * @return a new {@link ObjectMap#ObjectMap(Map)} initialized with the mappings from {@code map}
+     * @return a new {@link HashObjectMap#HashObjectMap(Map)} initialized with the mappings from {@code map}
      */
-    public static ObjectMap newObjectMap(final Map map) {
-        return new ObjectMap(map);
+    public static HashObjectMap newObjectMap(final Map map) {
+        return new HashObjectMap(map);
     }
 
     /**
-     * Creates an ObjectMap instance.
+     * Creates an HashObjectMap instance.
      */
-    public ObjectMap() {
+    public HashObjectMap() {
     }
 
     /**
-     * Creates a ObjectMap instance initialized with the given map.
+     * Creates a HashObjectMap instance initialized with the given map.
      *
      * @param map initial map
      */
-    public ObjectMap(final Map<K, V> map) {
+    public HashObjectMap(final Map<K, V> map) {
         putAll(map);
     }
 
@@ -54,7 +54,7 @@ public class ObjectMap<K, V> extends LinkedHashMap<K, V> {
      * @param value value
      * @return this
      */
-    public ObjectMap<K, V> append(final K key, final V value) {
+    public HashObjectMap<K, V> append(final K key, final V value) {
         if (containsKey(key)) {
             replace(key, value);
         } else {

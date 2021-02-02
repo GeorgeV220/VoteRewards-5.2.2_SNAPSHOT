@@ -3,9 +3,10 @@ package com.georgev22.voterewards.commands;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.configmanager.FileManager;
 import com.georgev22.voterewards.utilities.MessagesUtil;
-import com.georgev22.voterewards.utilities.ObjectMap;
 import com.georgev22.voterewards.utilities.Options;
 import com.georgev22.voterewards.utilities.Utils;
+import com.georgev22.voterewards.utilities.maps.HashObjectMap;
+import com.georgev22.voterewards.utilities.maps.ObjectMap;
 import com.georgev22.voterewards.utilities.player.UserVoteData;
 import com.georgev22.voterewards.utilities.player.VotePartyUtils;
 import org.bukkit.Bukkit;
@@ -31,7 +32,7 @@ public class VoteParty extends BukkitCommand {
 
     public boolean execute(@NotNull final CommandSender sender, @NotNull final String label, final String[] args) {
         if (!testPermission(sender)) return true;
-        final ObjectMap<String, String> placeholders = new ObjectMap<>();
+        final ObjectMap<String, String> placeholders = new HashObjectMap<>();
         final FileManager fm = FileManager.getInstance();
         if (args.length != 0) {
             if (args[0].equalsIgnoreCase("start")) {

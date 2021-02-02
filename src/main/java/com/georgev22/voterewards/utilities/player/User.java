@@ -1,13 +1,13 @@
 package com.georgev22.voterewards.utilities.player;
 
-import com.georgev22.voterewards.utilities.ObjectMap;
+import com.georgev22.voterewards.utilities.maps.ConcurrentObjectMap;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
 import java.util.Map;
 import java.util.UUID;
 
-public class User extends ObjectMap {
+public class User extends ConcurrentObjectMap {
 
     private final UUID uuid;
 

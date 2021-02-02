@@ -3,9 +3,11 @@ package com.georgev22.voterewards.hooks;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.configmanager.CFG;
 import com.georgev22.voterewards.configmanager.FileManager;
-import com.georgev22.voterewards.utilities.ObjectMap;
 import com.georgev22.voterewards.utilities.Options;
 import com.georgev22.voterewards.utilities.Utils;
+import com.georgev22.voterewards.utilities.maps.ConcurrentObjectMap;
+import com.georgev22.voterewards.utilities.maps.HashObjectMap;
+import com.georgev22.voterewards.utilities.maps.ObjectMap;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import com.gmail.filoghost.holographicdisplays.api.line.TextLine;
@@ -24,7 +26,7 @@ public class HolographicDisplays {
     private final static CFG dataCFG = fileManager.getData();
     private final static FileConfiguration data = dataCFG.getFileConfiguration();
     private final static VoteRewardPlugin m = VoteRewardPlugin.getInstance();
-    private static final ObjectMap<String, Hologram> hologramMap = new ObjectMap<>();
+    private static final ObjectMap<String, Hologram> hologramMap = new ConcurrentObjectMap<>();
 
     public static Hologram create(String name, Location location, String type, boolean save) {
         Hologram hologram = getHologramMap().get(name);
@@ -126,7 +128,7 @@ public class HolographicDisplays {
     }
 
     public static ObjectMap<String, String> getPlaceholderMap() {
-        final ObjectMap<String, String> map = new ObjectMap<>();
+        final ObjectMap<String, String> map = new HashObjectMap<>();
         map.append("top-1", Utils.getTopPlayer(0))
                 .append("%top-2%", Utils.getTopPlayer(1))
                 .append("%top-3%", Utils.getTopPlayer(2))

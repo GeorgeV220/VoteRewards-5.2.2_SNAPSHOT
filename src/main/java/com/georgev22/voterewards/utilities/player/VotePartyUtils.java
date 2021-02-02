@@ -6,6 +6,8 @@ import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.configmanager.CFG;
 import com.georgev22.voterewards.configmanager.FileManager;
 import com.georgev22.voterewards.utilities.*;
+import com.georgev22.voterewards.utilities.maps.HashObjectMap;
+import com.georgev22.voterewards.utilities.maps.ObjectMap;
 import com.google.common.collect.Sets;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -44,7 +46,7 @@ public class VotePartyUtils {
         int maxVotes = (int) Options.VOTEPARTY_VOTES.getValue();
         int currentVotes = dataFile.getInt("VoteParty-Votes", 0);
 
-        final ObjectMap<String, String> placeholders = new ObjectMap<>();
+        final ObjectMap<String, String> placeholders = new HashObjectMap<>();
         if (!start) {
             if (!Options.VOTEPARTY.isEnabled()) {
                 return;

@@ -2,9 +2,10 @@ package com.georgev22.voterewards.commands;
 
 import com.georgev22.voterewards.configmanager.FileManager;
 import com.georgev22.voterewards.utilities.MessagesUtil;
-import com.georgev22.voterewards.utilities.ObjectMap;
 import com.georgev22.voterewards.utilities.Options;
 import com.georgev22.voterewards.utilities.Utils;
+import com.georgev22.voterewards.utilities.maps.HashObjectMap;
+import com.georgev22.voterewards.utilities.maps.ObjectMap;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
@@ -42,7 +43,7 @@ public class VoteTop extends BukkitCommand {
             return true;
         }
 
-        ObjectMap<String, String> placeholders = new ObjectMap<>();
+        ObjectMap<String, String> placeholders = new HashObjectMap<>();
 
         if (Options.VOTETOP_HEADER.isEnabled())
             MessagesUtil.VOTE_TOP_HEADER.msg(sender);

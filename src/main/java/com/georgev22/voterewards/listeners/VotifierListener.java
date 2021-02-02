@@ -3,8 +3,9 @@ package com.georgev22.voterewards.listeners;
 import com.georgev22.externals.xseries.XSound;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.utilities.MessagesUtil;
-import com.georgev22.voterewards.utilities.ObjectMap;
 import com.georgev22.voterewards.utilities.Options;
+import com.georgev22.voterewards.utilities.maps.HashObjectMap;
+import com.georgev22.voterewards.utilities.maps.ObjectMap;
 import com.georgev22.voterewards.utilities.player.VoteUtils;
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.model.VotifierEvent;
@@ -35,7 +36,7 @@ public class VotifierListener implements Listener {
         }
 
         VoteUtils.processVote(offlinePlayer, vote.getUsername());
-        ObjectMap<String, String> placeholders = new ObjectMap<>();
+        ObjectMap<String, String> placeholders = new HashObjectMap<>();
         placeholders.append("%player%", vote.getUsername()).append("%servicename%", vote.getServiceName());
         if (Options.MESSAGE.isEnabled())
             MessagesUtil.VOTE.msgAll(placeholders, true);

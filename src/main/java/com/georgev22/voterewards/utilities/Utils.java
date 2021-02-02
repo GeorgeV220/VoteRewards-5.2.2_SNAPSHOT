@@ -1,6 +1,7 @@
 package com.georgev22.voterewards.utilities;
 
 import com.georgev22.voterewards.VoteRewardPlugin;
+import com.georgev22.voterewards.utilities.maps.LinkedObjectMap;
 import com.georgev22.voterewards.utilities.player.UserVoteData;
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Doubles;
@@ -410,10 +411,10 @@ public final class Utils {
         return sb.toString();
     }
 
-    public static ObjectMap<String, Integer> getTopPlayers(int limit) {
+    public static LinkedObjectMap<String, Integer> getTopPlayers(int limit) {
         return UserVoteData.getAllUsersMap().entrySet().stream()
                 .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())).limit(limit).collect(Collectors.toMap(
-                        Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue, ObjectMap::new));
+                        Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue, LinkedObjectMap::new));
     }
 
     public static String getTopPlayer(int number) {

@@ -1,9 +1,10 @@
 package com.georgev22.voterewards.commands;
 
 import com.georgev22.voterewards.utilities.MessagesUtil;
-import com.georgev22.voterewards.utilities.ObjectMap;
 import com.georgev22.voterewards.utilities.Options;
 import com.georgev22.voterewards.utilities.Utils;
+import com.georgev22.voterewards.utilities.maps.HashObjectMap;
+import com.georgev22.voterewards.utilities.maps.ObjectMap;
 import com.georgev22.voterewards.utilities.player.UserVoteData;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
@@ -32,7 +33,7 @@ public class Vote extends BukkitCommand {
         }
 
         Player player = (Player) sender;
-        ObjectMap<String, String> placeholders = new ObjectMap<>();
+        ObjectMap<String, String> placeholders = new HashObjectMap<>();
         UserVoteData userVoteData = UserVoteData.getUser(player.getUniqueId());
         placeholders.append("%votes%", String.valueOf(userVoteData.getVotes()));
         MessagesUtil.VOTE_COMMAND.msg(player, placeholders, true);

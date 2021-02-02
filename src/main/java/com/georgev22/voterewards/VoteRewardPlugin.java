@@ -14,6 +14,9 @@ import com.georgev22.voterewards.hooks.*;
 import com.georgev22.voterewards.listeners.PlayerListeners;
 import com.georgev22.voterewards.listeners.VotifierListener;
 import com.georgev22.voterewards.utilities.*;
+import com.georgev22.voterewards.utilities.maps.ConcurrentObjectMap;
+import com.georgev22.voterewards.utilities.maps.HashObjectMap;
+import com.georgev22.voterewards.utilities.maps.ObjectMap;
 import com.georgev22.voterewards.utilities.player.UserVoteData;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
@@ -141,7 +144,7 @@ public class VoteRewardPlugin extends JavaPlugin {
                     if (reminderTimer <= System.currentTimeMillis()) {
                         UserVoteData userVoteData = UserVoteData.getUser(player.getUniqueId());
                         if (System.currentTimeMillis() >= userVoteData.getLastVote() + (24 * 60 * 60 * 1000)) {
-                            ObjectMap<String, String> placeholders = new ObjectMap<>();
+                            ObjectMap<String, String> placeholders = new HashObjectMap<>();
                             placeholders.append("%player%", player.getName());
                             MessagesUtil.REMINDER.msg(player, placeholders, true);
                         }
@@ -378,9 +381,9 @@ public class VoteRewardPlugin extends JavaPlugin {
     /**
      * Creates the reminder map
      * <p>
-     * creates a new, empty {@link ObjectMap#ObjectMap()}
+     * creates a new, empty {@link ConcurrentObjectMap#ConcurrentObjectMap()}
      */
-    public final ObjectMap<Player, Long> reminderMap = new ObjectMap<>();
+    public final ObjectMap<Player, Long> reminderMap = new ConcurrentObjectMap<>();
 
 
 }

@@ -59,7 +59,8 @@ public class VoteRewards extends BukkitCommand {
             Utils.msg(sender, "&a&l(!) &aPlugin reloaded!");
         } else if (args[0].equalsIgnoreCase("set")) {
             if (args.length < 3) {
-                Utils.msg(sender, "&c&l(!) &cThis feature has been disabled!");
+                Utils.msg(sender, "&c&l(!) &c/vr set <player> <data> <value>!");
+                Utils.msg(sender, "&c&l(!) &cData: vote voteparty time dailyvotes");
                 return true;
             }
             OfflinePlayer target = Bukkit.getOfflinePlayer(args[1]);
@@ -76,6 +77,9 @@ public class VoteRewards extends BukkitCommand {
             } else if (args[2].equalsIgnoreCase("dailyvotes")) {
                 userVoteData.setDailyVotes(Integer.parseInt(args[3]));
                 Utils.msg(sender, "&a&l(!) &aSuccessfully set " + target.getName() + " daily votes to " + args[3]);
+            } else {
+                Utils.msg(sender, "&c&l(!) &c/vr set <player> <data>!");
+                Utils.msg(sender, "&c&l(!) &cData: vote voteparty time dailyvotes");
             }
             userVoteData.save(true);
             return true;
@@ -90,8 +94,8 @@ public class VoteRewards extends BukkitCommand {
                 Utils.msg(sender, " ");
                 Utils.msg(sender, "&c&l(!) &cCommands &c&l(!)");
                 Utils.msg(sender, "&6/vr clear <player>");
-                Utils.msg(sender, "&6/vr set <player> <votes|voteparty|time> <amount>");
-                Utils.msg(sender, "&6/vr region <add|remove> <regionName>");
+                Utils.msg(sender, "&6/vr set <player> <data> <value>");
+                Utils.msg(sender, "&6/vr region add/remove <regionName>");
                 Utils.msg(sender, "&c&l==============");
             } else if (args[1].equalsIgnoreCase("voteparty")) {
                 Utils.msg(sender, " ");
@@ -107,7 +111,7 @@ public class VoteRewards extends BukkitCommand {
             }
         } else if (args[0].equalsIgnoreCase("region")) {
             if (args.length == 1) {
-                Utils.msg(sender, "&c&l(!) &c/vr region <add|remove> <name>");
+                Utils.msg(sender, "&c&l(!) &c/vr region <add/remove> <name>");
                 return true;
             }
 
