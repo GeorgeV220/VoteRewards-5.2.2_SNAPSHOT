@@ -81,6 +81,7 @@ public class VoteRewards extends BukkitCommand {
                 Utils.msg(sender, "&c&l(!) &c/vr set <player> <data>!");
                 Utils.msg(sender, "&c&l(!) &cData: vote voteparty time dailyvotes");
             }
+            UserVoteData.getAllUsersMap().replace(target.getName(), userVoteData.getVotes());
             userVoteData.save(true);
             return true;
         } else if (args[0].equalsIgnoreCase("help")) {
