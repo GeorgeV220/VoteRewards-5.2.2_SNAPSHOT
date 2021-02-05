@@ -129,7 +129,7 @@ public class HolographicDisplays {
 
     public static ObjectMap<String, String> getPlaceholderMap() {
         final ObjectMap<String, String> map = new HashObjectMap<>();
-        map.append("top-1", Utils.getTopPlayer(0))
+        map.append("%top-1%", Utils.getTopPlayer(0))
                 .append("%top-2%", Utils.getTopPlayer(1))
                 .append("%top-3%", Utils.getTopPlayer(2))
                 .append("%top-4%", Utils.getTopPlayer(3))
