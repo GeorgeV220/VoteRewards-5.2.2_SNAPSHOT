@@ -46,7 +46,11 @@ public class VoteRewards extends BukkitCommand {
             UserVoteData userVoteData = UserVoteData.getUser(target.getUniqueId());
 
             if (userVoteData.playerExists()) {
-                userVoteData.reset();
+                try {
+                    userVoteData.reset();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 Utils.msg(sender, "&c&l(!) &cYou cleared player " + target.getName());
             } else {
                 Utils.msg(sender, "&c&l(!) &cPlayer " + target.getName() + " doesn't exist");
@@ -81,7 +85,7 @@ public class VoteRewards extends BukkitCommand {
                 Utils.msg(sender, "&c&l(!) &c/vr set <player> <data>!");
                 Utils.msg(sender, "&c&l(!) &cData: vote voteparty time dailyvotes");
             }
-            UserVoteData.getAllUsersMap().replace(target.getName(), userVoteData.getVotes());
+            UserVoteData.getAllUsersMap().replace(target.getUniqueId(), userVoteData.getUser());
             userVoteData.save(true);
             return true;
         } else if (args[0].equalsIgnoreCase("help")) {

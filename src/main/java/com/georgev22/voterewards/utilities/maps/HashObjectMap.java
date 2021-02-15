@@ -1,33 +1,15 @@
 package com.georgev22.voterewards.utilities.maps;
 
+import org.bukkit.Location;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static com.georgev22.voterewards.utilities.Assertions.notNull;
 import static java.lang.String.format;
 
 public class HashObjectMap<K, V> extends HashMap<K, V> implements ObjectMap<K, V> {
-
-    /**
-     * Creates a new empty {@link HashObjectMap} instance.
-     *
-     * @return a new empty {@link HashObjectMap} instance.
-     */
-    public static HashObjectMap newObjectMap() {
-        return new HashObjectMap();
-    }
-
-    /**
-     * Creates a {@link HashObjectMap} instance with the same mappings as the specified map.
-     *
-     * @param map the mappings to be placed in the new map
-     * @return a new {@link HashObjectMap#HashObjectMap(Map)} initialized with the mappings from {@code map}
-     */
-    public static HashObjectMap newObjectMap(final Map map) {
-        return new HashObjectMap(map);
-    }
 
     /**
      * Creates an HashObjectMap instance.
@@ -40,7 +22,7 @@ public class HashObjectMap<K, V> extends HashMap<K, V> implements ObjectMap<K, V
      *
      * @param map initial map
      */
-    public HashObjectMap(final Map<K, V> map) {
+    public HashObjectMap(final ObjectMap<K, V> map) {
         putAll(map);
     }
 
@@ -68,7 +50,7 @@ public class HashObjectMap<K, V> extends HashMap<K, V> implements ObjectMap<K, V
      *
      * @param key the key
      * @return the value as an integer, which may be null
-     * @throws java.lang.ClassCastException if the value is not an integer
+     * @throws ClassCastException if the value is not an integer
      */
     public Integer getInteger(final Object key) {
         return getInteger(key, 0);
@@ -80,7 +62,7 @@ public class HashObjectMap<K, V> extends HashMap<K, V> implements ObjectMap<K, V
      * @param key          the key
      * @param defaultValue what to return if the value is null
      * @return the value as an integer, which may be null
-     * @throws java.lang.ClassCastException if the value is not an integer
+     * @throws ClassCastException if the value is not an integer
      */
     public int getInteger(final Object key, final int defaultValue) {
         return get(key, defaultValue);
@@ -91,7 +73,7 @@ public class HashObjectMap<K, V> extends HashMap<K, V> implements ObjectMap<K, V
      *
      * @param key the key
      * @return the value as a long, which may be null
-     * @throws java.lang.ClassCastException if the value is not an long
+     * @throws ClassCastException if the value is not an long
      */
     public Long getLong(final Object key) {
         return getLong(key, 0L);
@@ -103,7 +85,7 @@ public class HashObjectMap<K, V> extends HashMap<K, V> implements ObjectMap<K, V
      * @param key          the key
      * @param defaultValue what to return if the value is null
      * @return the value as a long, which may be null
-     * @throws java.lang.ClassCastException if the value is not an long
+     * @throws ClassCastException if the value is not an long
      */
     public Long getLong(final Object key, final long defaultValue) {
         return get(key, defaultValue);
@@ -114,7 +96,7 @@ public class HashObjectMap<K, V> extends HashMap<K, V> implements ObjectMap<K, V
      *
      * @param key the key
      * @return the value as a double, which may be null
-     * @throws java.lang.ClassCastException if the value is not an double
+     * @throws ClassCastException if the value is not an double
      */
     public Double getDouble(final Object key) {
         return getDouble(key, 0D);
@@ -126,7 +108,7 @@ public class HashObjectMap<K, V> extends HashMap<K, V> implements ObjectMap<K, V
      * @param key          the key
      * @param defaultValue what to return if the value is null
      * @return the value as a double, which may be null
-     * @throws java.lang.ClassCastException if the value is not an double
+     * @throws ClassCastException if the value is not an double
      */
     public Double getDouble(final Object key, final double defaultValue) {
         return get(key, defaultValue);
@@ -137,7 +119,7 @@ public class HashObjectMap<K, V> extends HashMap<K, V> implements ObjectMap<K, V
      *
      * @param key the key
      * @return the value as a String, which may be null
-     * @throws java.lang.ClassCastException if the value is not a String
+     * @throws ClassCastException if the value is not a String
      */
     public String getString(final Object key) {
         return getString(key, "");
@@ -149,7 +131,7 @@ public class HashObjectMap<K, V> extends HashMap<K, V> implements ObjectMap<K, V
      * @param key          the key
      * @param defaultValue what to return if the value is null
      * @return the value as a String, which may be null
-     * @throws java.lang.ClassCastException if the value is not a String
+     * @throws ClassCastException if the value is not a String
      */
     public String getString(final Object key, final String defaultValue) {
         return get(key, defaultValue);
@@ -160,7 +142,7 @@ public class HashObjectMap<K, V> extends HashMap<K, V> implements ObjectMap<K, V
      *
      * @param key the key
      * @return the value as a Boolean, which may be null
-     * @throws java.lang.ClassCastException if the value is not an boolean
+     * @throws ClassCastException if the value is not an boolean
      */
     public Boolean getBoolean(final Object key) {
         return getBoolean(key, false);
@@ -172,7 +154,7 @@ public class HashObjectMap<K, V> extends HashMap<K, V> implements ObjectMap<K, V
      * @param key          the key
      * @param defaultValue what to return if the value is null
      * @return the value as a primitive boolean
-     * @throws java.lang.ClassCastException if the value is not a boolean
+     * @throws ClassCastException if the value is not a boolean
      */
     public boolean getBoolean(final Object key, final boolean defaultValue) {
         return get(key, defaultValue);
@@ -183,7 +165,7 @@ public class HashObjectMap<K, V> extends HashMap<K, V> implements ObjectMap<K, V
      *
      * @param key the key
      * @return the value as a Date, which may be null
-     * @throws java.lang.ClassCastException if the value is not a Date
+     * @throws ClassCastException if the value is not a Date
      */
     public Date getDate(final Object key) {
         return getDate(key, new Date());
@@ -195,10 +177,21 @@ public class HashObjectMap<K, V> extends HashMap<K, V> implements ObjectMap<K, V
      * @param key          the key
      * @param defaultValue what to return if the value is null
      * @return the value as a Date, which may be null
-     * @throws java.lang.ClassCastException if the value is not a Date
+     * @throws ClassCastException if the value is not a Date
      */
     public Date getDate(final Object key, final Date defaultValue) {
         return get(key, defaultValue);
+    }
+
+    /**
+     * Gets the value of the given key as a Location.
+     *
+     * @param key the key
+     * @return the value as a Location, which may be null
+     * @throws ClassCastException if the value is not a Location
+     */
+    public Location getLocation(final Object key) {
+        return (Location) get(key);
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.georgev22.voterewards.database;
 
 import com.georgev22.voterewards.utilities.Options;
+import com.georgev22.voterewards.utilities.maps.ObjectMap;
 
 import java.sql.*;
 
@@ -14,8 +15,12 @@ public abstract class Database {
 
     public abstract Connection openConnection() throws SQLException, ClassNotFoundException;
 
-    public boolean checkConnection() throws SQLException {
-        return connection != null && !connection.isClosed();
+    public boolean isConnectionValid() {
+        return connection != null;
+    }
+
+    public boolean isClosed() throws SQLException {
+        return connection.isClosed();
     }
 
     public Connection getConnection() {
@@ -31,7 +36,7 @@ public abstract class Database {
     }
 
     public ResultSet queryPreparedSQL(String query) throws SQLException, ClassNotFoundException {
-        if (!checkConnection()) {
+        if (!isClosed()) {
             openConnection();
         }
 
@@ -39,7 +44,7 @@ public abstract class Database {
     }
 
     public int updatePreparedSQL(String query) throws SQLException, ClassNotFoundException {
-        if (!checkConnection()) {
+        if (!isClosed()) {
             openConnection();
         }
 
@@ -47,7 +52,7 @@ public abstract class Database {
     }
 
     public ResultSet querySQL(String query) throws SQLException, ClassNotFoundException {
-        if (!checkConnection()) {
+        if (!isClosed()) {
             openConnection();
         }
 
@@ -55,11 +60,29 @@ public abstract class Database {
     }
 
     public int updateSQL(String query) throws SQLException, ClassNotFoundException {
-        if (!checkConnection()) {
+        if (!isClosed()) {
             openConnection();
         }
 
         return connection.createStatement().executeUpdate(query);
+    }
+
+    public void checkColumn(String tableName, String column, String type) throws SQLException {
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery("SELECT * FROM `" + tableName + "`;");
+        ResultSetMetaData metaData = resultSet.getMetaData();
+        int rowCount = metaData.getColumnCount();
+
+        boolean isMyColumnPresent = false;
+        for (int i = 1; i <= rowCount; i++) {
+            if (column.equals(metaData.getColumnName(i))) {
+                isMyColumnPresent = true;
+            }
+        }
+
+        if (!isMyColumnPresent) {
+            statement.executeUpdate("ALTER TABLE `" + tableName + "` ADD `" + column + "` " + type + ";");
+        }
     }
 
     /**
@@ -69,6 +92,29 @@ public abstract class Database {
      * @throws ClassNotFoundException When class is not found
      */
     public void createTable() throws SQLException, ClassNotFoundException {
-        updateSQL("CREATE TABLE IF NOT EXISTS `" + Options.DATABASE_TABLE_NAME.getValue() + "` (\n  `uuid` varchar(255) DEFAULT NULL,\n  `name` varchar(255) DEFAULT NULL,\n  `votes` int(255) DEFAULT NULL,\n  `time` varchar(255) DEFAULT NULL,\n  `voteparty` int(255) DEFAULT NULL,\n  `daily` int(255) DEFAULT NULL,\n `services` varchar(10000) DEFAULT NULL\n)");
+        updateSQL("CREATE TABLE IF NOT EXISTS `" + Options.DATABASE_TABLE_NAME.getValue() + "` (\n  `uuid` VARCHAR(38) DEFAULT NULL,\n" +
+                " `name` VARCHAR(18) DEFAULT NULL,\n" +
+                " `votes` INT(10) DEFAULT 0,\n" +
+                " `time` VARCHAR(20) DEFAULT 0,\n" +
+                " `voteparty` INT(10) DEFAULT 0,\n" +
+                " `daily` BIGINT(10) DEFAULT 0,\n" +
+                " `services` VARCHAR(10000) DEFAULT NULL,\n" +
+                " `totalvotes` INT(10) DEFAULT 0\n)");
+        ObjectMap<String, String> tableMap = ObjectMap.newHashObjectMap();
+        tableMap.append("uuid", "VARCHAR(38) DEFAULT NULL")
+                .append("name", "VARCHAR(18) DEFAULT NULL")
+                .append("votes", "INT(10) DEFAULT 0")
+                .append("time", "VARCHAR(20) DEFAULT 0")
+                .append("voteparty", "INT(10) DEFAULT 0")
+                .append("daily", "BIGINT(10) DEFAULT 0")
+                .append("services", "VARCHAR(10000) DEFAULT NULL")
+                .append("totalvotes", "INT(10) DEFAULT 0");
+        tableMap.forEach((columnName, type) -> {
+            try {
+                checkColumn(String.valueOf(Options.DATABASE_TABLE_NAME.getValue()), columnName, type);
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        });
     }
 }

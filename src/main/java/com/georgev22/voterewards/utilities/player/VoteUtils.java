@@ -3,18 +3,26 @@ package com.georgev22.voterewards.utilities.player;
 import com.georgev22.externals.xseries.XSound;
 import com.georgev22.externals.xseries.messages.Titles;
 import com.georgev22.voterewards.VoteRewardPlugin;
+import com.georgev22.voterewards.configmanager.CFG;
+import com.georgev22.voterewards.configmanager.FileManager;
 import com.georgev22.voterewards.hooks.HolographicDisplays;
 import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.Options;
 import com.georgev22.voterewards.utilities.Utils;
+import com.georgev22.voterewards.utilities.interfaces.Callback;
+import com.georgev22.voterewards.utilities.maps.LinkedObjectMap;
+import com.georgev22.voterewards.utilities.maps.ObjectMap;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
 
 import java.time.Instant;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 public class VoteUtils {
 
@@ -30,7 +38,8 @@ public class VoteUtils {
         UserVoteData userVoteData = UserVoteData.getUser(offlinePlayer.getUniqueId());
         userVoteData.setVotes(userVoteData.getVotes() + 1);
         userVoteData.setLastVoted(System.currentTimeMillis());
-        UserVoteData.getAllUsersMap().replace(offlinePlayer.getName(), UserVoteData.getUser(offlinePlayer.getUniqueId()).getVotes());
+        userVoteData.setAllTimeVotes(userVoteData.getAllTimeVotes() + 1);
+        UserVoteData.getAllUsersMap().replace(offlinePlayer.getUniqueId(), UserVoteData.getUser(offlinePlayer.getUniqueId()).getUser());
 
         if (Options.VOTE_TITLE.isEnabled()) {
             Titles.sendTitle(offlinePlayer.getPlayer(),
@@ -63,7 +72,7 @@ public class VoteUtils {
         // LUCKY REWARDS
         if (Options.LUCKY.isEnabled()) {
             ThreadLocalRandom random = ThreadLocalRandom.current();
-            int i = random.nextInt((int) Options.LUCKY_NUMBERS.getValue() + 1);
+            int i = random.nextInt(Options.LUCKY_NUMBERS.getIntValue() + 1);
             for (String s2 : voteRewardPlugin.getConfig().getConfigurationSection("Rewards.Lucky")
                     .getKeys(false)) {
                 if (Integer.valueOf(s2).equals(i)) {
@@ -138,9 +147,9 @@ public class VoteUtils {
      * @param offlinePlayer player who voted
      * @param serviceName   service name (dah)
      */
-    public static void processOfflineVote(OfflinePlayer offlinePlayer, final String serviceName) {
+    public static void processOfflineVote(OfflinePlayer offlinePlayer, final String serviceName) throws Exception {
         UserVoteData userVoteData = UserVoteData.getUser(offlinePlayer.getUniqueId());
-        userVoteData.load(new UserVoteData.Callback() {
+        userVoteData.load(new Callback() {
             @Override
             public void onSuccess() {
                 List<String> services = userVoteData.getOfflineServices();
@@ -154,6 +163,88 @@ public class VoteUtils {
                 throwable.printStackTrace();
             }
         });
+    }
+
+    public static void monthlyReset() {
+        Bukkit.getScheduler().runTaskTimer(voteRewardPlugin, () -> {
+            if (Options.DEBUG_USELESS.isEnabled())
+                Utils.debug(voteRewardPlugin, "Monthly reset Thread ID: " + Thread.currentThread().getId());
+            FileManager fileManager = FileManager.getInstance();
+            CFG cfg = fileManager.getData();
+            FileConfiguration dataConfiguration = cfg.getFileConfiguration();
+            if (dataConfiguration.getInt("month") != Calendar.getInstance().getTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getMonthValue()) {
+                ObjectMap<UUID, User> objectMap = UserVoteData.getAllUsersMap();
+                objectMap.forEach((uuid, user) -> {
+                    UserVoteData userVoteData = UserVoteData.getUser(uuid);
+                    userVoteData.reset();
+                });
+                dataConfiguration.set("month", Calendar.getInstance().getTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getMonthValue());
+                cfg.saveFile();
+            }
+        }, 20L, Options.MONTHLY_MINUTES.getLongValue() * 1200L);
+    }
+
+    /**
+     * Purge players data if they don't have vote for a X days.
+     */
+    public static void purgeData() {
+        Bukkit.getScheduler().runTaskTimer(voteRewardPlugin, () -> {
+            if (Options.DEBUG_USELESS.isEnabled())
+                Utils.debug(voteRewardPlugin, "Purge data Thread ID: " + Thread.currentThread().getId());
+            ObjectMap<UUID, User> objectMap = UserVoteData.getAllUsersMap();
+            objectMap.forEach((uuid, user) -> {
+                UserVoteData userVoteData = UserVoteData.getUser(uuid);
+                long time = userVoteData.getLastVote() + (Options.PURGE_DAYS.getLongValue() * 86400000);
+                if (Options.DEBUG_USELESS.isEnabled()) {
+                    Utils.debug(voteRewardPlugin, Instant.ofEpochMilli(userVoteData.getLastVote()).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())).toString());
+                    Utils.debug(voteRewardPlugin, Instant.ofEpochMilli(time).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())).toString());
+                }
+                if (time <= System.currentTimeMillis()) {
+                    userVoteData.delete();
+                }
+
+            });
+        }, 20L, Options.PURGE_MINUTES.getLongValue() * 1200L);
+    }
+
+    /**
+     * @param limit number of top monthly voters in a Map.
+     * @return a {@link LinkedObjectMap} with {limit} top players.
+     */
+    public static LinkedObjectMap<String, Integer> getTopPlayers(int limit) {
+        ObjectMap<String, Integer> objectMap = ObjectMap.newLinkedObjectMap();
+
+        for (Map.Entry<UUID, User> entry : UserVoteData.getAllUsersMap().entrySet()) {
+            objectMap.append(entry.getValue().getString("name"), entry.getValue().getInteger("votes"));
+        }
+
+        return objectMap.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())).limit(limit).collect(Collectors.toMap(
+                        Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue, LinkedObjectMap::new));
+    }
+
+    /**
+     * @param limit number of top all time voters in a Map.
+     * @return a {@link LinkedObjectMap} with {limit} top players.
+     */
+    public static LinkedObjectMap<String, Integer> getAllTimeTopPlayers(int limit) {
+        ObjectMap<String, Integer> objectMap = ObjectMap.newLinkedObjectMap();
+
+        for (Map.Entry<UUID, User> entry : UserVoteData.getAllUsersMap().entrySet()) {
+            objectMap.append(entry.getValue().getString("name"), entry.getValue().getInteger("totalvotes"));
+        }
+
+        return objectMap.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())).limit(limit).collect(Collectors.toMap(
+                        Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue, LinkedObjectMap::new));
+    }
+
+    public static String getTopPlayer(int number) {
+        try {
+            return String.valueOf(getTopPlayers(number + 1).keySet().toArray()[number]).replace("[", "").replace("]", "");
+        } catch (ArrayIndexOutOfBoundsException ignored) {
+            return getTopPlayer(0);
+        }
     }
 
 }

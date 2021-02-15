@@ -17,6 +17,10 @@ public enum Options {
 
     DEBUG_CREATE("debug.create"),
 
+    DEBUG_USELESS("debug.useless info"),
+
+    DEBUG_DELETE("debug.delete"),
+
     DEBUG_VOTES_CUMULATIVE("debug.votes.cumulative"),
 
     DEBUG_VOTES_DAILY("debug.votes.daily"),
@@ -36,6 +40,16 @@ public enum Options {
     VOTEPARTY_TITLE("title.voteparty"),
 
     UPDATER("updater"),
+
+    MONTHLY_ENABLED("monthly.enabled"),
+
+    MONTHLY_MINUTES("monthly.minutes"),
+
+    PURGE_ENABLED("purge.enabled"),
+
+    PURGE_DAYS("purge.days"),
+
+    PURGE_MINUTES("purge.minutes"),
 
     DAILY("votes.daily.enabled"),
 
@@ -63,13 +77,21 @@ public enum Options {
 
     SOUND("sound.vote"),
 
-    MESSAGE("message"),
+    MESSAGE_VOTE("message.vote"),
+
+    MESSAGE_VOTEPARTY("message.voteparty"),
 
     VOTETOP_HEADER("votetop.header"),
+
+    VOTETOP_LINE("votetop.line"),
 
     VOTETOP_FOOTER("votetop.footer"),
 
     VOTETOP_VOTERS("votetop.voters"),
+
+    VOTETOP_ALL_TIME_ENABLED("votetop.all time.enabled"),
+
+    VOTETOP_ALL_TIME_VOTERS("votetop.all time.voters"),
 
     COMMAND_REWARDS("commands.rewards"),
 
@@ -172,6 +194,16 @@ public enum Options {
     public Object getValue() {
         final FileConfiguration file = FileManager.getInstance().getConfig().getFileConfiguration();
         return file.get("Options." + this.pathName, 0);
+    }
+
+    public Long getLongValue() {
+        final FileConfiguration file = FileManager.getInstance().getConfig().getFileConfiguration();
+        return file.getLong("Options." + this.pathName, 0L);
+    }
+
+    public Integer getIntValue() {
+        final FileConfiguration file = FileManager.getInstance().getConfig().getFileConfiguration();
+        return file.getInt("Options." + this.pathName, 0);
     }
 
     public List<String> getStringList() {

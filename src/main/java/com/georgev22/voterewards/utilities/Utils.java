@@ -1,8 +1,6 @@
 package com.georgev22.voterewards.utilities;
 
 import com.georgev22.voterewards.VoteRewardPlugin;
-import com.georgev22.voterewards.utilities.maps.LinkedObjectMap;
-import com.georgev22.voterewards.utilities.player.UserVoteData;
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Doubles;
 import com.google.common.primitives.Ints;
@@ -11,9 +9,13 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Field;
@@ -411,20 +413,6 @@ public final class Utils {
         return sb.toString();
     }
 
-    public static LinkedObjectMap<String, Integer> getTopPlayers(int limit) {
-        return UserVoteData.getAllUsersMap().entrySet().stream()
-                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())).limit(limit).collect(Collectors.toMap(
-                        Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue, LinkedObjectMap::new));
-    }
-
-    public static String getTopPlayer(int number) {
-        try {
-            return String.valueOf(getTopPlayers(number + 1).keySet().toArray()[number]).replace("[", "").replace("]", "");
-        } catch (ArrayIndexOutOfBoundsException ignored) {
-            return getTopPlayer(0);
-        }
-    }
-
     /**
      * Get the greatest values in a map
      *
@@ -498,6 +486,62 @@ public final class Utils {
     public static boolean isLegacy() {
         String version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3] + ".";
         return version.contains("1_8") || version.contains("1_9") || version.contains("1_11") || version.contains("1_12");
+    }
+
+
+    /**
+     * Register listeners
+     *
+     * @param listeners Class that implements Listener interface
+     */
+    public static void registerListeners(Listener... listeners) {
+        final PluginManager pm = Bukkit.getPluginManager();
+        for (final Listener listener : listeners) {
+            pm.registerEvents(listener, m);
+        }
+    }
+
+    /**
+     * Register a command given an executor and a name.
+     *
+     * @param commandName The name of the command
+     * @param command     The class that extends the BukkitCommand class
+     */
+    public static void registerCommand(final String commandName, final Command command) {
+        try {
+            Field field = Bukkit.getServer().getPluginManager().getClass().getDeclaredField("commandMap");
+            field.setAccessible(true);
+            Object result = field.get(Bukkit.getServer().getPluginManager());
+            SimpleCommandMap commandMap = (SimpleCommandMap) result;
+            commandMap.register(commandName, command);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * unregister a command
+     *
+     * @param commandName The name of the command
+     */
+    public static void unRegisterCommand(String commandName) {
+        try {
+            Field field1 = Bukkit.getServer().getPluginManager().getClass().getDeclaredField("commandMap");
+            field1.setAccessible(true);
+            Object result = field1.get(Bukkit.getServer().getPluginManager());
+            SimpleCommandMap commandMap = (SimpleCommandMap) result;
+            Field field = Utils.isLegacy() ? commandMap.getClass().getDeclaredField("knownCommands") : commandMap.getClass().getSuperclass().getDeclaredField("knownCommands");
+            field.setAccessible(true);
+            Object map = field.get(commandMap);
+            HashMap<String, Command> knownCommands = (HashMap<String, Command>) map;
+            Command command = commandMap.getCommand(commandName);
+            knownCommands.remove(command.getName());
+            for (String alias : command.getAliases()) {
+                knownCommands.remove(alias);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

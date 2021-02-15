@@ -6,6 +6,8 @@ Options:
     load: false
     save: false
     create: false
+    useless info: false
+    delete: false
     votes:
       cumulative: false
       daily: false
@@ -27,10 +29,21 @@ Options:
     vote: false #Shows a title message when the player votes
   gui: false #LeaderHeads plugin is needed
   updater: true
+  purge: #Purge old data
+    enabled: false
+    minutes: 30 #Every how many minutes to check whether the days has passed
+    days: 60 #How many days from the last vote to purge player data
+  monthly: #Reset votes each month
+    enabled: false
+    minutes: 30 #Every how many minutes to check whether the month has changed
   votetop:
     header: true
+    line: false
     footer: true
     voters: 5 #How many players will show up in the list
+    all time: #All time top voters
+      enabled: false
+      voters: 3
   message:
     vote: true
     voteparty: true
@@ -47,11 +60,12 @@ Options:
       enabled: false
       numbers: 50
     cumulative: false #Reward players if they reach X votes
-  # File, MySQL, SQLite, MongoDB
+  # File, MySQL, PostgreSQL, SQLite, MongoDB
   # Select in what type you want your data to be stored
   # File is recommended
-  #SQL section is for MySQL
-  #Default MySQL port: 3306
+  #SQL section is for MySQL(or MariaDB) and PostgreSQL
+  #Default PostgreSQL port: 5432
+  #Default MySQL and MariaDB port: 3306
   #Default MongoDB port: 27017
   database:
     type: File

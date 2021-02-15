@@ -7,6 +7,7 @@ import com.georgev22.voterewards.hooks.HolographicDisplays;
 import com.georgev22.voterewards.utilities.Options;
 import com.georgev22.voterewards.utilities.Updater;
 import com.georgev22.voterewards.utilities.Utils;
+import com.georgev22.voterewards.utilities.interfaces.Callback;
 import com.georgev22.voterewards.utilities.player.UserVoteData;
 import com.georgev22.voterewards.utilities.player.VotePartyUtils;
 import com.georgev22.voterewards.utilities.player.VoteUtils;
@@ -35,39 +36,42 @@ public class PlayerListeners implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
-        //HOLOGRAMS
-        if (Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays")) {
-            if (!HolographicDisplays.getHolograms().isEmpty()) {
-                for (Hologram hologram : HolographicDisplays.getHolograms()) {
-                    HolographicDisplays.show(hologram, event.getPlayer());
-                }
-
-                HolographicDisplays.updateAll();
-            }
-        }
-
         UserVoteData userVoteData = UserVoteData.getUser(event.getPlayer().getUniqueId());
         final Stopwatch sw = Stopwatch.createStarted();
-        userVoteData.load(new UserVoteData.Callback() {
-            @Override
-            public void onSuccess() {
-                //OFFLINE VOTING
-                if (Options.OFFLINE.isEnabled() && !Bukkit.getPluginManager().isPluginEnabled("AuthMeReloaded")) {
-                    for (String serviceName : userVoteData.getOfflineServices()) {
-                        VoteUtils.processVote(event.getPlayer(), serviceName);
+        try {
+            userVoteData.load(new Callback() {
+                @Override
+                public void onSuccess() {
+                    //OFFLINE VOTING
+                    if (Options.OFFLINE.isEnabled() && !Bukkit.getPluginManager().isPluginEnabled("AuthMeReloaded")) {
+                        for (String serviceName : userVoteData.getOfflineServices()) {
+                            VoteUtils.processVote(event.getPlayer(), serviceName);
+                        }
+                        userVoteData.setOfflineServices(Lists.newArrayList());
                     }
-                    userVoteData.setOfflineServices(Lists.newArrayList());
+                    userVoteData.save(true);
+
+                    UserVoteData.getAllUsersMap().append(event.getPlayer().getUniqueId(), userVoteData.getUser());
+                    //HOLOGRAMS
+                    if (Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays")) {
+                        if (!HolographicDisplays.getHolograms().isEmpty()) {
+                            for (Hologram hologram : HolographicDisplays.getHolograms()) {
+                                HolographicDisplays.show(hologram, event.getPlayer());
+                            }
+
+                            HolographicDisplays.updateAll();
+                        }
+                    }
                 }
-                userVoteData.save(true);
 
-                UserVoteData.getAllUsersMap().append(event.getPlayer().getName(), userVoteData.getVotes());
-            }
-
-            @Override
-            public void onFailure(Throwable throwable) {
-                throwable.printStackTrace();
-            }
-        });
+                @Override
+                public void onFailure(Throwable throwable) {
+                    throwable.printStackTrace();
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         final long elapsedMillis = sw.elapsed(TimeUnit.MILLISECONDS);
         if (Options.DEBUG_LOAD.isEnabled()) {
             Utils.debug(VoteRewardPlugin.getInstance(), "Elapsed time to load user data: " + elapsedMillis);
@@ -87,7 +91,6 @@ public class PlayerListeners implements Listener {
     public void onQuit(PlayerQuitEvent event) {
         UserVoteData.getUser(event.getPlayer().getUniqueId()).save(true);
         voteRewardPlugin.reminderMap.remove(event.getPlayer());
-        UserVoteData.getUserMap().remove(event.getPlayer().getUniqueId());
     }
 
 

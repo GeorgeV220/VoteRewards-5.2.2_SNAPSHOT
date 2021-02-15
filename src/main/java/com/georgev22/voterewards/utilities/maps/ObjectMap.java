@@ -1,10 +1,69 @@
 package com.georgev22.voterewards.utilities.maps;
 
+import org.bukkit.Location;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 public interface ObjectMap<K, V> extends Map<K, V> {
+
+    /**
+     * Creates a new empty {@link LinkedObjectMap} instance.
+     *
+     * @return a new empty {@link LinkedObjectMap} instance.
+     */
+    static ObjectMap newLinkedObjectMap() {
+        return new LinkedObjectMap();
+    }
+
+    /**
+     * Creates a new empty {@link ConcurrentObjectMap} instance.
+     *
+     * @return a new empty {@link ConcurrentObjectMap} instance.
+     */
+    static ObjectMap newConcurrentObjectMap() {
+        return new ConcurrentObjectMap();
+    }
+
+    /**
+     * Creates a new empty {@link HashObjectMap} instance.
+     *
+     * @return a new empty {@link HashObjectMap} instance.
+     */
+    static ObjectMap newHashObjectMap() {
+        return new HashObjectMap();
+    }
+
+    /**
+     * Creates a {@link LinkedObjectMap} instance with the same mappings as the specified map.
+     *
+     * @param map the mappings to be placed in the new map
+     * @return a new {@link LinkedObjectMap#LinkedObjectMap(ObjectMap)} initialized with the mappings from {@code map}
+     */
+    static ObjectMap newLinkedObjectMap(ObjectMap map) {
+        return new LinkedObjectMap(map);
+    }
+
+    /**
+     * Creates a {@link ConcurrentObjectMap} instance with the same mappings as the specified map.
+     *
+     * @param map the mappings to be placed in the new map
+     * @return a new {@link ConcurrentObjectMap#ConcurrentObjectMap(ObjectMap)} initialized with the mappings from {@code map}
+     */
+    static ObjectMap newConcurrentObjectMap(ObjectMap map) {
+        return new ConcurrentObjectMap(map);
+    }
+
+    /**
+     * Creates a {@link HashObjectMap} instance with the same mappings as the specified map.
+     *
+     * @param map the mappings to be placed in the new map
+     * @return a new {@link HashObjectMap#HashObjectMap(ObjectMap)} initialized with the mappings from {@code map}
+     */
+    static ObjectMap newHashObjectMap(ObjectMap map) {
+        return new HashObjectMap(map);
+    }
 
 
     /**
@@ -24,7 +83,7 @@ public interface ObjectMap<K, V> extends Map<K, V> {
      *
      * @param key the key
      * @return the value as an integer, which may be null
-     * @throws java.lang.ClassCastException if the value is not an integer
+     * @throws ClassCastException if the value is not an integer
      */
     Integer getInteger(final Object key);
 
@@ -34,7 +93,7 @@ public interface ObjectMap<K, V> extends Map<K, V> {
      * @param key          the key
      * @param defaultValue what to return if the value is null
      * @return the value as an integer, which may be null
-     * @throws java.lang.ClassCastException if the value is not an integer
+     * @throws ClassCastException if the value is not an integer
      */
     int getInteger(final Object key, final int defaultValue);
 
@@ -43,7 +102,7 @@ public interface ObjectMap<K, V> extends Map<K, V> {
      *
      * @param key the key
      * @return the value as a long, which may be null
-     * @throws java.lang.ClassCastException if the value is not an long
+     * @throws ClassCastException if the value is not an long
      */
     Long getLong(final Object key);
 
@@ -53,7 +112,7 @@ public interface ObjectMap<K, V> extends Map<K, V> {
      * @param key          the key
      * @param defaultValue what to return if the value is null
      * @return the value as a long, which may be null
-     * @throws java.lang.ClassCastException if the value is not an long
+     * @throws ClassCastException if the value is not an long
      */
     Long getLong(final Object key, final long defaultValue);
 
@@ -62,7 +121,7 @@ public interface ObjectMap<K, V> extends Map<K, V> {
      *
      * @param key the key
      * @return the value as a double, which may be null
-     * @throws java.lang.ClassCastException if the value is not an double
+     * @throws ClassCastException if the value is not an double
      */
     Double getDouble(final Object key);
 
@@ -72,7 +131,7 @@ public interface ObjectMap<K, V> extends Map<K, V> {
      * @param key          the key
      * @param defaultValue what to return if the value is null
      * @return the value as a double, which may be null
-     * @throws java.lang.ClassCastException if the value is not an double
+     * @throws ClassCastException if the value is not an double
      */
     Double getDouble(final Object key, final double defaultValue);
 
@@ -81,7 +140,7 @@ public interface ObjectMap<K, V> extends Map<K, V> {
      *
      * @param key the key
      * @return the value as a String, which may be null
-     * @throws java.lang.ClassCastException if the value is not a String
+     * @throws ClassCastException if the value is not a String
      */
     String getString(final Object key);
 
@@ -91,7 +150,7 @@ public interface ObjectMap<K, V> extends Map<K, V> {
      * @param key          the key
      * @param defaultValue what to return if the value is null
      * @return the value as a String, which may be null
-     * @throws java.lang.ClassCastException if the value is not a String
+     * @throws ClassCastException if the value is not a String
      */
     String getString(final Object key, final String defaultValue);
 
@@ -100,7 +159,7 @@ public interface ObjectMap<K, V> extends Map<K, V> {
      *
      * @param key the key
      * @return the value as a Boolean, which may be null
-     * @throws java.lang.ClassCastException if the value is not an boolean
+     * @throws ClassCastException if the value is not an boolean
      */
     Boolean getBoolean(final Object key);
 
@@ -110,7 +169,7 @@ public interface ObjectMap<K, V> extends Map<K, V> {
      * @param key          the key
      * @param defaultValue what to return if the value is null
      * @return the value as a primitive boolean
-     * @throws java.lang.ClassCastException if the value is not a boolean
+     * @throws ClassCastException if the value is not a boolean
      */
     boolean getBoolean(final Object key, final boolean defaultValue);
 
@@ -119,7 +178,7 @@ public interface ObjectMap<K, V> extends Map<K, V> {
      *
      * @param key the key
      * @return the value as a Date, which may be null
-     * @throws java.lang.ClassCastException if the value is not a Date
+     * @throws ClassCastException if the value is not a Date
      */
     Date getDate(final Object key);
 
@@ -129,9 +188,18 @@ public interface ObjectMap<K, V> extends Map<K, V> {
      * @param key          the key
      * @param defaultValue what to return if the value is null
      * @return the value as a Date, which may be null
-     * @throws java.lang.ClassCastException if the value is not a Date
+     * @throws ClassCastException if the value is not a Date
      */
     Date getDate(final Object key, final Date defaultValue);
+
+    /**
+     * Gets the value of the given key as a Location.
+     *
+     * @param key the key
+     * @return the value as a Location, which may be null
+     * @throws ClassCastException if the value is not a Location
+     */
+    Location getLocation(final Object key);
 
     /**
      * Gets the list value of the given key, casting the list elements to the given {@code Class<T>}.  This is useful to avoid having

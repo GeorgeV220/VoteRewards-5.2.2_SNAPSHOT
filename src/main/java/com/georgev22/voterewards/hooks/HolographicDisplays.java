@@ -5,9 +5,8 @@ import com.georgev22.voterewards.configmanager.CFG;
 import com.georgev22.voterewards.configmanager.FileManager;
 import com.georgev22.voterewards.utilities.Options;
 import com.georgev22.voterewards.utilities.Utils;
-import com.georgev22.voterewards.utilities.maps.ConcurrentObjectMap;
-import com.georgev22.voterewards.utilities.maps.HashObjectMap;
 import com.georgev22.voterewards.utilities.maps.ObjectMap;
+import com.georgev22.voterewards.utilities.player.VoteUtils;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import com.gmail.filoghost.holographicdisplays.api.line.TextLine;
@@ -16,6 +15,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * @author GeorgeV22
@@ -26,7 +26,7 @@ public class HolographicDisplays {
     private final static CFG dataCFG = fileManager.getData();
     private final static FileConfiguration data = dataCFG.getFileConfiguration();
     private final static VoteRewardPlugin m = VoteRewardPlugin.getInstance();
-    private static final ObjectMap<String, Hologram> hologramMap = new ConcurrentObjectMap<>();
+    private static final ObjectMap<String, Hologram> hologramMap = ObjectMap.newConcurrentObjectMap();
 
     public static Hologram create(String name, Location location, String type, boolean save) {
         Hologram hologram = getHologramMap().get(name);
@@ -47,14 +47,15 @@ public class HolographicDisplays {
         return hologram;
     }
 
-    public static void remove(String name) {
+    public static void remove(String name, boolean save) {
         Hologram hologram = getHologramMap().remove(name);
 
         hologram.delete();
 
-        data.set("Holograms." + name, null);
-        dataCFG.saveFile();
-
+        if (save) {
+            data.set("Holograms." + name, null);
+            dataCFG.saveFile();
+        }
     }
 
     public static void show(String name, Player player) {
@@ -128,19 +129,20 @@ public class HolographicDisplays {
     }
 
     public static ObjectMap<String, String> getPlaceholderMap() {
-        final ObjectMap<String, String> map = new HashObjectMap<>();
-        map.append("%top-1%", Utils.getTopPlayer(0))
-                .append("%top-2%", Utils.getTopPlayer(1))
-                .append("%top-3%", Utils.getTopPlayer(2))
-                .append("%top-4%", Utils.getTopPlayer(3))
-                .append("%top-5%", Utils.getTopPlayer(4))
-                .append("%bar%", Utils.getProgressBar(
-                        data.getInt("VoteParty-Votes"),
-                        (int) Options.VOTEPARTY_VOTES.getValue(),
-                        (int) Options.VOTEPARTY_BARS.getValue(),
-                        (String) Options.VOTEPARTY_BAR_SYMBOL.getValue(),
-                        (String) Options.VOTEPARTY_COMPLETE_COLOR.getValue(),
-                        (String) Options.VOTEPARTY_NOT_COMPLETE_COLOR.getValue()));
+        final ObjectMap<String, String> map = ObjectMap.newHashObjectMap();
+        int i = 1;
+        for (Map.Entry<String, Integer> b : VoteUtils.getTopPlayers(Options.VOTETOP_VOTERS.getIntValue()).entrySet()) {
+            String[] args = String.valueOf(b).split("=");
+            map.append("%top-" + i + "%", args[0]).append("%vote-" + i + "%", args[1]);
+            i++;
+        }
+        map.append("%bar%", Utils.getProgressBar(
+                data.getInt("VoteParty-Votes"),
+                Options.VOTEPARTY_VOTES.getIntValue(),
+                Options.VOTEPARTY_BARS.getIntValue(),
+                (String) Options.VOTEPARTY_BAR_SYMBOL.getValue(),
+                (String) Options.VOTEPARTY_COMPLETE_COLOR.getValue(),
+                (String) Options.VOTEPARTY_NOT_COMPLETE_COLOR.getValue()));
         return map;
     }
 

@@ -54,6 +54,8 @@ public enum MessagesUtil {
 
     VOTE_TOP_FOOTER("Messages.VoteTop-Footer", "&8[&aTop Voters&8]"),
 
+    VOTE_TOP_LINE("Messages.VoteTop-Line", " ", "===========", " "),
+
     REWARDS("Messages.Rewards", "&a&l(!) &aRewards:", "&a100$", "&a10 Diamonds"),
 
     VOTE_TITLE("Messages.Vote-Title", "&bThank your for your vote"),

@@ -5,8 +5,10 @@ import com.georgev22.externals.xseries.XSound;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.configmanager.CFG;
 import com.georgev22.voterewards.configmanager.FileManager;
-import com.georgev22.voterewards.utilities.*;
-import com.georgev22.voterewards.utilities.maps.HashObjectMap;
+import com.georgev22.voterewards.utilities.MessagesUtil;
+import com.georgev22.voterewards.utilities.Options;
+import com.georgev22.voterewards.utilities.Regions;
+import com.georgev22.voterewards.utilities.Utils;
 import com.georgev22.voterewards.utilities.maps.ObjectMap;
 import com.google.common.collect.Sets;
 import org.bukkit.Bukkit;
@@ -43,19 +45,20 @@ public class VotePartyUtils {
         dataFile.set("VoteParty-Votes", dataFile.getInt("VoteParty-Votes", 0) + 1);
         fm.getData().saveFile();
 
-        int maxVotes = (int) Options.VOTEPARTY_VOTES.getValue();
+        int maxVotes = Options.VOTEPARTY_VOTES.getIntValue();
         int currentVotes = dataFile.getInt("VoteParty-Votes", 0);
 
-        final ObjectMap<String, String> placeholders = new HashObjectMap<>();
+        final ObjectMap<String, String> placeholders = ObjectMap.newHashObjectMap();
         if (!start) {
             if (!Options.VOTEPARTY.isEnabled()) {
                 return;
             }
-            if (maxVotes - currentVotes > 0) {
-                placeholders.append("%votes%", Utils.formatNumber(maxVotes - currentVotes));
-                MessagesUtil.VOTEPARTY_VOTES_NEED.msgAll(placeholders, true);
-                placeholders.clear();
-            }
+            if (Options.MESSAGE_VOTEPARTY.isEnabled())
+                if (maxVotes - currentVotes > 0) {
+                    placeholders.append("%votes%", Utils.formatNumber(maxVotes - currentVotes));
+                    MessagesUtil.VOTEPARTY_VOTES_NEED.msgAll(placeholders, true);
+                    placeholders.clear();
+                }
 
             if (Options.VOTEPARTY_PARTICIPATE.isEnabled()) {
                 players.add(player);

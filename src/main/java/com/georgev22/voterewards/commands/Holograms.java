@@ -87,7 +87,7 @@ public class Holograms extends BukkitCommand {
                 return true;
             }
 
-            HolographicDisplays.remove(args[1]);
+            HolographicDisplays.remove(args[1], true);
 
             Utils.msg(sender, "&a&l(!) &aHologram " + args[1] + " successfully removed!");
         } else if (args[0].equalsIgnoreCase("update")) {

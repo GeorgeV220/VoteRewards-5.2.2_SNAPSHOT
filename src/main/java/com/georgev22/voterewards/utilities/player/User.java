@@ -1,10 +1,13 @@
 package com.georgev22.voterewards.utilities.player;
 
 import com.georgev22.voterewards.utilities.maps.ConcurrentObjectMap;
+import com.georgev22.voterewards.utilities.maps.ObjectMap;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.Map;
+import java.util.List;
 import java.util.UUID;
 
 public class User extends ConcurrentObjectMap {
@@ -30,7 +33,7 @@ public class User extends ConcurrentObjectMap {
      * @param map  initial map
      * @see User#User(UUID)
      */
-    public User(UUID uuid, final Map<String, Object> map) {
+    public User(UUID uuid, final ObjectMap<String, Object> map) {
         super(map);
         this.uuid = uuid;
     }
@@ -53,7 +56,42 @@ public class User extends ConcurrentObjectMap {
      *
      * @return an offline player
      */
+    @NotNull
     public OfflinePlayer getPlayer() {
         return Bukkit.getOfflinePlayer(getUniqueID());
+    }
+
+    /**
+     * Returns the name of this player
+     *
+     * @return Player name or null
+     */
+    @Nullable
+    public String getName() {
+        return getString("name");
+    }
+
+    public int getVotes() {
+        return getInteger("votes", 0);
+    }
+
+    public int getDailyVotes() {
+        return getInteger("daily", 0);
+    }
+
+    public long getLastVoted() {
+        return getLong("last", 0L);
+    }
+
+    public int getVoteParties() {
+        return getInteger("voteparty", 0);
+    }
+
+    public int getAllTimeVotes() {
+        return getInteger("totalvotes", 0);
+    }
+
+    public List<String> getServices() {
+        return getList("services", String.class);
     }
 }

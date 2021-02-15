@@ -1,4 +1,4 @@
-package com.georgev22.voterewards.database.mysql;
+package com.georgev22.voterewards.database.sql.mysql;
 
 import com.georgev22.voterewards.database.Database;
 
@@ -25,8 +25,9 @@ public class MySQL extends Database {
 
     @Override
     public Connection openConnection() throws SQLException, ClassNotFoundException {
-        if (checkConnection()) {
-            return connection;
+        if (isConnectionValid()) {
+            if (!isClosed())
+                return connection;
         }
 
         Class.forName("com.mysql.jdbc.Driver");

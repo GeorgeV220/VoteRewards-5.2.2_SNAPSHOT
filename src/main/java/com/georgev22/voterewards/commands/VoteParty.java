@@ -5,7 +5,6 @@ import com.georgev22.voterewards.configmanager.FileManager;
 import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.Options;
 import com.georgev22.voterewards.utilities.Utils;
-import com.georgev22.voterewards.utilities.maps.HashObjectMap;
 import com.georgev22.voterewards.utilities.maps.ObjectMap;
 import com.georgev22.voterewards.utilities.player.UserVoteData;
 import com.georgev22.voterewards.utilities.player.VotePartyUtils;
@@ -32,7 +31,7 @@ public class VoteParty extends BukkitCommand {
 
     public boolean execute(@NotNull final CommandSender sender, @NotNull final String label, final String[] args) {
         if (!testPermission(sender)) return true;
-        final ObjectMap<String, String> placeholders = new HashObjectMap<>();
+        final ObjectMap<String, String> placeholders = ObjectMap.newHashObjectMap();
         final FileManager fm = FileManager.getInstance();
         if (args.length != 0) {
             if (args[0].equalsIgnoreCase("start")) {
@@ -122,10 +121,10 @@ public class VoteParty extends BukkitCommand {
             return true;
         }
         placeholders
-                .append("%votes%", String.valueOf((int) Options.VOTEPARTY_VOTES.getValue()
+                .append("%votes%", String.valueOf(Options.VOTEPARTY_VOTES.getIntValue()
                         - fm.getData().getFileConfiguration().getInt("VoteParty-Votes")))
                 .append("%current%", String.valueOf(fm.getData().getFileConfiguration().getInt("VoteParty-Votes")))
-                .append("%need%", String.valueOf((int) Options.VOTEPARTY_VOTES.getValue()));
+                .append("%need%", String.valueOf(Options.VOTEPARTY_VOTES.getIntValue()));
         MessagesUtil.VOTEPARTY.msg(sender, placeholders, true);
         placeholders.clear();
         return true;

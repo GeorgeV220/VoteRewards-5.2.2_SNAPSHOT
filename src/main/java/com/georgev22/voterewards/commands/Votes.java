@@ -2,7 +2,6 @@ package com.georgev22.voterewards.commands;
 
 import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.Utils;
-import com.georgev22.voterewards.utilities.maps.HashObjectMap;
 import com.georgev22.voterewards.utilities.maps.ObjectMap;
 import com.georgev22.voterewards.utilities.player.UserVoteData;
 import org.bukkit.Bukkit;
@@ -29,7 +28,7 @@ public class Votes extends BukkitCommand {
     public boolean execute(@NotNull final CommandSender sender, final @NotNull String label, final String[] args) {
         if (!testPermission(sender)) return true;
 
-        ObjectMap<String, String> placeholders = new HashObjectMap<>();
+        ObjectMap<String, String> placeholders = ObjectMap.newHashObjectMap();
         if (args.length == 0) {
             if (!(sender instanceof Player)) {
                 Utils.msg(sender, "/votes <player>");
@@ -42,7 +41,7 @@ public class Votes extends BukkitCommand {
             return true;
         }
         OfflinePlayer target = Bukkit.getOfflinePlayer(args[0]);
-        placeholders.append("%player%", target.getName()).append("%votes%", String.valueOf(UserVoteData.getAllUsersMap().get(target.getName())));
+        placeholders.append("%player%", target.getName()).append("%votes%", String.valueOf(UserVoteData.getAllUsersMap().get(target.getUniqueId())));
         MessagesUtil.VOTES.msg(sender, placeholders, true);
         placeholders.clear();
 

@@ -1,4 +1,4 @@
-package com.georgev22.voterewards.database.sqlite;
+package com.georgev22.voterewards.database.sql.sqlite;
 
 import com.georgev22.voterewards.database.Database;
 
@@ -19,8 +19,9 @@ public class SQLite extends Database {
 
     @Override
     public Connection openConnection() throws SQLException, ClassNotFoundException {
-        if (checkConnection()) {
-            return connection;
+        if (isConnectionValid()) {
+            if (!isClosed())
+                return connection;
         }
 
         Class.forName("org.sqlite.JDBC");
