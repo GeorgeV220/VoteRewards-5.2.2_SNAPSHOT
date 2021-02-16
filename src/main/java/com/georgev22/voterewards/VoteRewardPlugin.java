@@ -1,6 +1,5 @@
 package com.georgev22.voterewards;
 
-import com.georgev22.externals.com.tchristofferson.configupdater.ConfigUpdater;
 import com.georgev22.externals.me.lucko.helper.maven.LibraryLoader;
 import com.georgev22.externals.me.lucko.helper.maven.MavenLibrary;
 import com.georgev22.voterewards.commands.*;
@@ -32,11 +31,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.annotation.Nonnull;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.ZoneId;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Map;
 
@@ -73,13 +70,6 @@ public class VoteRewardPlugin extends JavaPlugin {
         final FileManager fm = FileManager.getInstance();
         fm.loadFiles(this);
         MessagesUtil.repairPaths(fm.getMessages());
-
-        try {
-            ConfigUpdater.update(this, "config.yml", fm.getConfig().getFile(), Arrays.asList("Services", "Holograms"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         CFG dataCFG = fm.getData();
         FileConfiguration data = dataCFG.getFileConfiguration();
         if (OptionsUtil.DEBUG_USELESS.isEnabled())
