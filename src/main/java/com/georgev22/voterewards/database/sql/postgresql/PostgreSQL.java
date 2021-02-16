@@ -9,13 +9,14 @@ import java.util.Properties;
 
 public class PostgreSQL extends Database {
 
-    private final String user, password, database, port, hostname;
+    private final String user, password, database, hostname;
+    private final int port;
 
-    public PostgreSQL(String hostname, String port, String username, String password) {
+    public PostgreSQL(String hostname, int port, String username, String password) {
         this(hostname, port, null, username, password);
     }
 
-    public PostgreSQL(String hostname, String port, String database, String username, String password) {
+    public PostgreSQL(String hostname, int port, String database, String username, String password) {
         this.hostname = hostname;
         this.port = port;
         this.database = database;

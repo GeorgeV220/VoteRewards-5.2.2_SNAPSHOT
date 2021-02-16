@@ -27,7 +27,7 @@ Options:
     hologram: true
   title:
     vote: false #Shows a title message when the player votes
-  gui: false #LeaderHeads plugin is needed
+    voteparty: false #Shows a voteparty title message
   updater: true
   purge: #Purge old data
     enabled: false
@@ -44,6 +44,9 @@ Options:
     all time: #All time top voters
       enabled: false
       voters: 3
+    gui: #LeaderHeads plugin is needed
+      enabled: false
+      type: "monthly" #Types: "monthly" and "all"
   message:
     vote: true
     voteparty: true
@@ -113,7 +116,7 @@ Options:
   reminder:
     enabled: false
     time: 120
-  # Play a sound when the player votes
+  # Play a sound on votes or on voteparty.
   sound:
     voteparty: false
     vote: false

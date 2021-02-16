@@ -4,7 +4,7 @@ import com.georgev22.externals.xseries.XMaterial;
 import com.georgev22.externals.xseries.XSound;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.hooks.HolographicDisplays;
-import com.georgev22.voterewards.utilities.Options;
+import com.georgev22.voterewards.utilities.OptionsUtil;
 import com.georgev22.voterewards.utilities.Updater;
 import com.georgev22.voterewards.utilities.Utils;
 import com.georgev22.voterewards.utilities.interfaces.Callback;
@@ -43,7 +43,7 @@ public class PlayerListeners implements Listener {
                 @Override
                 public void onSuccess() {
                     //OFFLINE VOTING
-                    if (Options.OFFLINE.isEnabled() && !Bukkit.getPluginManager().isPluginEnabled("AuthMeReloaded")) {
+                    if (OptionsUtil.OFFLINE.isEnabled() && !Bukkit.getPluginManager().isPluginEnabled("AuthMeReloaded")) {
                         for (String serviceName : userVoteData.getOfflineServices()) {
                             VoteUtils.processVote(event.getPlayer(), serviceName);
                         }
@@ -73,12 +73,12 @@ public class PlayerListeners implements Listener {
             e.printStackTrace();
         }
         final long elapsedMillis = sw.elapsed(TimeUnit.MILLISECONDS);
-        if (Options.DEBUG_LOAD.isEnabled()) {
+        if (OptionsUtil.DEBUG_LOAD.isEnabled()) {
             Utils.debug(VoteRewardPlugin.getInstance(), "Elapsed time to load user data: " + elapsedMillis);
         }
 
         //UPDATER
-        if (Options.UPDATER.isEnabled()) {
+        if (OptionsUtil.UPDATER.isEnabled()) {
             if (event.getPlayer().hasPermission("voterewards.updater") || event.getPlayer().isOp()) {
                 new Updater(event.getPlayer());
             }
@@ -108,7 +108,7 @@ public class PlayerListeners implements Listener {
 
         final ItemStack item = p.getInventory().getItemInHand();
 
-        if (item.getType() != XMaterial.matchXMaterial(String.valueOf(Objects.requireNonNull(Options.VOTEPARTY_CRATE_ITEM.getValue()))).get()
+        if (item.getType() != XMaterial.matchXMaterial(Objects.requireNonNull(OptionsUtil.VOTEPARTY_CRATE_ITEM.getStringValue())).get()
                 .parseMaterial()) {
             return;
         }
@@ -119,7 +119,7 @@ public class PlayerListeners implements Listener {
             return;
         }
 
-        final String itemName = String.valueOf(Options.VOTEPARTY_CRATE_NAME.getValue());
+        final String itemName = OptionsUtil.VOTEPARTY_CRATE_NAME.getStringValue();
         if (itemName == null) {
             return;
         }
@@ -136,10 +136,10 @@ public class PlayerListeners implements Listener {
             item.setAmount(amount - 1);
         }
 
-        VotePartyUtils.getInstance().chooseRandom(Options.VOTEPARTY_RANDOM.isEnabled(), p);
+        VotePartyUtils.getInstance().chooseRandom(OptionsUtil.VOTEPARTY_RANDOM.isEnabled(), p);
 
-        if (Options.VOTEPARTY_SOUND_CRATE.isEnabled()) {
-            p.playSound(p.getLocation(), XSound.matchXSound(String.valueOf(Options.SOUND_VOTEPARTY_START.getValue())).get().parseSound(), 1000, 1);
+        if (OptionsUtil.VOTEPARTY_SOUND_CRATE.isEnabled()) {
+            p.playSound(p.getLocation(), XSound.matchXSound(OptionsUtil.SOUND_VOTEPARTY_START.getStringValue()).get().parseSound(), 1000, 1);
         }
 
         event.setCancelled(true);

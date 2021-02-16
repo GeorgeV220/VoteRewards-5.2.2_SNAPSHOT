@@ -3,7 +3,7 @@ package com.georgev22.voterewards.commands;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.configmanager.FileManager;
 import com.georgev22.voterewards.utilities.MessagesUtil;
-import com.georgev22.voterewards.utilities.Options;
+import com.georgev22.voterewards.utilities.OptionsUtil;
 import com.georgev22.voterewards.utilities.Utils;
 import com.georgev22.voterewards.utilities.maps.ObjectMap;
 import com.georgev22.voterewards.utilities.player.UserVoteData;
@@ -121,10 +121,10 @@ public class VoteParty extends BukkitCommand {
             return true;
         }
         placeholders
-                .append("%votes%", String.valueOf(Options.VOTEPARTY_VOTES.getIntValue()
+                .append("%votes%", String.valueOf(OptionsUtil.VOTEPARTY_VOTES.getIntValue()
                         - fm.getData().getFileConfiguration().getInt("VoteParty-Votes")))
                 .append("%current%", String.valueOf(fm.getData().getFileConfiguration().getInt("VoteParty-Votes")))
-                .append("%need%", String.valueOf(Options.VOTEPARTY_VOTES.getIntValue()));
+                .append("%need%", String.valueOf(OptionsUtil.VOTEPARTY_VOTES.getIntValue()));
         MessagesUtil.VOTEPARTY.msg(sender, placeholders, true);
         placeholders.clear();
         return true;

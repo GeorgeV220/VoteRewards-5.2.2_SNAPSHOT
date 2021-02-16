@@ -1,6 +1,5 @@
 package com.georgev22.voterewards.configmanager;
 
-import com.georgev22.voterewards.utilities.Options;
 import com.georgev22.voterewards.utilities.Utils;
 import com.google.common.collect.Sets;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -49,9 +48,7 @@ public final class CFG {
     public void setup() {
         if (!this.plugin.getDataFolder().exists()) {
             if (this.plugin.getDataFolder().mkdir()) {
-                if (Options.DEBUG_CREATE.isEnabled()) {
-                    Utils.debug(plugin, "Folder " + this.plugin.getDataFolder().getName() + " has been created!");
-                }
+                Utils.debug(plugin, "Folder " + this.plugin.getDataFolder().getName() + " has been created!");
             }
         }
 
@@ -60,9 +57,7 @@ public final class CFG {
         if (!this.file.exists()) {
             try {
                 if (this.file.createNewFile()) {
-                    if (Options.DEBUG_CREATE.isEnabled()) {
-                        Utils.debug(plugin, "File " + this.file.getName() + " has been created!");
-                    }
+                    Utils.debug(plugin, "File " + this.file.getName() + " has been created!");
                 }
             } catch (final IOException e) {
                 e.printStackTrace();
@@ -104,6 +99,15 @@ public final class CFG {
      */
     public FileConfiguration getFileConfiguration() {
         return this.fileConfiguration;
+    }
+
+    /**
+     * Get the file
+     *
+     * @return the file
+     */
+    public File getFile() {
+        return file;
     }
 
     @Override

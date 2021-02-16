@@ -1,6 +1,6 @@
 package com.georgev22.voterewards.database;
 
-import com.georgev22.voterewards.utilities.Options;
+import com.georgev22.voterewards.utilities.OptionsUtil;
 import com.georgev22.voterewards.utilities.maps.ObjectMap;
 
 import java.sql.*;
@@ -92,7 +92,7 @@ public abstract class Database {
      * @throws ClassNotFoundException When class is not found
      */
     public void createTable() throws SQLException, ClassNotFoundException {
-        updateSQL("CREATE TABLE IF NOT EXISTS `" + Options.DATABASE_TABLE_NAME.getValue() + "` (\n  `uuid` VARCHAR(38) DEFAULT NULL,\n" +
+        updateSQL("CREATE TABLE IF NOT EXISTS `" + OptionsUtil.DATABASE_TABLE_NAME.getStringValue() + "` (\n  `uuid` VARCHAR(38) DEFAULT NULL,\n" +
                 " `name` VARCHAR(18) DEFAULT NULL,\n" +
                 " `votes` INT(10) DEFAULT 0,\n" +
                 " `time` VARCHAR(20) DEFAULT 0,\n" +
@@ -111,7 +111,7 @@ public abstract class Database {
                 .append("totalvotes", "INT(10) DEFAULT 0");
         tableMap.forEach((columnName, type) -> {
             try {
-                checkColumn(String.valueOf(Options.DATABASE_TABLE_NAME.getValue()), columnName, type);
+                checkColumn(OptionsUtil.DATABASE_TABLE_NAME.getStringValue(), columnName, type);
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }

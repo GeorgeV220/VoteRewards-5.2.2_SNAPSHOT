@@ -6,7 +6,7 @@ import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.configmanager.CFG;
 import com.georgev22.voterewards.configmanager.FileManager;
 import com.georgev22.voterewards.utilities.MessagesUtil;
-import com.georgev22.voterewards.utilities.Options;
+import com.georgev22.voterewards.utilities.OptionsUtil;
 import com.georgev22.voterewards.utilities.Regions;
 import com.georgev22.voterewards.utilities.Utils;
 import com.georgev22.voterewards.utilities.maps.ObjectMap;
@@ -45,22 +45,22 @@ public class VotePartyUtils {
         dataFile.set("VoteParty-Votes", dataFile.getInt("VoteParty-Votes", 0) + 1);
         fm.getData().saveFile();
 
-        int maxVotes = Options.VOTEPARTY_VOTES.getIntValue();
+        int maxVotes = OptionsUtil.VOTEPARTY_VOTES.getIntValue();
         int currentVotes = dataFile.getInt("VoteParty-Votes", 0);
 
         final ObjectMap<String, String> placeholders = ObjectMap.newHashObjectMap();
         if (!start) {
-            if (!Options.VOTEPARTY.isEnabled()) {
+            if (!OptionsUtil.VOTEPARTY.isEnabled()) {
                 return;
             }
-            if (Options.MESSAGE_VOTEPARTY.isEnabled())
+            if (OptionsUtil.MESSAGE_VOTEPARTY.isEnabled())
                 if (maxVotes - currentVotes > 0) {
                     placeholders.append("%votes%", Utils.formatNumber(maxVotes - currentVotes));
                     MessagesUtil.VOTEPARTY_VOTES_NEED.msgAll(placeholders, true);
                     placeholders.clear();
                 }
 
-            if (Options.VOTEPARTY_PARTICIPATE.isEnabled()) {
+            if (OptionsUtil.VOTEPARTY_PARTICIPATE.isEnabled()) {
                 players.add(player);
             } else {
                 this.players.addAll(Bukkit.getOnlinePlayers());
@@ -73,9 +73,9 @@ public class VotePartyUtils {
         } else {
             players.addAll(Bukkit.getOnlinePlayers());
         }
-        if (Options.VOTEPARTY_COOLDOWN.isEnabled()) {
+        if (OptionsUtil.VOTEPARTY_COOLDOWN.isEnabled()) {
             placeholders.append("%secs%",
-                    String.valueOf(Options.VOTEPARTY_COOLDOWN_SECONDS.getValue()));
+                    OptionsUtil.VOTEPARTY_COOLDOWN_SECONDS.getStringValue());
             MessagesUtil.VOTEPARTY_START.msgAll(placeholders, true);
             placeholders.clear();
 
@@ -87,7 +87,7 @@ public class VotePartyUtils {
                 @Override
                 public void run() {
                     for (OfflinePlayer offlinePlayer : players) {
-                        if (Options.VOTEPARTY_CRATE.isEnabled()) {
+                        if (OptionsUtil.VOTEPARTY_CRATE.isEnabled()) {
                             if (offlinePlayer != null && offlinePlayer.isOnline()) {
                                 if (isInLocation(offlinePlayer.getPlayer().getLocation())) {
                                     UserVoteData userVoteData = UserVoteData.getUser(offlinePlayer.getUniqueId());
@@ -97,21 +97,21 @@ public class VotePartyUtils {
                                     offlinePlayer.getPlayer().getInventory().addItem(crate(1));
                             }
                         } else {
-                            chooseRandom(Options.VOTEPARTY_RANDOM.isEnabled(), offlinePlayer);
+                            chooseRandom(OptionsUtil.VOTEPARTY_RANDOM.isEnabled(), offlinePlayer);
                         }
-                        if ((offlinePlayer != null && offlinePlayer.isOnline()) && Options.VOTEPARTY_SOUND_START.isEnabled()) {
+                        if ((offlinePlayer != null && offlinePlayer.isOnline()) && OptionsUtil.VOTEPARTY_SOUND_START.isEnabled()) {
                             offlinePlayer.getPlayer().playSound(offlinePlayer.getPlayer().getLocation(), XSound
-                                            .matchXSound(String.valueOf(Options.SOUND_VOTEPARTY_START.getValue())).get().parseSound(),
+                                            .matchXSound(OptionsUtil.SOUND_VOTEPARTY_START.getStringValue()).get().parseSound(),
                                     1000, 1);
                         }
                     }
                     players.clear();
                 }
-            }.runTaskLaterAsynchronously(voteRewardPlugin, ((Number) Options.VOTEPARTY_COOLDOWN_SECONDS.getValue()).longValue() * 20L);
+            }.runTaskLaterAsynchronously(voteRewardPlugin, OptionsUtil.VOTEPARTY_COOLDOWN_SECONDS.getLongValue() * 20L);
 
         } else {
             for (OfflinePlayer offlinePlayer : players) {
-                if (Options.VOTEPARTY_CRATE.isEnabled()) {
+                if (OptionsUtil.VOTEPARTY_CRATE.isEnabled()) {
                     if (offlinePlayer.getPlayer() != null) {
                         if (isInLocation(offlinePlayer.getPlayer().getLocation())) {
                             UserVoteData userVoteData = UserVoteData.getUser(offlinePlayer.getUniqueId());
@@ -122,7 +122,7 @@ public class VotePartyUtils {
                     }
 
                 } else {
-                    chooseRandom(Options.VOTEPARTY_RANDOM.isEnabled(), offlinePlayer);
+                    chooseRandom(OptionsUtil.VOTEPARTY_RANDOM.isEnabled(), offlinePlayer);
                 }
 
             }
@@ -142,7 +142,7 @@ public class VotePartyUtils {
      * @param offlinePlayer Player to give the rewards
      */
     public void chooseRandom(boolean enable, OfflinePlayer offlinePlayer) {
-        List<String> list = Options.VOTEPARTY_REWARDS.getStringList();
+        List<String> list = OptionsUtil.VOTEPARTY_REWARDS.getStringList();
         if (enable) {
             Random random = new Random();
             int selector = random.nextInt(list.size());
@@ -157,7 +157,7 @@ public class VotePartyUtils {
     public boolean isInLocation(Location location) {
         CFG cfg = FileManager.getInstance().getData();
         FileConfiguration data = cfg.getFileConfiguration();
-        if (!Options.VOTEPARTY_REGIONS.isEnabled()) {
+        if (!OptionsUtil.VOTEPARTY_REGIONS.isEnabled()) {
             return false;
         }
         if (data.getConfigurationSection("Regions") == null || data.getConfigurationSection("Regions").getKeys(false).isEmpty()) {
@@ -176,10 +176,10 @@ public class VotePartyUtils {
         ItemStack itemStack = new ItemStack(
                 Objects.requireNonNull(
                         XMaterial.matchXMaterial(
-                                String.valueOf(Objects.requireNonNull(Options.VOTEPARTY_CRATE_ITEM.getValue()))).get().parseMaterial()));
+                                Objects.requireNonNull(OptionsUtil.VOTEPARTY_CRATE_ITEM.getStringValue())).get().parseMaterial()));
         ItemMeta itemMeta = itemStack.getItemMeta();
-        itemMeta.setDisplayName(Utils.colorize(String.valueOf(Options.VOTEPARTY_CRATE_NAME.getValue())));
-        itemMeta.setLore(Utils.colorize(Options.VOTEPARTY_CRATE_LORES.getStringList()));
+        itemMeta.setDisplayName(Utils.colorize(OptionsUtil.VOTEPARTY_CRATE_NAME.getStringValue()));
+        itemMeta.setLore(Utils.colorize(OptionsUtil.VOTEPARTY_CRATE_LORES.getStringList()));
         itemStack.setItemMeta(itemMeta);
         itemStack.setAmount(amount);
         return itemStack;

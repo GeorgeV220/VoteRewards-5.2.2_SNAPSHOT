@@ -7,7 +7,7 @@ import com.georgev22.voterewards.configmanager.CFG;
 import com.georgev22.voterewards.configmanager.FileManager;
 import com.georgev22.voterewards.hooks.HolographicDisplays;
 import com.georgev22.voterewards.utilities.MessagesUtil;
-import com.georgev22.voterewards.utilities.Options;
+import com.georgev22.voterewards.utilities.OptionsUtil;
 import com.georgev22.voterewards.utilities.Utils;
 import com.georgev22.voterewards.utilities.interfaces.Callback;
 import com.georgev22.voterewards.utilities.maps.LinkedObjectMap;
@@ -41,14 +41,14 @@ public class VoteUtils {
         userVoteData.setAllTimeVotes(userVoteData.getAllTimeVotes() + 1);
         UserVoteData.getAllUsersMap().replace(offlinePlayer.getUniqueId(), UserVoteData.getUser(offlinePlayer.getUniqueId()).getUser());
 
-        if (Options.VOTE_TITLE.isEnabled()) {
+        if (OptionsUtil.VOTE_TITLE.isEnabled()) {
             Titles.sendTitle(offlinePlayer.getPlayer(),
                     Utils.colorize(MessagesUtil.VOTE_TITLE.getMessages()[0]).replace("%player%", offlinePlayer.getName()),
                     Utils.colorize(MessagesUtil.VOTE_SUBTITLE.getMessages()[0]).replace("%player%", offlinePlayer.getName()));
         }
 
         // WORLD REWARDS (WITH SERVICES)
-        if (Options.WORLD.isEnabled()) {
+        if (OptionsUtil.WORLD.isEnabled()) {
             if (voteRewardPlugin.getConfig().getString("Rewards.Worlds." + offlinePlayer.getPlayer().getWorld() + "." + serviceName) != null) {
                 userVoteData.runCommands(voteRewardPlugin.getConfig()
                         .getStringList("Rewards.Worlds." + offlinePlayer.getPlayer().getWorld() + "." + serviceName));
@@ -59,7 +59,7 @@ public class VoteUtils {
         }
 
         // SERVICE REWARDS
-        if (!Options.DISABLE_SERVICES.isEnabled()) {
+        if (!OptionsUtil.DISABLE_SERVICES.isEnabled()) {
             if (voteRewardPlugin.getConfig().getString("Rewards.Services." + serviceName) != null) {
                 userVoteData.runCommands(voteRewardPlugin.getConfig()
                         .getStringList("Rewards.Services." + serviceName + ".commands"));
@@ -70,9 +70,9 @@ public class VoteUtils {
         }
 
         // LUCKY REWARDS
-        if (Options.LUCKY.isEnabled()) {
+        if (OptionsUtil.LUCKY.isEnabled()) {
             ThreadLocalRandom random = ThreadLocalRandom.current();
-            int i = random.nextInt(Options.LUCKY_NUMBERS.getIntValue() + 1);
+            int i = random.nextInt(OptionsUtil.LUCKY_NUMBERS.getIntValue() + 1);
             for (String s2 : voteRewardPlugin.getConfig().getConfigurationSection("Rewards.Lucky")
                     .getKeys(false)) {
                 if (Integer.valueOf(s2).equals(i)) {
@@ -83,7 +83,7 @@ public class VoteUtils {
         }
 
         // PERMISSIONS REWARDS
-        if (Options.PERMISSIONS.isEnabled()) {
+        if (OptionsUtil.PERMISSIONS.isEnabled()) {
             final ConfigurationSection section = voteRewardPlugin.getConfig()
                     .getConfigurationSection("Rewards.Permission");
             for (String s2 : section.getKeys(false)) {
@@ -95,7 +95,7 @@ public class VoteUtils {
         }
 
         // CUMULATIVE REWARDS
-        if (Options.CUMULATIVE.isEnabled()) {
+        if (OptionsUtil.CUMULATIVE.isEnabled()) {
             int votes = userVoteData.getVotes();
             for (String s2 : voteRewardPlugin.getConfig().getConfigurationSection("Rewards.Cumulative")
                     .getKeys(false)) {
@@ -107,13 +107,13 @@ public class VoteUtils {
         }
 
         // PLAY SOUND
-        if (Options.SOUND.isEnabled()) {
+        if (OptionsUtil.SOUND.isEnabled()) {
             if (offlinePlayer.isOnline())
                 offlinePlayer.getPlayer().playSound(offlinePlayer.getPlayer().getLocation(),
-                        XSound.matchXSound(String.valueOf(Options.SOUND_VOTE.getValue())).get().parseSound(), 1000, 1);
+                        XSound.matchXSound(OptionsUtil.SOUND_VOTE.getStringValue()).get().parseSound(), 1000, 1);
         }
 
-        if (Options.DAILY.isEnabled()) {
+        if (OptionsUtil.DAILY.isEnabled()) {
             int votes = userVoteData.getDailyVotes();
             for (String s2 : voteRewardPlugin.getConfig().getConfigurationSection("Rewards.Daily")
                     .getKeys(false)) {
@@ -131,7 +131,7 @@ public class VoteUtils {
         if (Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays"))
             HolographicDisplays.updateAll();
 
-        if (Options.DEBUG_VOTE_AFTER.isEnabled()) {
+        if (OptionsUtil.DEBUG_VOTE_AFTER.isEnabled()) {
             Utils.debug(voteRewardPlugin,
                     "Vote for player " + offlinePlayer.getPlayer(),
                     "Votes: " + userVoteData.getVotes(),
@@ -167,7 +167,7 @@ public class VoteUtils {
 
     public static void monthlyReset() {
         Bukkit.getScheduler().runTaskTimer(voteRewardPlugin, () -> {
-            if (Options.DEBUG_USELESS.isEnabled())
+            if (OptionsUtil.DEBUG_USELESS.isEnabled())
                 Utils.debug(voteRewardPlugin, "Monthly reset Thread ID: " + Thread.currentThread().getId());
             FileManager fileManager = FileManager.getInstance();
             CFG cfg = fileManager.getData();
@@ -181,7 +181,7 @@ public class VoteUtils {
                 dataConfiguration.set("month", Calendar.getInstance().getTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getMonthValue());
                 cfg.saveFile();
             }
-        }, 20L, Options.MONTHLY_MINUTES.getLongValue() * 1200L);
+        }, 20L, OptionsUtil.MONTHLY_MINUTES.getLongValue() * 1200L);
     }
 
     /**
@@ -189,13 +189,13 @@ public class VoteUtils {
      */
     public static void purgeData() {
         Bukkit.getScheduler().runTaskTimer(voteRewardPlugin, () -> {
-            if (Options.DEBUG_USELESS.isEnabled())
+            if (OptionsUtil.DEBUG_USELESS.isEnabled())
                 Utils.debug(voteRewardPlugin, "Purge data Thread ID: " + Thread.currentThread().getId());
             ObjectMap<UUID, User> objectMap = UserVoteData.getAllUsersMap();
             objectMap.forEach((uuid, user) -> {
                 UserVoteData userVoteData = UserVoteData.getUser(uuid);
-                long time = userVoteData.getLastVote() + (Options.PURGE_DAYS.getLongValue() * 86400000);
-                if (Options.DEBUG_USELESS.isEnabled()) {
+                long time = userVoteData.getLastVote() + (OptionsUtil.PURGE_DAYS.getLongValue() * 86400000);
+                if (OptionsUtil.DEBUG_USELESS.isEnabled()) {
                     Utils.debug(voteRewardPlugin, Instant.ofEpochMilli(userVoteData.getLastVote()).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())).toString());
                     Utils.debug(voteRewardPlugin, Instant.ofEpochMilli(time).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())).toString());
                 }
@@ -204,7 +204,7 @@ public class VoteUtils {
                 }
 
             });
-        }, 20L, Options.PURGE_MINUTES.getLongValue() * 1200L);
+        }, 20L, OptionsUtil.PURGE_MINUTES.getLongValue() * 1200L);
     }
 
     /**

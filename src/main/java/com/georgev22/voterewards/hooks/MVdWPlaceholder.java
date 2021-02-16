@@ -3,7 +3,7 @@ package com.georgev22.voterewards.hooks;
 import be.maximvdw.placeholderapi.PlaceholderAPI;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.configmanager.FileManager;
-import com.georgev22.voterewards.utilities.Options;
+import com.georgev22.voterewards.utilities.OptionsUtil;
 import com.georgev22.voterewards.utilities.Utils;
 import com.georgev22.voterewards.utilities.player.UserVoteData;
 import com.georgev22.voterewards.utilities.player.VoteUtils;
@@ -25,19 +25,19 @@ public class MVdWPlaceholder {
                 event -> String.valueOf(fm.getData().getFileConfiguration().getInt("VoteParty-Votes")));
 
         PlaceholderAPI.registerPlaceholder(plugin, "voterewards_voteparty_votes_need",
-                event -> String.valueOf(Options.VOTEPARTY_VOTES.getIntValue()));
+                event -> String.valueOf(OptionsUtil.VOTEPARTY_VOTES.getIntValue()));
 
         PlaceholderAPI.registerPlaceholder(plugin, "voterewards_voteparty_votes_until",
-                event -> String.valueOf(Options.VOTEPARTY_VOTES.getIntValue()
+                event -> String.valueOf(OptionsUtil.VOTEPARTY_VOTES.getIntValue()
                         - fm.getData().getFileConfiguration().getInt("VoteParty-Votes", 0)));
 
         PlaceholderAPI.registerPlaceholder(plugin, "voterewards_voteparty_bar", event -> Utils.getProgressBar(
                 fm.getData().getFileConfiguration().getInt("VoteParty-Votes"),
-                Options.VOTEPARTY_VOTES.getIntValue(),
-                Options.VOTEPARTY_BARS.getIntValue(),
-                (String) Options.VOTEPARTY_BAR_SYMBOL.getValue(),
-                (String) Options.VOTEPARTY_COMPLETE_COLOR.getValue(),
-                (String) Options.VOTEPARTY_NOT_COMPLETE_COLOR.getValue()));
+                OptionsUtil.VOTEPARTY_VOTES.getIntValue(),
+                OptionsUtil.VOTEPARTY_BARS.getIntValue(),
+                OptionsUtil.VOTEPARTY_BAR_SYMBOL.getStringValue(),
+                OptionsUtil.VOTEPARTY_COMPLETE_COLOR.getStringValue(),
+                OptionsUtil.VOTEPARTY_NOT_COMPLETE_COLOR.getStringValue()));
 
         PlaceholderAPI.registerPlaceholder(plugin, "voterewards_top_voter", event -> VoteUtils.getTopPlayer(0));
     }

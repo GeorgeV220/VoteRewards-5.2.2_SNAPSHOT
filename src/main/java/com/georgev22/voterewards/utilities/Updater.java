@@ -12,13 +12,13 @@ import java.net.URL;
 public class Updater {
 
     private final VoteRewardPlugin voteRewardPlugin = VoteRewardPlugin.getInstance();
+    private final String localVersion = voteRewardPlugin.getDescription().getVersion();
+    private String onlineVersion;
 
     public Updater() {
         Bukkit.getScheduler().runTaskAsynchronously(voteRewardPlugin, () -> {
             final String BASE_URL = "https://raw.githubusercontent.com/GeorgeV220/VoteRewards/master/version.md";
             voteRewardPlugin.getLogger().info("Checking for Updates ... ");
-
-            String onlineVersion;
 
             try {
                 System.setProperty("http.agent", "Chrome");
@@ -41,35 +41,32 @@ public class Updater {
                 return;
 
             }
-            if (!voteRewardPlugin.getDescription().getVersion().equalsIgnoreCase(onlineVersion)) {
+            if (compareVersions(onlineVersion.replace("v", ""), localVersion.replace("v", "")) == 0) {
+                if (localVersion.contains("Beta")) {
+                    voteRewardPlugin.getLogger().info("You are running the newest beta build.");
+                } else {
+                    voteRewardPlugin.getLogger().info("You are running the newest stable build.");
+                }
+            } else if (compareVersions(onlineVersion.replace("v", ""), localVersion.replace("v", "")) == 1) {
                 if (onlineVersion.contains("Beta")) {
                     voteRewardPlugin.getLogger().warning("New beta version available!");
 
                     voteRewardPlugin.getLogger().warning("Beta Version: " + onlineVersion + ". You are running version: "
-                            + voteRewardPlugin.getDescription().getVersion());
-                    voteRewardPlugin.getLogger().warning("Update at: https://github.com/GeorgeV220/VoteRewards/releases/");
-                } else if (onlineVersion.contains("Alpha")) {
-                    voteRewardPlugin.getLogger().warning("New Alpha version available!");
-
-                    voteRewardPlugin.getLogger().warning("Alpha Version: " + onlineVersion + ". You are running version: "
-                            + voteRewardPlugin.getDescription().getVersion());
+                            + localVersion);
                     voteRewardPlugin.getLogger().warning("Update at: https://github.com/GeorgeV220/VoteRewards/releases/");
                 } else {
                     voteRewardPlugin.getLogger().warning("New stable version available!");
 
                     voteRewardPlugin.getLogger().warning("Stable Version: " + onlineVersion + ". You are running version: "
-                            + voteRewardPlugin.getDescription().getVersion());
+                            + localVersion);
                     voteRewardPlugin.getLogger().warning("Update at: https://github.com/GeorgeV220/VoteRewards/releases/");
                 }
             } else {
-                if (voteRewardPlugin.getDescription().getVersion().contains("Beta")) {
-                    voteRewardPlugin.getLogger().info("You are running the newest beta build.");
-                } else if (voteRewardPlugin.getDescription().getVersion().contains("Alpha")) {
-                    voteRewardPlugin.getLogger().info("You are running the newest alpha build.");
-                } else {
-                    voteRewardPlugin.getLogger().info("You are running the newest stable build.");
-                }
+                voteRewardPlugin.getLogger().warning("You are currently using the " + localVersion + " version which is under development. If you have problems contact me on discord or github");
+                voteRewardPlugin.getLogger().warning("Your version is " + localVersion);
+                voteRewardPlugin.getLogger().warning("Latest released version is " + onlineVersion);
             }
+
         });
     }
 
@@ -77,8 +74,6 @@ public class Updater {
         Bukkit.getScheduler().runTaskAsynchronously(voteRewardPlugin, () -> {
             final String BASE_URL = "https://raw.githubusercontent.com/GeorgeV220/VoteRewards/master/version.md";
             Utils.msg(player, "&e&lUpdater &8» &6Checking for Updates ...");
-
-            String onlineVersion;
 
             try {
                 System.setProperty("http.agent", "Chrome");
@@ -99,35 +94,52 @@ public class Updater {
                 return;
 
             }
-            if (!voteRewardPlugin.getDescription().getVersion().equalsIgnoreCase(onlineVersion)) {
+            if (compareVersions(onlineVersion.replace("v", ""), localVersion.replace("v", "")) == 0) {
+                if (localVersion.contains("Beta")) {
+                    Utils.msg(player, "&e&lUpdater &8» &6You are running the newest beta build.");
+                } else {
+                    Utils.msg(player, "&e&lUpdater &8» &6You are running the newest stable build.");
+                }
+            } else if (compareVersions(onlineVersion.replace("v", ""), localVersion.replace("v", "")) == 1) {
                 if (onlineVersion.contains("Beta")) {
                     Utils.msg(player, "&e&lUpdater &8» &6New beta version available!");
                     Utils.msg(player, "&e&lUpdater &8» &6Beta Version: &c"
-                            + onlineVersion + ". &6You are running version: &c" + voteRewardPlugin.getDescription().getVersion());
-                    Utils.msg(player, "&e&lUpdater &8» &6Update at: https://github.com/GeorgeV220/VoteRewards/releases/");
-                } else if (onlineVersion.contains("Alpha")) {
-                    Utils.msg(player, "&e&lUpdater &8» &6New alpha version available!");
-                    Utils.msg(player, "&e&lUpdater &8» &6Alpha Version: &c"
-                            + onlineVersion + ". &6You are running version: &c" + voteRewardPlugin.getDescription().getVersion());
+                            + onlineVersion + ". &6You are running version: &c" + localVersion);
                     Utils.msg(player, "&e&lUpdater &8» &6Update at: https://github.com/GeorgeV220/VoteRewards/releases/");
                 } else {
                     Utils.msg(player,
                             "&e&lUpdater &8» &6New stable version available!");
                     Utils.msg(player, "&e&lUpdater &8» &6Stable Version: &c"
-                            + onlineVersion + ". &6You are running version: &c" + voteRewardPlugin.getDescription().getVersion());
+                            + onlineVersion + ". &6You are running version: &c" + localVersion);
                     Utils.msg(player, "&e&lUpdater &8» &6Update at: https://github.com/GeorgeV220/VoteRewards/releases/");
 
                 }
             } else {
-                if (voteRewardPlugin.getDescription().getVersion().contains("Beta")) {
-                    Utils.msg(player, "&e&lUpdater &8» &6You are running the newest beta build.");
-                } else if (voteRewardPlugin.getDescription().getVersion().contains("Alpha")) {
-                    Utils.msg(player, "&e&lUpdater &8» &6You are running the newest alpha build.");
-                } else {
-                    Utils.msg(player, "&e&lUpdater &8» &6You are running the newest stable build.");
-                }
+                Utils.msg(player, "&e&lUpdater &8» &6You are currently using the &c" + localVersion + " &6version which is under development. If you have problems contact me on discord or github");
+                Utils.msg(player, "&e&lUpdater &8» &6Your version is &c" + localVersion);
+                Utils.msg(player, "&e&lUpdater &8» &6Latest released version is &c" + onlineVersion);
             }
         });
+    }
+
+
+    private int compareVersions(String version1, String version2) {
+        int comparisonResult = 0;
+
+        String[] version1Splits = version1.split("\\.");
+        String[] version2Splits = version2.split("\\.");
+        int maxLengthOfVersionSplits = Math.max(version1Splits.length, version2Splits.length);
+
+        for (int i = 0; i < maxLengthOfVersionSplits; i++) {
+            Integer v1 = i < version1Splits.length ? Integer.parseInt(version1Splits[i]) : 0;
+            Integer v2 = i < version2Splits.length ? Integer.parseInt(version2Splits[i]) : 0;
+            int compare = v1.compareTo(v2);
+            if (compare != 0) {
+                comparisonResult = compare;
+                break;
+            }
+        }
+        return comparisonResult;
     }
 
 }

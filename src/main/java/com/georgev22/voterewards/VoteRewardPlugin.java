@@ -1,5 +1,6 @@
 package com.georgev22.voterewards;
 
+import com.georgev22.externals.com.tchristofferson.configupdater.ConfigUpdater;
 import com.georgev22.externals.me.lucko.helper.maven.LibraryLoader;
 import com.georgev22.externals.me.lucko.helper.maven.MavenLibrary;
 import com.georgev22.voterewards.commands.*;
@@ -14,7 +15,7 @@ import com.georgev22.voterewards.hooks.*;
 import com.georgev22.voterewards.listeners.PlayerListeners;
 import com.georgev22.voterewards.listeners.VotifierListener;
 import com.georgev22.voterewards.utilities.MessagesUtil;
-import com.georgev22.voterewards.utilities.Options;
+import com.georgev22.voterewards.utilities.OptionsUtil;
 import com.georgev22.voterewards.utilities.Updater;
 import com.georgev22.voterewards.utilities.Utils;
 import com.georgev22.voterewards.utilities.interfaces.Callback;
@@ -31,9 +32,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.annotation.Nonnull;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.ZoneId;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Map;
 
@@ -70,9 +73,16 @@ public class VoteRewardPlugin extends JavaPlugin {
         final FileManager fm = FileManager.getInstance();
         fm.loadFiles(this);
         MessagesUtil.repairPaths(fm.getMessages());
+
+        try {
+            ConfigUpdater.update(this, "config.yml", fm.getConfig().getFile(), Arrays.asList("Services", "Holograms"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         CFG dataCFG = fm.getData();
         FileConfiguration data = dataCFG.getFileConfiguration();
-        if (Options.DEBUG_USELESS.isEnabled())
+        if (OptionsUtil.DEBUG_USELESS.isEnabled())
             Utils.debug(this, "onEnable Thread ID: " + Thread.currentThread().getId());
         Utils.registerListeners(new VotifierListener(), new PlayerListeners());
 
@@ -81,21 +91,21 @@ public class VoteRewardPlugin extends JavaPlugin {
             dataCFG.saveFile();
         }
 
-        if (Options.COMMAND_VOTEREWARDS.isEnabled())
+        if (OptionsUtil.COMMAND_VOTEREWARDS.isEnabled())
             Utils.registerCommand("voterewards", new VoteRewards());
-        if (Options.COMMAND_FAKEVOTE.isEnabled())
+        if (OptionsUtil.COMMAND_FAKEVOTE.isEnabled())
             Utils.registerCommand("fakevote", new FakeVote());
-        if (Options.COMMAND_VOTE.isEnabled())
+        if (OptionsUtil.COMMAND_VOTE.isEnabled())
             Utils.registerCommand("vote", new Vote());
-        if (Options.COMMAND_VOTES.isEnabled())
+        if (OptionsUtil.COMMAND_VOTES.isEnabled())
             Utils.registerCommand("votes", new Votes());
-        if (Options.COMMAND_VOTEPARTY.isEnabled())
+        if (OptionsUtil.COMMAND_VOTEPARTY.isEnabled())
             Utils.registerCommand("voteparty", new VoteParty());
-        if (Options.COMMAND_REWARDS.isEnabled())
+        if (OptionsUtil.COMMAND_REWARDS.isEnabled())
             Utils.registerCommand("rewards", new Rewards());
-        if (Options.COMMAND_VOTETOP.isEnabled())
+        if (OptionsUtil.COMMAND_VOTETOP.isEnabled())
             Utils.registerCommand("votetop", new VoteTop());
-        if (Options.COMMAND_HOLOGRAM.isEnabled())
+        if (OptionsUtil.COMMAND_HOLOGRAM.isEnabled())
             Utils.registerCommand("hologram", new Holograms());
 
         Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
@@ -135,7 +145,7 @@ public class VoteRewardPlugin extends JavaPlugin {
             Bukkit.getLogger().info("[VoteRewards] Hooked into AuthMeReloaded!");
         }
 
-        if (Options.UPDATER.isEnabled()) {
+        if (OptionsUtil.UPDATER.isEnabled()) {
             new Updater();
         }
 
@@ -144,7 +154,7 @@ public class VoteRewardPlugin extends JavaPlugin {
             Bukkit.getLogger().info("[VoteRewards] Metrics are enabled!");
         }
 
-        if (Options.REMINDER.isEnabled()) {
+        if (OptionsUtil.REMINDER.isEnabled()) {
             Bukkit.getScheduler().runTaskTimerAsynchronously(instance, () -> {
                 for (Map.Entry<Player, Long> entry : reminderMap.entrySet()) {
                     Player player = entry.getKey();
@@ -156,17 +166,17 @@ public class VoteRewardPlugin extends JavaPlugin {
                             placeholders.append("%player%", player.getName());
                             MessagesUtil.REMINDER.msg(player, placeholders, true);
                         }
-                        reminderMap.replace(player, System.currentTimeMillis() + (Options.REMINDER_SEC.getIntValue() * 1000));
+                        reminderMap.replace(player, System.currentTimeMillis() + (OptionsUtil.REMINDER_SEC.getIntValue() * 1000));
                     }
                 }
             }, 20, 20);
         }
 
-        if (Options.DAILY.isEnabled()) {
+        if (OptionsUtil.DAILY.isEnabled()) {
             Bukkit.getScheduler().runTaskTimerAsynchronously(instance, () -> {
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     UserVoteData userVoteData = UserVoteData.getUser(player.getUniqueId());
-                    if (System.currentTimeMillis() >= userVoteData.getLastVote() + (Options.DAILY_HOURS.getIntValue() * 60 * 60 * 1000)) {
+                    if (System.currentTimeMillis() >= userVoteData.getLastVote() + (OptionsUtil.DAILY_HOURS.getIntValue() * 60 * 60 * 1000)) {
                         if (userVoteData.getDailyVotes() != 0) {
                             userVoteData.setDailyVotes(0);
                         }
@@ -185,21 +195,21 @@ public class VoteRewardPlugin extends JavaPlugin {
         }
         Bukkit.getScheduler().cancelTasks(this);
         HolographicDisplays.getHologramMap().forEach((name, hologram) -> HolographicDisplays.remove(name, false));
-        if (Options.COMMAND_VOTEREWARDS.isEnabled())
+        if (OptionsUtil.COMMAND_VOTEREWARDS.isEnabled())
             Utils.unRegisterCommand("voterewards");
-        if (Options.COMMAND_FAKEVOTE.isEnabled())
+        if (OptionsUtil.COMMAND_FAKEVOTE.isEnabled())
             Utils.unRegisterCommand("fakevote");
-        if (Options.COMMAND_VOTE.isEnabled())
+        if (OptionsUtil.COMMAND_VOTE.isEnabled())
             Utils.unRegisterCommand("vote");
-        if (Options.COMMAND_VOTES.isEnabled())
+        if (OptionsUtil.COMMAND_VOTES.isEnabled())
             Utils.unRegisterCommand("votes");
-        if (Options.COMMAND_VOTEPARTY.isEnabled())
+        if (OptionsUtil.COMMAND_VOTEPARTY.isEnabled())
             Utils.unRegisterCommand("voteparty");
-        if (Options.COMMAND_REWARDS.isEnabled())
+        if (OptionsUtil.COMMAND_REWARDS.isEnabled())
             Utils.unRegisterCommand("rewards");
-        if (Options.COMMAND_VOTETOP.isEnabled())
+        if (OptionsUtil.COMMAND_VOTETOP.isEnabled())
             Utils.unRegisterCommand("votetop");
-        if (Options.COMMAND_HOLOGRAM.isEnabled())
+        if (OptionsUtil.COMMAND_HOLOGRAM.isEnabled())
             Utils.unRegisterCommand("hologram");
         if (connection != null) {
             try {
@@ -220,17 +230,17 @@ public class VoteRewardPlugin extends JavaPlugin {
      * @throws ClassNotFoundException When class is not found
      */
     private void setupDatabase() throws Exception {
-        if (Options.DEBUG_USELESS.isEnabled())
+        if (OptionsUtil.DEBUG_USELESS.isEnabled())
             Utils.debug(this, "Setup database Thread ID: " + Thread.currentThread().getId());
-        switch (String.valueOf(Options.DATABASE_TYPE.getValue())) {
+        switch (OptionsUtil.DATABASE_TYPE.getStringValue()) {
             case "MySQL": {
                 if (connection == null || connection.isClosed()) {
                     database = new MySQL(
-                            String.valueOf(Options.DATABASE_HOST.getValue()),
-                            String.valueOf(Options.DATABASE_PORT.getValue()),
-                            String.valueOf(Options.DATABASE_DATABASE.getValue()),
-                            String.valueOf(Options.DATABASE_USER.getValue()),
-                            String.valueOf(Options.DATABASE_PASSWORD.getValue()));
+                            OptionsUtil.DATABASE_HOST.getStringValue(),
+                            OptionsUtil.DATABASE_PORT.getIntValue(),
+                            OptionsUtil.DATABASE_DATABASE.getStringValue(),
+                            OptionsUtil.DATABASE_USER.getStringValue(),
+                            OptionsUtil.DATABASE_PASSWORD.getStringValue());
                     iDatabaseType = new UserVoteData.SQLUserUtils();
                     connection = database.openConnection();
                     database.createTable();
@@ -241,11 +251,11 @@ public class VoteRewardPlugin extends JavaPlugin {
             case "PostgreSQL": {
                 if (connection == null || connection.isClosed()) {
                     database = new PostgreSQL(
-                            String.valueOf(Options.DATABASE_HOST.getValue()),
-                            String.valueOf(Options.DATABASE_PORT.getValue()),
-                            String.valueOf(Options.DATABASE_DATABASE.getValue()),
-                            String.valueOf(Options.DATABASE_USER.getValue()),
-                            String.valueOf(Options.DATABASE_PASSWORD.getValue()));
+                            OptionsUtil.DATABASE_HOST.getStringValue(),
+                            OptionsUtil.DATABASE_PORT.getIntValue(),
+                            OptionsUtil.DATABASE_DATABASE.getStringValue(),
+                            OptionsUtil.DATABASE_USER.getStringValue(),
+                            OptionsUtil.DATABASE_PASSWORD.getStringValue());
                     iDatabaseType = new UserVoteData.SQLUserUtils();
                     connection = database.openConnection();
                     database.createTable();
@@ -257,7 +267,7 @@ public class VoteRewardPlugin extends JavaPlugin {
                 if (connection == null || connection.isClosed()) {
                     database = new SQLite(
                             getDataFolder(),
-                            String.valueOf(Options.DATABASE_SQLITE.getValue()));
+                            OptionsUtil.DATABASE_SQLITE.getStringValue());
                     iDatabaseType = new UserVoteData.SQLUserUtils();
                     connection = database.openConnection();
                     database.createTable();
@@ -267,12 +277,12 @@ public class VoteRewardPlugin extends JavaPlugin {
             }
             case "MongoDB": {
                 mongoDB = new MongoDB(
-                        String.valueOf(Options.DATABASE_MONGO_HOST.getValue()),
-                        Options.DATABASE_MONGO_PORT.getIntValue(),
-                        String.valueOf(Options.DATABASE_MONGO_USER.getValue()),
-                        String.valueOf(Options.DATABASE_MONGO_PASSWORD.getValue()),
-                        String.valueOf(Options.DATABASE_MONGO_DATABASE.getValue()),
-                        String.valueOf(Options.DATABASE_MONGO_COLLECTION.getValue()));
+                        OptionsUtil.DATABASE_MONGO_HOST.getStringValue(),
+                        OptionsUtil.DATABASE_MONGO_PORT.getIntValue(),
+                        OptionsUtil.DATABASE_MONGO_USER.getStringValue(),
+                        OptionsUtil.DATABASE_MONGO_PASSWORD.getStringValue(),
+                        OptionsUtil.DATABASE_MONGO_DATABASE.getStringValue(),
+                        OptionsUtil.DATABASE_MONGO_COLLECTION.getStringValue());
                 database = null;
                 iDatabaseType = new UserVoteData.MongoDBUtils();
                 Bukkit.getLogger().info("[VoteRewards] Database: MongoDB");
@@ -293,7 +303,7 @@ public class VoteRewardPlugin extends JavaPlugin {
             userVoteData.load(new Callback() {
                 @Override
                 public void onSuccess() {
-                    if (Options.DEBUG_LOAD.isEnabled())
+                    if (OptionsUtil.DEBUG_LOAD.isEnabled())
                         Utils.debug(VoteRewardPlugin.getInstance(), "Successfully loaded user " + userVoteData.getUser().getPlayer().getName());
                 }
 
@@ -306,10 +316,10 @@ public class VoteRewardPlugin extends JavaPlugin {
 
         HolographicDisplays.updateAll();
 
-        if (Options.PURGE_ENABLED.isEnabled())
+        if (OptionsUtil.PURGE_ENABLED.isEnabled())
             VoteUtils.purgeData();
 
-        if (Options.MONTHLY_ENABLED.isEnabled())
+        if (OptionsUtil.MONTHLY_ENABLED.isEnabled())
             VoteUtils.monthlyReset();
     }
 

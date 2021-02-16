@@ -2,7 +2,7 @@ package com.georgev22.voterewards.hooks;
 
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.configmanager.FileManager;
-import com.georgev22.voterewards.utilities.Options;
+import com.georgev22.voterewards.utilities.OptionsUtil;
 import com.georgev22.voterewards.utilities.Utils;
 import com.georgev22.voterewards.utilities.player.UserVoteData;
 import com.georgev22.voterewards.utilities.player.VoteUtils;
@@ -61,21 +61,21 @@ public class PAPI extends PlaceholderExpansion {
         }
 
         if (identifier.equalsIgnoreCase("voteparty_votes_until")) {
-            return String.valueOf(Options.VOTEPARTY_VOTES.getIntValue()
+            return String.valueOf(OptionsUtil.VOTEPARTY_VOTES.getIntValue()
                     - fm.getData().getFileConfiguration().getInt("VoteParty-Votes", 0));
         }
         if (identifier.equalsIgnoreCase("voteparty_votes_need")) {
-            return String.valueOf(Options.VOTEPARTY_VOTES.getValue());
+            return OptionsUtil.VOTEPARTY_VOTES.getStringValue();
         }
 
         if (identifier.equalsIgnoreCase("voteparty_bar")) {
             return Utils.getProgressBar(
                     fm.getData().getFileConfiguration().getInt("VoteParty-Votes"),
-                    Options.VOTEPARTY_VOTES.getIntValue(),
-                    Options.VOTEPARTY_BARS.getIntValue(),
-                    (String) Options.VOTEPARTY_BAR_SYMBOL.getValue(),
-                    (String) Options.VOTEPARTY_COMPLETE_COLOR.getValue(),
-                    (String) Options.VOTEPARTY_NOT_COMPLETE_COLOR.getValue());
+                    OptionsUtil.VOTEPARTY_VOTES.getIntValue(),
+                    OptionsUtil.VOTEPARTY_BARS.getIntValue(),
+                    OptionsUtil.VOTEPARTY_BAR_SYMBOL.getStringValue(),
+                    OptionsUtil.VOTEPARTY_COMPLETE_COLOR.getStringValue(),
+                    OptionsUtil.VOTEPARTY_NOT_COMPLETE_COLOR.getStringValue());
         }
 
         if (identifier.equalsIgnoreCase("top_voter")) {

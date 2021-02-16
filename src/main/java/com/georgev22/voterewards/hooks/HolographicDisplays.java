@@ -3,7 +3,7 @@ package com.georgev22.voterewards.hooks;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.configmanager.CFG;
 import com.georgev22.voterewards.configmanager.FileManager;
-import com.georgev22.voterewards.utilities.Options;
+import com.georgev22.voterewards.utilities.OptionsUtil;
 import com.georgev22.voterewards.utilities.Utils;
 import com.georgev22.voterewards.utilities.maps.ObjectMap;
 import com.georgev22.voterewards.utilities.player.VoteUtils;
@@ -131,18 +131,18 @@ public class HolographicDisplays {
     public static ObjectMap<String, String> getPlaceholderMap() {
         final ObjectMap<String, String> map = ObjectMap.newHashObjectMap();
         int i = 1;
-        for (Map.Entry<String, Integer> b : VoteUtils.getTopPlayers(Options.VOTETOP_VOTERS.getIntValue()).entrySet()) {
+        for (Map.Entry<String, Integer> b : VoteUtils.getTopPlayers(OptionsUtil.VOTETOP_VOTERS.getIntValue()).entrySet()) {
             String[] args = String.valueOf(b).split("=");
             map.append("%top-" + i + "%", args[0]).append("%vote-" + i + "%", args[1]);
             i++;
         }
         map.append("%bar%", Utils.getProgressBar(
                 data.getInt("VoteParty-Votes"),
-                Options.VOTEPARTY_VOTES.getIntValue(),
-                Options.VOTEPARTY_BARS.getIntValue(),
-                (String) Options.VOTEPARTY_BAR_SYMBOL.getValue(),
-                (String) Options.VOTEPARTY_COMPLETE_COLOR.getValue(),
-                (String) Options.VOTEPARTY_NOT_COMPLETE_COLOR.getValue()));
+                OptionsUtil.VOTEPARTY_VOTES.getIntValue(),
+                OptionsUtil.VOTEPARTY_BARS.getIntValue(),
+                OptionsUtil.VOTEPARTY_BAR_SYMBOL.getStringValue(),
+                OptionsUtil.VOTEPARTY_COMPLETE_COLOR.getStringValue(),
+                OptionsUtil.VOTEPARTY_NOT_COMPLETE_COLOR.getStringValue()));
         return map;
     }
 

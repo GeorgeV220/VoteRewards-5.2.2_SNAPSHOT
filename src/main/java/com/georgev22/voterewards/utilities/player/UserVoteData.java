@@ -1,7 +1,7 @@
 package com.georgev22.voterewards.utilities.player;
 
 import com.georgev22.voterewards.VoteRewardPlugin;
-import com.georgev22.voterewards.utilities.Options;
+import com.georgev22.voterewards.utilities.OptionsUtil;
 import com.georgev22.voterewards.utilities.Utils;
 import com.georgev22.voterewards.utilities.interfaces.Callback;
 import com.georgev22.voterewards.utilities.interfaces.IDatabaseType;
@@ -50,7 +50,7 @@ public class UserVoteData {
      */
     public static void loadAllUsers() throws Exception {
         allUsersMap.putAll(voteRewardPlugin.getIDatabaseType().getAllUsers());
-        if (Options.DEBUG_LOAD.isEnabled())
+        if (OptionsUtil.DEBUG_LOAD.isEnabled())
             Utils.debug(voteRewardPlugin, getAllUsersMap().toString());
     }
 
@@ -115,7 +115,7 @@ public class UserVoteData {
      * @param services The services that player voted when he was offline.
      */
     public void setOfflineServices(List<String> services) {
-        if (Options.DEBUG_VOTES_OFFLINE.isEnabled())
+        if (OptionsUtil.DEBUG_VOTES_OFFLINE.isEnabled())
             Utils.debug(voteRewardPlugin, "Offline Voting Debug", services.toString());
         user.append("services", services);
     }
@@ -310,7 +310,7 @@ public class UserVoteData {
          */
         public void save(User user) throws SQLException, ClassNotFoundException {
             voteRewardPlugin.getDatabase().updateSQL(
-                    "UPDATE `" + Options.DATABASE_TABLE_NAME.getValue() + "` " +
+                    "UPDATE `" + OptionsUtil.DATABASE_TABLE_NAME.getStringValue() + "` " +
                             "SET `votes` = '" + user.getVotes() + "', " +
                             "`name` = '" + user.getString("name", user.getName()) + "', " +
                             "`time` = '" + user.getLastVoted() + "', " +
@@ -319,7 +319,7 @@ public class UserVoteData {
                             "`services` = '" + user.getServices().toString().replace("[", "").replace("]", "").replace(" ", "") + "', " +
                             "`totalvotes` = '" + user.getAllTimeVotes() + "' " +
                             "WHERE `uuid` = '" + user.getUniqueID() + "'");
-            if (Options.DEBUG_SAVE.isEnabled()) {
+            if (OptionsUtil.DEBUG_SAVE.isEnabled()) {
                 Utils.debug(voteRewardPlugin,
                         "User " + user.getString("name", user.getName()) + " successfully saved!",
                         "Votes: " + user.getVotes(),
@@ -353,7 +353,7 @@ public class UserVoteData {
          * @throws ClassNotFoundException When class is not found
          */
         public void delete(User user) throws SQLException, ClassNotFoundException {
-            voteRewardPlugin.getDatabase().updateSQL("DELETE FROM `" + Options.DATABASE_TABLE_NAME.getValue() + "` WHERE `uuid` = '" + user.getUniqueID().toString() + "';");
+            voteRewardPlugin.getDatabase().updateSQL("DELETE FROM `" + OptionsUtil.DATABASE_TABLE_NAME.getStringValue() + "` WHERE `uuid` = '" + user.getUniqueID().toString() + "';");
             Utils.debug(voteRewardPlugin, "User " + user.getName() + " deleted from the database!");
             allUsersMap.remove(user.getUniqueID());
         }
@@ -368,7 +368,7 @@ public class UserVoteData {
                 @Override
                 public void onSuccess() {
                     try {
-                        ResultSet resultSet = voteRewardPlugin.getDatabase().querySQL("SELECT * FROM `" + Options.DATABASE_TABLE_NAME.getValue() + "` WHERE `uuid` = '" + user.getUniqueID().toString() + "'");
+                        ResultSet resultSet = voteRewardPlugin.getDatabase().querySQL("SELECT * FROM `" + OptionsUtil.DATABASE_TABLE_NAME.getStringValue() + "` WHERE `uuid` = '" + user.getUniqueID().toString() + "'");
                         while (resultSet.next()) {
                             user.append("votes", resultSet.getInt("votes"))
                                     .append("name", resultSet.getString("name"))
@@ -377,7 +377,7 @@ public class UserVoteData {
                                     .append("voteparty", resultSet.getInt("voteparty"))
                                     .append("daily", resultSet.getInt("daily"))
                                     .append("totalvotes", resultSet.getInt("totalvotes"));
-                            if (Options.DEBUG_LOAD.isEnabled()) {
+                            if (OptionsUtil.DEBUG_LOAD.isEnabled()) {
                                 Utils.debug(voteRewardPlugin,
                                         "User " + user.getName() + " successfully loaded!",
                                         "Votes: " + user.getVotes(),
@@ -407,7 +407,7 @@ public class UserVoteData {
          * @return true if player exists or false when is not
          */
         public boolean playerExists(User user) throws SQLException, ClassNotFoundException {
-            return voteRewardPlugin.getDatabase().querySQL("SELECT * FROM " + Options.DATABASE_TABLE_NAME.getValue() + " WHERE `uuid` = '" + user.getUniqueID().toString() + "'").next();
+            return voteRewardPlugin.getDatabase().querySQL("SELECT * FROM " + OptionsUtil.DATABASE_TABLE_NAME.getStringValue() + " WHERE `uuid` = '" + user.getUniqueID().toString() + "'").next();
         }
 
         /**
@@ -419,7 +419,7 @@ public class UserVoteData {
             try {
                 if (!playerExists(user)) {
                     voteRewardPlugin.getDatabase().updateSQL(
-                            "INSERT INTO `" + Options.DATABASE_TABLE_NAME.getValue() + "` (`uuid`, `name`, `votes`, `time`, `daily`, `voteparty`, `services`, `totalvotes`)" +
+                            "INSERT INTO `" + OptionsUtil.DATABASE_TABLE_NAME.getStringValue() + "` (`uuid`, `name`, `votes`, `time`, `daily`, `voteparty`, `services`, `totalvotes`)" +
                                     " VALUES " +
                                     "('" + user.getUniqueID().toString() + "', '" + Bukkit.getOfflinePlayer(user.getUniqueID()).getName() + "','0', '0', '0', '0', '" + Lists.newArrayList().toString().replace("[", "").replace("]", "").replace(" ", "") + "', '0'" + ");");
                 }
@@ -438,7 +438,7 @@ public class UserVoteData {
          */
         public ObjectMap<UUID, User> getAllUsers() throws Exception {
             ObjectMap<UUID, User> map = ObjectMap.newConcurrentObjectMap();
-            ResultSet resultSet = voteRewardPlugin.getDatabase().querySQL("SELECT * FROM `" + Options.DATABASE_TABLE_NAME.getValue() + "`");
+            ResultSet resultSet = voteRewardPlugin.getDatabase().querySQL("SELECT * FROM `" + OptionsUtil.DATABASE_TABLE_NAME.getStringValue() + "`");
             while (resultSet.next()) {
                 UserVoteData userVoteData = UserVoteData.getUser(UUID.fromString(resultSet.getString("uuid")));
                 userVoteData.load(new Callback() {
@@ -483,7 +483,7 @@ public class UserVoteData {
                     .append("totalvotes", user.getAllTimeVotes()));
 
             voteRewardPlugin.getMongoDB().getCollection().updateOne(query, updateObject);
-            if (Options.DEBUG_SAVE.isEnabled()) {
+            if (OptionsUtil.DEBUG_SAVE.isEnabled()) {
                 Utils.debug(voteRewardPlugin,
                         "User " + user.getString("name", user.getName()) + " successfully saved!",
                         "Votes: " + user.getVotes(),
@@ -578,7 +578,7 @@ public class UserVoteData {
             theQuery.put("uuid", user.getUniqueID().toString());
             DeleteResult result = voteRewardPlugin.getMongoDB().getCollection().deleteMany(theQuery);
             if (result.getDeletedCount() > 0) {
-                if (Options.DEBUG_DELETE.isEnabled()) {
+                if (OptionsUtil.DEBUG_DELETE.isEnabled()) {
                     Utils.debug(voteRewardPlugin, "User " + user.getName() + " deleted from the database!");
                 }
                 allUsersMap.remove(user.getUniqueID());
@@ -681,7 +681,7 @@ public class UserVoteData {
         public void setupUser(User user, Callback callback) throws IOException {
             if (new File(VoteRewardPlugin.getInstance().getDataFolder(),
                     "userdata").mkdirs()) {
-                if (Options.DEBUG_CREATE.isEnabled()) {
+                if (OptionsUtil.DEBUG_CREATE.isEnabled()) {
                     Utils.debug(voteRewardPlugin, "Folder userdata has been created!");
                 }
             }
@@ -690,7 +690,7 @@ public class UserVoteData {
             if (!playerExists(user)) {
                 try {
                     if (this.file.createNewFile()) {
-                        if (Options.DEBUG_CREATE.isEnabled()) {
+                        if (OptionsUtil.DEBUG_CREATE.isEnabled()) {
                             Utils.debug(voteRewardPlugin, "File " + file.getName() + " for the user " + Bukkit.getOfflinePlayer(user.getUniqueID()).getName() + " has been created!");
                         }
                     }
@@ -730,7 +730,7 @@ public class UserVoteData {
          */
         public void delete(User user) {
             if (file.delete()) {
-                if (Options.DEBUG_DELETE.isEnabled()) {
+                if (OptionsUtil.DEBUG_DELETE.isEnabled()) {
                     Utils.debug(voteRewardPlugin, "File " + file.getName() + " deleted!");
                 }
                 UserVoteData.getAllUsersMap().remove(user.getUniqueID());

@@ -1,6 +1,6 @@
 package com.georgev22.voterewards.hooks;
 
-import com.georgev22.voterewards.utilities.Options;
+import com.georgev22.voterewards.utilities.OptionsUtil;
 import com.georgev22.voterewards.utilities.player.UserVoteData;
 import com.georgev22.voterewards.utilities.player.VoteUtils;
 import com.google.common.collect.Lists;
@@ -15,7 +15,7 @@ public class AuthMe implements Listener {
 
     @EventHandler
     public void onAuthLogin(LoginEvent event) {
-        if (Options.OFFLINE.isEnabled()) {
+        if (OptionsUtil.OFFLINE.isEnabled()) {
             UserVoteData userVoteData = UserVoteData.getUser(event.getPlayer().getUniqueId());
             for (String serviceName : userVoteData.getOfflineServices()) {
                 VoteUtils.processVote(event.getPlayer(), serviceName);
