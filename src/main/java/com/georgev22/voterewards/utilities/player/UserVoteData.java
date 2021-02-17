@@ -47,6 +47,8 @@ public class UserVoteData {
 
     /**
      * Load all users
+     *
+     * @throws Exception When something goes wrong
      */
     public static void loadAllUsers() throws Exception {
         allUsersMap.putAll(voteRewardPlugin.getIDatabaseType().getAllUsers());
@@ -140,43 +142,43 @@ public class UserVoteData {
 
 
     /**
-     * Get player all time votes
+     * Get user all time votes
      *
-     * @return player all time votes
+     * @return user all time votes
      */
     public int getAllTimeVotes() {
         return user.getAllTimeVotes();
     }
 
     /**
-     * Get player total votes
+     * Get user total votes
      *
-     * @return player total votes
+     * @return user total votes
      */
     public int getVotes() {
         return user.getVotes();
     }
 
     /**
-     * Get player virtual crates
+     * Get user virtual crates
      *
-     * @return player virtual crates
+     * @return user virtual crates
      */
     public int getVoteParty() {
         return user.getVoteParties();
     }
 
     /**
-     * Get the last time when the player voted
+     * Get the last time when the user voted
      *
-     * @return the last time when the player voted
+     * @return the last time when the user voted
      */
     public long getLastVote() {
         return user.getLastVoted();
     }
 
     /**
-     * Get all services that the player have voted
+     * Get all services that the user have voted
      * when he was offline
      *
      * @return services
@@ -195,9 +197,9 @@ public class UserVoteData {
     }
 
     /**
-     * Check if the player exists
+     * Check if the user exists
      *
-     * @return true if player exists or false when is not
+     * @return true if user exists or false when is not
      */
     public boolean playerExists() {
         return getAllUsersMap().containsKey(user.getUniqueID());
@@ -236,16 +238,17 @@ public class UserVoteData {
     }
 
     /**
-     * Load player data
+     * Load user data
      *
      * @param callback Callback
+     * @throws Exception When something goes wrong
      */
     public void load(Callback callback) throws Exception {
         voteRewardPlugin.getIDatabaseType().load(user, callback);
     }
 
     /**
-     * Save all player's data
+     * Save all user's data
      *
      * @param async True if you want to save async
      */
@@ -268,7 +271,7 @@ public class UserVoteData {
     }
 
     /**
-     * Reset player's stats
+     * Reset user's stats
      */
     public void reset() {
         Bukkit.getScheduler().runTaskAsynchronously(voteRewardPlugin, () -> {
@@ -281,7 +284,7 @@ public class UserVoteData {
     }
 
     /**
-     * Delete player from database
+     * Delete user from database
      */
     public void delete() {
         Bukkit.getScheduler().runTaskAsynchronously(voteRewardPlugin, () -> {
@@ -303,7 +306,7 @@ public class UserVoteData {
         private static final VoteRewardPlugin voteRewardPlugin = VoteRewardPlugin.getInstance();
 
         /**
-         * Save all player's data
+         * Save all user's data
          *
          * @throws SQLException           When something goes wrong
          * @throws ClassNotFoundException When class not found
@@ -331,7 +334,7 @@ public class UserVoteData {
         }
 
         /**
-         * Reset all player's data
+         * Reset all user's data
          *
          * @throws SQLException           When something goes wrong
          * @throws ClassNotFoundException When class is not found
@@ -347,7 +350,7 @@ public class UserVoteData {
         }
 
         /**
-         * Remove player's data from database.
+         * Remove user's data from database.
          *
          * @throws SQLException           When something goes wrong
          * @throws ClassNotFoundException When class is not found
@@ -359,7 +362,7 @@ public class UserVoteData {
         }
 
         /**
-         * Load all player's data
+         * Load all user's data
          *
          * @param callback Callback
          */
@@ -371,6 +374,7 @@ public class UserVoteData {
                         ResultSet resultSet = voteRewardPlugin.getDatabase().querySQL("SELECT * FROM `" + OptionsUtil.DATABASE_TABLE_NAME.getStringValue() + "` WHERE `uuid` = '" + user.getUniqueID().toString() + "'");
                         while (resultSet.next()) {
                             user.append("votes", resultSet.getInt("votes"))
+                                    .append("name", resultSet.getString("name"))
                                     .append("last", resultSet.getLong("time"))
                                     .append("services", resultSet.getString("services").replace(" ", "").isEmpty() ? Lists.newArrayList() : new ArrayList<>(Arrays.asList(resultSet.getString("services").split(","))))
                                     .append("voteparty", resultSet.getInt("voteparty"))
@@ -401,9 +405,9 @@ public class UserVoteData {
         }
 
         /**
-         * Check if the player exists
+         * Check if the user exists
          *
-         * @return true if player exists or false when is not
+         * @return true if user exists or false when is not
          */
         public boolean playerExists(User user) throws SQLException, ClassNotFoundException {
             return voteRewardPlugin.getDatabase().querySQL("SELECT * FROM " + OptionsUtil.DATABASE_TABLE_NAME.getStringValue() + " WHERE `uuid` = '" + user.getUniqueID().toString() + "'").next();
@@ -420,7 +424,7 @@ public class UserVoteData {
                     voteRewardPlugin.getDatabase().updateSQL(
                             "INSERT INTO `" + OptionsUtil.DATABASE_TABLE_NAME.getStringValue() + "` (`uuid`, `name`, `votes`, `time`, `daily`, `voteparty`, `services`, `totalvotes`)" +
                                     " VALUES " +
-                                    "('" + user.getUniqueID().toString() + "', '" + Bukkit.getOfflinePlayer(user.getUniqueID()).getName() + "','0', '0', '0', '0', '" + Lists.newArrayList().toString().replace("[", "").replace("]", "").replace(" ", "") + "', '0'" + ");");
+                                    "('" + user.getUniqueID().toString() + "', '" + user.getPlayer().getName() + "','0', '0', '0', '0', '" + Lists.newArrayList().toString().replace("[", "").replace("]", "").replace(" ", "") + "', '0'" + ");");
                 }
                 callback.onSuccess();
             } catch (SQLException | ClassNotFoundException throwables) {
@@ -429,9 +433,9 @@ public class UserVoteData {
         }
 
         /**
-         * Get all players from the database
+         * Get all users from the database
          *
-         * @return all the players from the database
+         * @return all the users from the database
          * @throws SQLException           When something goes wrong
          * @throws ClassNotFoundException When the class is not found
          */
@@ -464,7 +468,7 @@ public class UserVoteData {
     public static class MongoDBUtils implements IDatabaseType {
 
         /**
-         * Save all player's data
+         * Save all user's data
          */
         public void save(User user) {
             BasicDBObject query = new BasicDBObject();
@@ -473,6 +477,7 @@ public class UserVoteData {
             BasicDBObject updateObject = new BasicDBObject();
             updateObject.append("$set", new BasicDBObject()
                     .append("uuid", user.getUniqueID().toString())
+                    .append("name", user.getName())
                     .append("votes", user.getVotes())
                     .append("voteparty", user.getVoteParties())
                     .append("daily", user.getDailyVotes())
@@ -494,7 +499,7 @@ public class UserVoteData {
         }
 
         /**
-         * Load player data
+         * Load user data
          *
          * @param user     User
          * @param callback Callback
@@ -508,6 +513,7 @@ public class UserVoteData {
                     FindIterable<Document> findIterable = voteRewardPlugin.getMongoDB().getCollection().find(searchQuery);
                     Document document = findIterable.first();
                     user.append("votes", document.getInteger("votes"))
+                            .append("name", document.getString("name"))
                             .append("daily", document.getInteger("daily"))
                             .append("voteparty", document.getInteger("voteparty"))
                             .append("last", document.getLong("last-vote"))
@@ -533,6 +539,7 @@ public class UserVoteData {
             if (!playerExists(user)) {
                 voteRewardPlugin.getMongoDB().getCollection().insertOne(new Document()
                         .append("uuid", user.getUniqueID().toString())
+                        .append("name", user.getPlayer().getName())
                         .append("votes", 0)
                         .append("voteparty", 0)
                         .append("daily", 0)
@@ -544,9 +551,9 @@ public class UserVoteData {
         }
 
         /**
-         * Check if the player exists
+         * Check if the user exists
          *
-         * @return true if player exists or false when is not
+         * @return true if user exists or false when is not
          */
         public boolean playerExists(User user) {
             long count = voteRewardPlugin.getMongoDB().getCollection().count(new BsonDocument("uuid", new BsonString(user.getUniqueID().toString())));
@@ -554,7 +561,7 @@ public class UserVoteData {
         }
 
         /**
-         * Reset player stats
+         * Reset user stats
          */
         public void reset(User user) {
             user.append("votes", 0)
@@ -567,7 +574,7 @@ public class UserVoteData {
         }
 
         /**
-         * Remove player's data from database.
+         * Remove user's data from database.
          */
         public void delete(User user) {
             BasicDBObject theQuery = new BasicDBObject();
@@ -583,9 +590,9 @@ public class UserVoteData {
 
 
         /**
-         * Get all players from the database
+         * Get all users from the database
          *
-         * @return all the players from the database
+         * @return all the users from the database
          */
         public ObjectMap<UUID, User> getAllUsers() {
             ObjectMap<UUID, User> map = ObjectMap.newConcurrentObjectMap();
@@ -625,7 +632,7 @@ public class UserVoteData {
         private final VoteRewardPlugin voteRewardPlugin = VoteRewardPlugin.getInstance();
 
         /**
-         * Save all player's data
+         * Save all user's data
          *
          * @param user User object
          */
@@ -642,7 +649,7 @@ public class UserVoteData {
         }
 
         /**
-         * Load player data
+         * Load user data
          *
          * @param user     User object
          * @param callback Callback
@@ -652,6 +659,7 @@ public class UserVoteData {
                 @Override
                 public void onSuccess() {
                     user.append("votes", yamlConfiguration.getInt("votes"))
+                            .append("name", yamlConfiguration.getString("name"))
                             .append("last", yamlConfiguration.getLong("time"))
                             .append("services", yamlConfiguration.getStringList("services"))
                             .append("voteparty", yamlConfiguration.getInt("voteparty"))
@@ -694,6 +702,7 @@ public class UserVoteData {
                     callback.onFailure(e.getCause());
                 }
                 user.append("votes", 0)
+                        .append("name", user.getPlayer().getName())
                         .append("last", 0L)
                         .append("services", Lists.newArrayList())
                         .append("voteparty", 0)
@@ -706,7 +715,7 @@ public class UserVoteData {
         }
 
         /**
-         * Reset player stats
+         * Reset user stats
          */
         public void reset(User user) throws IOException {
             user.append("votes", 0)
@@ -720,7 +729,7 @@ public class UserVoteData {
         }
 
         /**
-         * Remove player's data from file.
+         * Remove user's data from file.
          */
         public void delete(User user) {
             if (file.delete()) {
@@ -732,9 +741,9 @@ public class UserVoteData {
         }
 
         /**
-         * Check if the player exists
+         * Check if the user exists
          *
-         * @return true if player exists or false when is not
+         * @return true if user exists or false when is not
          */
         public boolean playerExists(User user) {
             return file.exists();

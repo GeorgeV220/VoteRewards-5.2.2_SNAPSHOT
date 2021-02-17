@@ -146,6 +146,7 @@ public class VoteUtils {
      *
      * @param offlinePlayer player who voted
      * @param serviceName   service name (dah)
+     * @throws Exception When something goes wrong
      */
     public static void processOfflineVote(OfflinePlayer offlinePlayer, final String serviceName) throws Exception {
         UserVoteData userVoteData = UserVoteData.getUser(offlinePlayer.getUniqueId());

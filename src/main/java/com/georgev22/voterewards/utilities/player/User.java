@@ -68,29 +68,60 @@ public class User extends ConcurrentObjectMap {
      */
     @Nullable
     public String getName() {
-        return getPlayer().getName();
+        return getString("name", getPlayer().getName());
     }
 
+    /**
+     * Get user total votes
+     *
+     * @return user total votes
+     */
     public int getVotes() {
         return getInteger("votes", 0);
     }
 
+    /**
+     * Get user daily votes
+     *
+     * @return user daily votes
+     */
     public int getDailyVotes() {
         return getInteger("daily", 0);
     }
 
+    /**
+     * Get the last time when the user voted
+     *
+     * @return the last time when the user voted
+     */
     public long getLastVoted() {
         return getLong("last", 0L);
     }
 
+    /**
+     * Get user virtual crates
+     *
+     * @return user virtual crates
+     */
     public int getVoteParties() {
         return getInteger("voteparty", 0);
     }
 
+    /**
+     * Get user all time votes
+     *
+     * @return user all time votes
+     */
     public int getAllTimeVotes() {
         return getInteger("totalvotes", 0);
     }
 
+    /**
+     * Get all services that the user have voted
+     * when he was offline
+     *
+     * @return services
+     */
     public List<String> getServices() {
         return getList("services", String.class);
     }

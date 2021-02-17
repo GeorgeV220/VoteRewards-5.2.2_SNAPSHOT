@@ -1,4 +1,6 @@
 # VoteRewards
+[![Build Status](https://jenkins.georgev22.com/buildStatus/icon?job=VoteRewards)](https://jenkins.georgev22.com/job/VoteRewards/)
+
 Vote Rewards is a simple plugin to reward your players when they vote for your server. Vote Rewards contains many features like daily vote rewards and voteparty. I promise that the Vote Rewards will not cause problems to your server and if you have a bug you can report it to the Discussion section, send me a private message or open an issue here
 
 # Compiling

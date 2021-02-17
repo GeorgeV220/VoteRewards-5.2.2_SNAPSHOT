@@ -1,7 +1,5 @@
 package com.georgev22.voterewards;
 
-import com.georgev22.externals.me.lucko.helper.maven.LibraryLoader;
-import com.georgev22.externals.me.lucko.helper.maven.MavenLibrary;
 import com.georgev22.voterewards.commands.*;
 import com.georgev22.voterewards.configmanager.CFG;
 import com.georgev22.voterewards.configmanager.FileManager;
@@ -21,6 +19,9 @@ import com.georgev22.voterewards.utilities.interfaces.Callback;
 import com.georgev22.voterewards.utilities.interfaces.IDatabaseType;
 import com.georgev22.voterewards.utilities.maps.ConcurrentObjectMap;
 import com.georgev22.voterewards.utilities.maps.ObjectMap;
+import com.georgev22.voterewards.utilities.maven.LibraryLoader;
+import com.georgev22.voterewards.utilities.maven.MavenLibrary;
+import com.georgev22.voterewards.utilities.maven.Repository;
 import com.georgev22.voterewards.utilities.player.UserVoteData;
 import com.georgev22.voterewards.utilities.player.VoteUtils;
 import org.bstats.bukkit.Metrics;
@@ -42,6 +43,10 @@ import java.util.Map;
 @MavenLibrary(groupId = "org.xerial", artifactId = "sqlite-jdbc", version = "3.34.0")
 @MavenLibrary(groupId = "com.google.guava", artifactId = "guava", version = "28.2-jre")
 @MavenLibrary(groupId = "org.postgresql", artifactId = "postgresql", version = "42.2.18")
+@MavenLibrary(groupId = "com.georgev22", artifactId = "Externals", version = "1.3", repo = @Repository(url = "https://artifactory.georgev22.com/artifactory/georgev22/"))
+@MavenLibrary(groupId = "com.georgev22", artifactId = "Interfaces", version = "1.0", repo = @Repository(url = "https://artifactory.georgev22.com/artifactory/georgev22/"))
+@MavenLibrary(groupId = "com.georgev22", artifactId = "LegacyWorldEdit", version = "1.0", repo = @Repository(url = "https://artifactory.georgev22.com/artifactory/georgev22/"))
+@MavenLibrary(groupId = "com.georgev22", artifactId = "NewWorldEdit", version = "1.0", repo = @Repository(url = "https://artifactory.georgev22.com/artifactory/georgev22/"))
 public class VoteRewardPlugin extends JavaPlugin {
 
     private static VoteRewardPlugin instance = null;
