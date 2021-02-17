@@ -68,7 +68,7 @@ public class User extends ConcurrentObjectMap {
      */
     @Nullable
     public String getName() {
-        return getString("name");
+        return getPlayer().getName();
     }
 
     public int getVotes() {

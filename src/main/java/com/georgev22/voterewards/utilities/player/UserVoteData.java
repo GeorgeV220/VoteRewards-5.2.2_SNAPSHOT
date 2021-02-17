@@ -312,7 +312,7 @@ public class UserVoteData {
             voteRewardPlugin.getDatabase().updateSQL(
                     "UPDATE `" + OptionsUtil.DATABASE_TABLE_NAME.getStringValue() + "` " +
                             "SET `votes` = '" + user.getVotes() + "', " +
-                            "`name` = '" + user.getString("name", user.getName()) + "', " +
+                            "`name` = '" + user.getName() + "', " +
                             "`time` = '" + user.getLastVoted() + "', " +
                             "`voteparty` = '" + user.getVoteParties() + "', " +
                             "`daily` = '" + user.getDailyVotes() + "', " +
@@ -321,7 +321,7 @@ public class UserVoteData {
                             "WHERE `uuid` = '" + user.getUniqueID() + "'");
             if (OptionsUtil.DEBUG_SAVE.isEnabled()) {
                 Utils.debug(voteRewardPlugin,
-                        "User " + user.getString("name", user.getName()) + " successfully saved!",
+                        "User " + user.getName() + " successfully saved!",
                         "Votes: " + user.getVotes(),
                         "Daily Votes: " + user.getDailyVotes(),
                         "Last Voted: " + Instant.ofEpochMilli(user.getLastVoted()).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())) + user.getLastVoted(),
@@ -371,7 +371,6 @@ public class UserVoteData {
                         ResultSet resultSet = voteRewardPlugin.getDatabase().querySQL("SELECT * FROM `" + OptionsUtil.DATABASE_TABLE_NAME.getStringValue() + "` WHERE `uuid` = '" + user.getUniqueID().toString() + "'");
                         while (resultSet.next()) {
                             user.append("votes", resultSet.getInt("votes"))
-                                    .append("name", resultSet.getString("name"))
                                     .append("last", resultSet.getLong("time"))
                                     .append("services", resultSet.getString("services").replace(" ", "").isEmpty() ? Lists.newArrayList() : new ArrayList<>(Arrays.asList(resultSet.getString("services").split(","))))
                                     .append("voteparty", resultSet.getInt("voteparty"))
@@ -474,7 +473,6 @@ public class UserVoteData {
             BasicDBObject updateObject = new BasicDBObject();
             updateObject.append("$set", new BasicDBObject()
                     .append("uuid", user.getUniqueID().toString())
-                    .append("name", user.getName())
                     .append("votes", user.getVotes())
                     .append("voteparty", user.getVoteParties())
                     .append("daily", user.getDailyVotes())
@@ -485,7 +483,7 @@ public class UserVoteData {
             voteRewardPlugin.getMongoDB().getCollection().updateOne(query, updateObject);
             if (OptionsUtil.DEBUG_SAVE.isEnabled()) {
                 Utils.debug(voteRewardPlugin,
-                        "User " + user.getString("name", user.getName()) + " successfully saved!",
+                        "User " + user.getName() + " successfully saved!",
                         "Votes: " + user.getVotes(),
                         "Daily Votes: " + user.getDailyVotes(),
                         "Last Voted: " + Instant.ofEpochMilli(user.getLastVoted()).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())) + user.getLastVoted(),
@@ -510,7 +508,6 @@ public class UserVoteData {
                     FindIterable<Document> findIterable = voteRewardPlugin.getMongoDB().getCollection().find(searchQuery);
                     Document document = findIterable.first();
                     user.append("votes", document.getInteger("votes"))
-                            .append("name", document.getString("name"))
                             .append("daily", document.getInteger("daily"))
                             .append("voteparty", document.getInteger("voteparty"))
                             .append("last", document.getLong("last-vote"))
@@ -536,7 +533,6 @@ public class UserVoteData {
             if (!playerExists(user)) {
                 voteRewardPlugin.getMongoDB().getCollection().insertOne(new Document()
                         .append("uuid", user.getUniqueID().toString())
-                        .append("name", user.getName())
                         .append("votes", 0)
                         .append("voteparty", 0)
                         .append("daily", 0)
@@ -656,7 +652,6 @@ public class UserVoteData {
                 @Override
                 public void onSuccess() {
                     user.append("votes", yamlConfiguration.getInt("votes"))
-                            .append("name", yamlConfiguration.getString("name"))
                             .append("last", yamlConfiguration.getLong("time"))
                             .append("services", yamlConfiguration.getStringList("services"))
                             .append("voteparty", yamlConfiguration.getInt("voteparty"))
@@ -699,7 +694,6 @@ public class UserVoteData {
                     callback.onFailure(e.getCause());
                 }
                 user.append("votes", 0)
-                        .append("name", user.getName())
                         .append("last", 0L)
                         .append("services", Lists.newArrayList())
                         .append("voteparty", 0)
