@@ -5,7 +5,7 @@ import com.georgev22.voterewards.configmanager.FileManager;
 import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.OptionsUtil;
 import com.georgev22.voterewards.utilities.Utils;
-import com.georgev22.voterewards.utilities.maps.ObjectMap;
+import com.georgev22.voterewards.utilities.interfaces.ObjectMap;
 import com.georgev22.voterewards.utilities.player.UserVoteData;
 import com.georgev22.voterewards.utilities.player.VotePartyUtils;
 import org.bukkit.Bukkit;

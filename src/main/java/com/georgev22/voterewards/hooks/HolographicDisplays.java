@@ -5,7 +5,7 @@ import com.georgev22.voterewards.configmanager.CFG;
 import com.georgev22.voterewards.configmanager.FileManager;
 import com.georgev22.voterewards.utilities.OptionsUtil;
 import com.georgev22.voterewards.utilities.Utils;
-import com.georgev22.voterewards.utilities.maps.ObjectMap;
+import com.georgev22.voterewards.utilities.interfaces.ObjectMap;
 import com.georgev22.voterewards.utilities.player.VoteUtils;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;

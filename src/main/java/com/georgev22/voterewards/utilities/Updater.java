@@ -32,9 +32,7 @@ public class Updater {
 
             } catch (Exception ex) {
 
-                voteRewardPlugin.getLogger().warning("Failed to check for an update on Git.");
-
-                voteRewardPlugin.getLogger().warning("Either Git or you are offline or are slow to respond.");
+                Utils.debug(voteRewardPlugin, "Failed to check for an update on Git.", "Either Git or you are offline or are slow to respond.");
 
                 ex.printStackTrace();
 
@@ -43,28 +41,31 @@ public class Updater {
             }
             if (compareVersions(onlineVersion.replace("v", ""), localVersion.replace("v", "")) == 0) {
                 if (localVersion.contains("Beta")) {
-                    voteRewardPlugin.getLogger().info("You are running the newest beta build.");
+                    Utils.debug(voteRewardPlugin, "You are running the newest beta build.");
                 } else {
-                    voteRewardPlugin.getLogger().info("You are running the newest stable build.");
+                    Utils.debug(voteRewardPlugin, "You are running the newest stable build.");
                 }
             } else if (compareVersions(onlineVersion.replace("v", ""), localVersion.replace("v", "")) == 1) {
                 if (onlineVersion.contains("Beta")) {
-                    voteRewardPlugin.getLogger().warning("New beta version available!");
 
-                    voteRewardPlugin.getLogger().warning("Beta Version: " + onlineVersion + ". You are running version: "
-                            + localVersion);
-                    voteRewardPlugin.getLogger().warning("Update at: https://github.com/GeorgeV220/VoteRewards/releases/");
+                    Utils.debug(voteRewardPlugin,
+                            "New beta version available!",
+                            "Beta Version: " + onlineVersion + ". You are running version: " + localVersion,
+                            "Update at: https://github.com/GeorgeV220/VoteRewards/releases/");
+
                 } else {
-                    voteRewardPlugin.getLogger().warning("New stable version available!");
 
-                    voteRewardPlugin.getLogger().warning("Stable Version: " + onlineVersion + ". You are running version: "
-                            + localVersion);
-                    voteRewardPlugin.getLogger().warning("Update at: https://github.com/GeorgeV220/VoteRewards/releases/");
+                    Utils.debug(voteRewardPlugin,
+                            "New stable version available!",
+                            "Stable Version: " + onlineVersion + ". You are running version: " + localVersion,
+                            "Update at: https://github.com/GeorgeV220/VoteRewards/releases/");
                 }
             } else {
-                voteRewardPlugin.getLogger().warning("You are currently using the " + localVersion + " version which is under development. If you have problems contact me on discord or github");
-                voteRewardPlugin.getLogger().warning("Your version is " + localVersion);
-                voteRewardPlugin.getLogger().warning("Latest released version is " + onlineVersion);
+
+                Utils.debug(voteRewardPlugin, "You are currently using the " + localVersion + " version which is under development.",
+                        "Your version is " + localVersion,
+                        "Latest released version is " + onlineVersion,
+                        "If you have problems contact me on discord or github. Thank you for testing this version");
             }
 
         });

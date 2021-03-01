@@ -5,7 +5,7 @@ import com.georgev22.voterewards.utilities.OptionsUtil;
 import com.georgev22.voterewards.utilities.Utils;
 import com.georgev22.voterewards.utilities.interfaces.Callback;
 import com.georgev22.voterewards.utilities.interfaces.IDatabaseType;
-import com.georgev22.voterewards.utilities.maps.ObjectMap;
+import com.georgev22.voterewards.utilities.interfaces.ObjectMap;
 import com.google.common.collect.Lists;
 import com.mongodb.BasicDBObject;
 import com.mongodb.Block;
@@ -273,10 +273,10 @@ public class UserVoteData {
     /**
      * Reset user's stats
      */
-    public void reset() {
+    public void reset(boolean allTime) {
         Bukkit.getScheduler().runTaskAsynchronously(voteRewardPlugin, () -> {
             try {
-                voteRewardPlugin.getIDatabaseType().reset(user);
+                voteRewardPlugin.getIDatabaseType().reset(user, allTime);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -331,22 +331,6 @@ public class UserVoteData {
                         "Vote Parties: " + user.getVoteParties(),
                         "All time votes: " + user.getAllTimeVotes());
             }
-        }
-
-        /**
-         * Reset all user's data
-         *
-         * @throws SQLException           When something goes wrong
-         * @throws ClassNotFoundException When class is not found
-         */
-        public void reset(User user) throws SQLException, ClassNotFoundException {
-            user.append("votes", 0)
-                    .append("services", Lists.newArrayList())
-                    .append("voteparty", 0)
-                    .append("daily", 0)
-                    .append("totalvotes", 0);
-            save(user);
-            Utils.debug(voteRewardPlugin, "User " + user.getName() + " has been reset!");
         }
 
         /**
@@ -520,6 +504,16 @@ public class UserVoteData {
                             .append("services", document.getList("services", String.class))
                             .append("totalvotes", document.getInteger("totalvotes"));
                     callback.onSuccess();
+                    if (OptionsUtil.DEBUG_LOAD.isEnabled()) {
+                        Utils.debug(voteRewardPlugin,
+                                "User " + user.getName() + " successfully loaded!",
+                                "Votes: " + user.getVotes(),
+                                "Daily Votes: " + user.getDailyVotes(),
+                                "Last Voted: " + Instant.ofEpochMilli(user.getLastVoted()).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())) + user.getLastVoted() + " " + user.getLastVoted(),
+                                "Vote Parties: " + user.getVoteParties(),
+                                "All time votes: " + user.getAllTimeVotes(),
+                                "Services: " + user.getServices().toString());
+                    }
                 }
 
                 @Override
@@ -558,19 +552,6 @@ public class UserVoteData {
         public boolean playerExists(User user) {
             long count = voteRewardPlugin.getMongoDB().getCollection().count(new BsonDocument("uuid", new BsonString(user.getUniqueID().toString())));
             return count > 0;
-        }
-
-        /**
-         * Reset user stats
-         */
-        public void reset(User user) {
-            user.append("votes", 0)
-                    .append("services", Lists.newArrayList())
-                    .append("voteparty", 0)
-                    .append("daily", 0)
-                    .append("totalvotes", 0);
-            save(user);
-            Utils.debug(voteRewardPlugin, "User " + user.getName() + " has been reset!");
         }
 
         /**
@@ -646,6 +627,15 @@ public class UserVoteData {
             this.yamlConfiguration.set("daily", user.getDailyVotes());
             this.yamlConfiguration.set("totalvotes", user.getAllTimeVotes());
             this.yamlConfiguration.save(file);
+            if (OptionsUtil.DEBUG_SAVE.isEnabled()) {
+                Utils.debug(voteRewardPlugin,
+                        "User " + user.getName() + " successfully saved!",
+                        "Votes: " + user.getVotes(),
+                        "Daily Votes: " + user.getDailyVotes(),
+                        "Last Voted: " + Instant.ofEpochMilli(user.getLastVoted()).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())) + user.getLastVoted(),
+                        "Vote Parties: " + user.getVoteParties(),
+                        "All time votes: " + user.getAllTimeVotes());
+            }
         }
 
         /**
@@ -654,7 +644,7 @@ public class UserVoteData {
          * @param user     User object
          * @param callback Callback
          */
-        public void load(User user, Callback callback) throws IOException {
+        public void load(User user, Callback callback) {
             setupUser(user, new Callback() {
                 @Override
                 public void onSuccess() {
@@ -666,6 +656,21 @@ public class UserVoteData {
                             .append("daily", yamlConfiguration.getInt("daily"))
                             .append("totalvotes", yamlConfiguration.getInt("totalvotes"));
                     callback.onSuccess();
+                    if (OptionsUtil.DEBUG_LOAD.isEnabled()) {
+                        Utils.debug(voteRewardPlugin,
+                                "User " + user.getName() + " successfully loaded!",
+                                "Votes: " + user.getVotes(),
+                                "Daily Votes: " + user.getDailyVotes(),
+                                "Last Voted: " + Instant.ofEpochMilli(user.getLastVoted()).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())) + user.getLastVoted() + " " + user.getLastVoted(),
+                                "Vote Parties: " + user.getVoteParties(),
+                                "All time votes: " + user.getAllTimeVotes(),
+                                "Services: " + user.getServices().toString());
+                    }
+                    try {
+                        save(user);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
 
                 @Override
@@ -681,7 +686,7 @@ public class UserVoteData {
          * @param user     User object
          * @param callback Callback
          */
-        public void setupUser(User user, Callback callback) throws IOException {
+        public void setupUser(User user, Callback callback) {
             if (new File(VoteRewardPlugin.getInstance().getDataFolder(),
                     "userdata").mkdirs()) {
                 if (OptionsUtil.DEBUG_CREATE.isEnabled()) {
@@ -710,22 +715,7 @@ public class UserVoteData {
                         .append("totalvotes", 0);
             }
             yamlConfiguration = YamlConfiguration.loadConfiguration(file);
-            save(user);
             callback.onSuccess();
-        }
-
-        /**
-         * Reset user stats
-         */
-        public void reset(User user) throws IOException {
-            user.append("votes", 0)
-                    .append("services", Lists.newArrayList())
-                    .append("voteparty", 0)
-                    .append("daily", 0)
-                    .append("totalvotes", 0);
-            save(user);
-            Utils.debug(voteRewardPlugin, "User " + user.getName() + " has been reset!");
-
         }
 
         /**

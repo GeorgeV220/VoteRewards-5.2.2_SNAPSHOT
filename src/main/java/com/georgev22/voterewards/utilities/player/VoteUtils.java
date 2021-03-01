@@ -11,7 +11,7 @@ import com.georgev22.voterewards.utilities.OptionsUtil;
 import com.georgev22.voterewards.utilities.Utils;
 import com.georgev22.voterewards.utilities.interfaces.Callback;
 import com.georgev22.voterewards.utilities.maps.LinkedObjectMap;
-import com.georgev22.voterewards.utilities.maps.ObjectMap;
+import com.georgev22.voterewards.utilities.interfaces.ObjectMap;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
@@ -177,7 +177,7 @@ public class VoteUtils {
                 ObjectMap<UUID, User> objectMap = UserVoteData.getAllUsersMap();
                 objectMap.forEach((uuid, user) -> {
                     UserVoteData userVoteData = UserVoteData.getUser(uuid);
-                    userVoteData.reset();
+                    userVoteData.reset(false);
                 });
                 dataConfiguration.set("month", Calendar.getInstance().getTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getMonthValue());
                 cfg.saveFile();

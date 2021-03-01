@@ -1,5 +1,6 @@
 package com.georgev22.voterewards.utilities.maps;
 
+import com.georgev22.voterewards.utilities.interfaces.ObjectMap;
 import org.bukkit.Location;
 
 import java.util.Date;
@@ -36,12 +37,33 @@ public class HashObjectMap<K, V> extends HashMap<K, V> implements ObjectMap<K, V
      * @param value value
      * @return this
      */
-    public HashObjectMap<K, V> append(final K key, final V value) {
+    public ObjectMap<K, V> append(final K key, final V value) {
         if (containsKey(key)) {
             replace(key, value);
         } else {
             put(key, value);
         }
+        return this;
+    }
+
+    /**
+     * Put/replace the given key/value pair into HashObjectMap if boolean is true and return this.  Useful for chaining puts in a single expression, e.g.
+     * <pre>
+     * user.append("a", 1, check1).append("b", 2, check2)}
+     * </pre>
+     *
+     * @param key    key
+     * @param value  value
+     * @param ifTrue ifTrue
+     * @return this
+     */
+    public ObjectMap<K, V> appendIfTrue(final K key, final V value, boolean ifTrue) {
+        if (ifTrue)
+            if (containsKey(key)) {
+                replace(key, value);
+            } else {
+                put(key, value);
+            }
         return this;
     }
 

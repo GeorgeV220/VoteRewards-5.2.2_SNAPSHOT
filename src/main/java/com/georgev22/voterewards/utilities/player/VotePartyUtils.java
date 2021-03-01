@@ -9,7 +9,7 @@ import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.OptionsUtil;
 import com.georgev22.voterewards.utilities.Regions;
 import com.georgev22.voterewards.utilities.Utils;
-import com.georgev22.voterewards.utilities.maps.ObjectMap;
+import com.georgev22.voterewards.utilities.interfaces.ObjectMap;
 import com.google.common.collect.Sets;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -75,7 +75,7 @@ public class VotePartyUtils {
         }
         if (OptionsUtil.VOTEPARTY_COOLDOWN.isEnabled()) {
             placeholders.append("%secs%",
-                    OptionsUtil.VOTEPARTY_COOLDOWN_SECONDS.getStringValue());
+                    String.valueOf(OptionsUtil.VOTEPARTY_COOLDOWN_SECONDS.getLongValue()));
             MessagesUtil.VOTEPARTY_START.msgAll(placeholders, true);
             placeholders.clear();
 

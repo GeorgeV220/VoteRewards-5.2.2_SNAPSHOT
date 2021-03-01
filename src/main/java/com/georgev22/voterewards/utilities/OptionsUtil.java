@@ -206,7 +206,7 @@ public enum OptionsUtil {
 
     public String getStringValue() {
         final FileConfiguration file = FileManager.getInstance().getConfig().getFileConfiguration();
-        return file.getString(getPath(), (String) getDefaultValue());
+        return file.getString(getPath(), String.valueOf(getDefaultValue()));
     }
 
     public Long getLongValue() {

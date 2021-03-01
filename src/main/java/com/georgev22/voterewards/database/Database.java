@@ -1,7 +1,7 @@
 package com.georgev22.voterewards.database;
 
 import com.georgev22.voterewards.utilities.OptionsUtil;
-import com.georgev22.voterewards.utilities.maps.ObjectMap;
+import com.georgev22.voterewards.utilities.interfaces.ObjectMap;
 
 import java.sql.*;
 

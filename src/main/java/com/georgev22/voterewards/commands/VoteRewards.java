@@ -47,7 +47,7 @@ public class VoteRewards extends BukkitCommand {
 
             if (userVoteData.playerExists()) {
                 try {
-                    userVoteData.reset();
+                    userVoteData.reset(true);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

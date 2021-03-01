@@ -1,5 +1,8 @@
-package com.georgev22.voterewards.utilities.maps;
+package com.georgev22.voterewards.utilities.interfaces;
 
+import com.georgev22.voterewards.utilities.maps.ConcurrentObjectMap;
+import com.georgev22.voterewards.utilities.maps.HashObjectMap;
+import com.georgev22.voterewards.utilities.maps.LinkedObjectMap;
 import org.bukkit.Location;
 
 import java.util.Date;
@@ -77,6 +80,19 @@ public interface ObjectMap<K, V> extends Map<K, V> {
      * @return this
      */
     ObjectMap<K, V> append(final K key, final V value);
+
+    /**
+     * Put/replace the given key/value pair into ObjectMap if boolean is true and return this.  Useful for chaining puts in a single expression, e.g.
+     * <pre>
+     * user.append("a", 1, check1).append("b", 2, check2)}
+     * </pre>
+     *
+     * @param key    key
+     * @param value  value
+     * @param ifTrue ifTrue
+     * @return this
+     */
+    ObjectMap<K, V> appendIfTrue(final K key, final V value, boolean ifTrue);
 
     /**
      * Gets the value of the given key as an Integer.

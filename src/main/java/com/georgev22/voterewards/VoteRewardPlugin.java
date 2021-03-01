@@ -18,7 +18,7 @@ import com.georgev22.voterewards.utilities.Utils;
 import com.georgev22.voterewards.utilities.interfaces.Callback;
 import com.georgev22.voterewards.utilities.interfaces.IDatabaseType;
 import com.georgev22.voterewards.utilities.maps.ConcurrentObjectMap;
-import com.georgev22.voterewards.utilities.maps.ObjectMap;
+import com.georgev22.voterewards.utilities.interfaces.ObjectMap;
 import com.georgev22.voterewards.utilities.maven.LibraryLoader;
 import com.georgev22.voterewards.utilities.maven.MavenLibrary;
 import com.georgev22.voterewards.utilities.maven.Repository;
@@ -239,7 +239,7 @@ public class VoteRewardPlugin extends JavaPlugin {
                     iDatabaseType = new UserVoteData.SQLUserUtils();
                     connection = database.openConnection();
                     database.createTable();
-                    Bukkit.getLogger().info("[VoteRewards] Database: MySQL");
+                    Utils.debug(this, "Database: MySQL");
                 }
                 break;
             }
@@ -254,7 +254,7 @@ public class VoteRewardPlugin extends JavaPlugin {
                     iDatabaseType = new UserVoteData.SQLUserUtils();
                     connection = database.openConnection();
                     database.createTable();
-                    Bukkit.getLogger().info("[VoteRewards] Database: PostgreSQL");
+                    Utils.debug(this, "Database: PostgreSQL");
                 }
                 break;
             }
@@ -266,7 +266,7 @@ public class VoteRewardPlugin extends JavaPlugin {
                     iDatabaseType = new UserVoteData.SQLUserUtils();
                     connection = database.openConnection();
                     database.createTable();
-                    Bukkit.getLogger().info("[VoteRewards] Database: SQLite");
+                    Utils.debug(this, "Database: SQLite");
                 }
                 break;
             }
@@ -280,13 +280,19 @@ public class VoteRewardPlugin extends JavaPlugin {
                         OptionsUtil.DATABASE_MONGO_COLLECTION.getStringValue());
                 database = null;
                 iDatabaseType = new UserVoteData.MongoDBUtils();
-                Bukkit.getLogger().info("[VoteRewards] Database: MongoDB");
+                Utils.debug(this, "Database: MongoDB");
+                break;
+            }
+            case "File": {
+                database = null;
+                iDatabaseType = new UserVoteData.FileUserUtils();
+                Utils.debug(this, "Database: File");
                 break;
             }
             default: {
-                Bukkit.getLogger().info("[VoteRewards] Database: File");
+                Utils.debug(this, "Please use one of the available databases", "Available databases: File, MySQL, SQLite, PostgreSQL and MongoDB");
                 database = null;
-                iDatabaseType = new UserVoteData.FileUserUtils();
+                iDatabaseType = null;
                 break;
             }
         }

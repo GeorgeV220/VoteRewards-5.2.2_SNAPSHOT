@@ -26,18 +26,12 @@ public class FakeVote extends BukkitCommand {
 
     public boolean execute(@NotNull final CommandSender sender, @NotNull final String label, final String[] args) {
         if (!testPermission(sender)) return true;
-        if (!(sender instanceof Player)) {
-            if (args.length == 0) {
-                Utils.msg(sender, "&c&l(!) &cNot enough arguments");
-            } else if (args.length == 1) {
-                process(args[0], "fakeVote");
-            } else {
-                process(args[0], args[1]);
-            }
-            return true;
-        }
 
         if (args.length == 0) {
+            if (!(sender instanceof Player)) {
+                Utils.msg(sender, "&c&l(!) &cNot enough arguments");
+                return true;
+            }
             process(sender.getName(), "fakeVote");
         } else if (args.length == 1) {
             process(args[0], "fakeVote");

@@ -1,7 +1,7 @@
 package com.georgev22.voterewards.utilities.player;
 
 import com.georgev22.voterewards.utilities.maps.ConcurrentObjectMap;
-import com.georgev22.voterewards.utilities.maps.ObjectMap;
+import com.georgev22.voterewards.utilities.interfaces.ObjectMap;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
