@@ -272,6 +272,8 @@ public class UserVoteData {
 
     /**
      * Reset user's stats
+     *
+     * @param allTime Set it true to reset all time votes.
      */
     public void reset(boolean allTime) {
         Bukkit.getScheduler().runTaskAsynchronously(voteRewardPlugin, () -> {

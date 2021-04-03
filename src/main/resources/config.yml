@@ -189,7 +189,7 @@ Rewards:
         - eco give %player% 3000
         - broadcast %player% was lucky and get 1000$
 
-  # Permission based rewards (eg: voterewards.rewards.starter , voterewards.rewards.vip )
+  # Permission based rewards (eg: voterewards.permission.starter , voterewards.permission.vip )
   Permission:
     starter:
       commands:

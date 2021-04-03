@@ -10,11 +10,10 @@ import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.OptionsUtil;
 import com.georgev22.voterewards.utilities.Utils;
 import com.georgev22.voterewards.utilities.interfaces.Callback;
-import com.georgev22.voterewards.utilities.maps.LinkedObjectMap;
 import com.georgev22.voterewards.utilities.interfaces.ObjectMap;
+import com.georgev22.voterewards.utilities.maps.LinkedObjectMap;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.time.Instant;
@@ -84,10 +83,8 @@ public class VoteUtils {
 
         // PERMISSIONS REWARDS
         if (OptionsUtil.PERMISSIONS.isEnabled()) {
-            final ConfigurationSection section = voteRewardPlugin.getConfig()
-                    .getConfigurationSection("Rewards.Permission");
-            for (String s2 : section.getKeys(false)) {
-                if (offlinePlayer.getPlayer().hasPermission("voterewards.permission" + s2)) {
+            for (String s2 : voteRewardPlugin.getConfig().getConfigurationSection("Rewards.Permission").getKeys(false)) {
+                if (offlinePlayer.getPlayer().hasPermission("voterewards.permission." + s2)) {
                     userVoteData.runCommands(voteRewardPlugin.getConfig()
                             .getStringList("Rewards.Permission." + s2 + ".commands"));
                 }
