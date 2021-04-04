@@ -34,6 +34,18 @@ public class VoteUtils {
      * @param serviceName   the service name (dah)
      */
     public static void processVote(OfflinePlayer offlinePlayer, String serviceName) {
+        processVote(offlinePlayer, serviceName, true);
+    }
+
+    /**
+     * Process player vote
+     *
+     * @param offlinePlayer the player who voted
+     * @param serviceName   the service name (dah)
+     * @param addVoteParty  count the vote on voteparty
+     * @since v4.7.0
+     */
+    public static void processVote(OfflinePlayer offlinePlayer, String serviceName, boolean addVoteParty) {
         UserVoteData userVoteData = UserVoteData.getUser(offlinePlayer.getUniqueId());
         userVoteData.setVotes(userVoteData.getVotes() + 1);
         userVoteData.setLastVoted(System.currentTimeMillis());
@@ -121,8 +133,9 @@ public class VoteUtils {
             }
         }
 
-        // VOTE PARTY START
-        VotePartyUtils.getInstance().run(offlinePlayer, false);
+        // VOTE PARTY
+        if (addVoteParty)
+            VotePartyUtils.getInstance().run(offlinePlayer, false);
 
         //HOLOGRAM UPDATE
         if (Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays"))
@@ -154,6 +167,7 @@ public class VoteUtils {
                 services.add(serviceName);
                 userVoteData.setOfflineServices(services);
                 userVoteData.save(true);
+                VotePartyUtils.getInstance().run(offlinePlayer, false);
             }
 
             @Override
@@ -163,6 +177,11 @@ public class VoteUtils {
         });
     }
 
+    /**
+     * Monthly reset the players stats
+     *
+     * @since v4.7.0
+     */
     public static void monthlyReset() {
         Bukkit.getScheduler().runTaskTimer(voteRewardPlugin, () -> {
             if (OptionsUtil.DEBUG_USELESS.isEnabled())
@@ -184,6 +203,8 @@ public class VoteUtils {
 
     /**
      * Purge players data if they don't have vote for a X days.
+     *
+     * @since v4.7.0
      */
     public static void purgeData() {
         Bukkit.getScheduler().runTaskTimer(voteRewardPlugin, () -> {
@@ -237,6 +258,12 @@ public class VoteUtils {
                         Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue, LinkedObjectMap::new));
     }
 
+    /**
+     * Get the top player in X place
+     *
+     * @param number the number of the place
+     * @return X place player name
+     */
     public static String getTopPlayer(int number) {
         try {
             return String.valueOf(getTopPlayers(number + 1).keySet().toArray()[number]).replace("[", "").replace("]", "");

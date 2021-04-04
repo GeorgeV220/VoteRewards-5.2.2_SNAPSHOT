@@ -86,17 +86,28 @@ public final class LibraryLoader {
         }
     }
 
-    public void load(String groupId, String artifactId, String version) {
-        load(groupId, artifactId, version, "https://repo1.maven.org/maven2");
-    }
-
     public void load(String groupId, String artifactId, String version, String repoUrl) {
         load(new Dependency(groupId, artifactId, version, repoUrl));
     }
 
     public void load(Dependency d) {
         Bukkit.getLogger().info(String.format("[" + plugin.getName() + "] Loading dependency %s:%s:%s from %s", d.getGroupId(), d.getArtifactId(), d.getVersion(), d.getRepoUrl()));
-        String name = d.getArtifactId() + "-" + d.getVersion();
+
+        for (File file : getLibFolder().listFiles((dir, name) -> name.endsWith(".jar"))) {
+            String[] fileandversion = file.getName().replace(".jar", "").split("_");
+            String dependencyName = fileandversion[0];
+            String version = fileandversion[1];
+            if (d.getArtifactId().equalsIgnoreCase(dependencyName)) {
+                if (!d.getVersion().equalsIgnoreCase(version)) {
+                    Bukkit.getLogger().info("[" + plugin.getName() + "] An old version of the dependency exists. Attempting to delete...");
+                    if (file.delete()) {
+                        Bukkit.getLogger().info("[" + plugin.getName() + "] Dependency '" + dependencyName + "' with version '" + version + "' has been deleted!\nA new version will be downloaded.");
+                    }
+                }
+            }
+        }
+
+        String name = d.getArtifactId() + "_" + d.getVersion();
 
         File saveLocation = new File(getLibFolder(), name + ".jar");
         if (!saveLocation.exists()) {

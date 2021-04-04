@@ -41,7 +41,7 @@ import java.util.Map;
 @MavenLibrary(groupId = "org.mongodb", artifactId = "mongo-java-driver", version = "3.12.7")
 @MavenLibrary(groupId = "mysql", artifactId = "mysql-connector-java", version = "8.0.22")
 @MavenLibrary(groupId = "org.xerial", artifactId = "sqlite-jdbc", version = "3.34.0")
-@MavenLibrary(groupId = "com.google.guava", artifactId = "guava", version = "28.2-jre")
+@MavenLibrary(groupId = "com.google.guava", artifactId = "guava", version = "30.1.1-jre")
 @MavenLibrary(groupId = "org.postgresql", artifactId = "postgresql", version = "42.2.18")
 @MavenLibrary(groupId = "com.georgev22", artifactId = "Externals", version = "1.3", repo = @Repository(url = "https://artifactory.georgev22.com/artifactory/georgev22/"))
 @MavenLibrary(groupId = "com.georgev22", artifactId = "Interfaces", version = "1.0", repo = @Repository(url = "https://artifactory.georgev22.com/artifactory/georgev22/"))
@@ -132,6 +132,7 @@ public class VoteRewardPlugin extends JavaPlugin {
                     HolographicDisplays.create(b, (Location) data.get("Holograms." + b + ".location"), data.getString("Holograms." + b + ".type"), false);
                 }
             }
+            HolographicDisplays.setHook(true);
             Bukkit.getLogger().info("[VoteRewards] Hooked into HolographicDisplays!");
         }
 
@@ -189,7 +190,8 @@ public class VoteRewardPlugin extends JavaPlugin {
             userVoteData.save(false);
         }
         Bukkit.getScheduler().cancelTasks(this);
-        HolographicDisplays.getHologramMap().forEach((name, hologram) -> HolographicDisplays.remove(name, false));
+        if (HolographicDisplays.isHooked())
+            HolographicDisplays.getHologramMap().forEach((name, hologram) -> HolographicDisplays.remove(name, false));
         if (OptionsUtil.COMMAND_VOTEREWARDS.isEnabled())
             Utils.unRegisterCommand("voterewards");
         if (OptionsUtil.COMMAND_FAKEVOTE.isEnabled())

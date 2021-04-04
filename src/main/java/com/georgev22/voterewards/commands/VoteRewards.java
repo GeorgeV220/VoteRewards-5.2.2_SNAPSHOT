@@ -2,6 +2,7 @@ package com.georgev22.voterewards.commands;
 
 import com.georgev22.voterewards.configmanager.CFG;
 import com.georgev22.voterewards.configmanager.FileManager;
+import com.georgev22.voterewards.database.Backup;
 import com.georgev22.voterewards.hooks.WorldEditHook;
 import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.Utils;
@@ -15,6 +16,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.util.Arrays;
 
 public class VoteRewards extends BukkitCommand {
@@ -33,6 +35,7 @@ public class VoteRewards extends BukkitCommand {
         if (args.length == 0) {
             Utils.msg(sender, "&c&l(!) &cCommands &c&l(!)");
             Utils.msg(sender, "&6/vr reload");
+            Utils.msg(sender, "&6/vr backup");
             Utils.msg(sender, "&6/vr help [player, voteparty]");
             Utils.msg(sender, "&c&l==============");
             return true;
@@ -61,6 +64,12 @@ public class VoteRewards extends BukkitCommand {
             fm.getMessages().reloadFile();
             MessagesUtil.repairPaths(fm.getMessages());
             Utils.msg(sender, "&a&l(!) &aPlugin reloaded!");
+        } else if (args[0].equalsIgnoreCase("backup")) {
+            try {
+                Backup.backup();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         } else if (args[0].equalsIgnoreCase("set")) {
             if (args.length < 3) {
                 Utils.msg(sender, "&c&l(!) &c/vr set <player> <data> <value>!");
