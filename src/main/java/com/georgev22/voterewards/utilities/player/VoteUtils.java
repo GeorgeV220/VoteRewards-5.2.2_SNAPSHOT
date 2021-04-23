@@ -118,8 +118,23 @@ public class VoteUtils {
         // PLAY SOUND
         if (OptionsUtil.SOUND.isEnabled()) {
             if (offlinePlayer.isOnline())
-                offlinePlayer.getPlayer().playSound(offlinePlayer.getPlayer().getLocation(),
-                        XSound.matchXSound(OptionsUtil.SOUND_VOTE.getStringValue()).get().parseSound(), 1000, 1);
+                try {
+                    offlinePlayer.getPlayer().playSound(offlinePlayer.getPlayer().getLocation(), XSound
+                                    .matchXSound(OptionsUtil.SOUND_VOTE.getStringValue()).get().parseSound(),
+                            org.bukkit.SoundCategory.valueOf(OptionsUtil.SOUND_VOTE_CHANNEL.getStringValue()),
+                            1000, 1);
+                } catch (NoClassDefFoundError error) {
+                    offlinePlayer.getPlayer().playSound(offlinePlayer.getPlayer().getLocation(), XSound
+                                    .matchXSound(OptionsUtil.SOUND_VOTE.getStringValue()).get().parseSound(),
+                            1000, 1);
+                    if (OptionsUtil.DEBUG_USELESS.isEnabled()) {
+                        Utils.debug(voteRewardPlugin, "========================================================");
+                        Utils.debug(voteRewardPlugin, "SoundCategory doesn't exists in versions below 1.12");
+                        error.printStackTrace();
+                        Utils.debug(voteRewardPlugin, "SoundCategory doesn't exists in versions below 1.12");
+                        Utils.debug(voteRewardPlugin, "========================================================");
+                    }
+                }
         }
 
         if (OptionsUtil.DAILY.isEnabled()) {

@@ -122,9 +122,15 @@ Options:
     vote: false
     crate: false
     sounds:
-      crate open: CHEST_OPEN
-      voteparty start: ENDERDRAGON_DEATH
-      vote received: NOTE_PIANO
+      crate open:
+        sound: CHEST_OPEN
+        channel: AMBIENT
+      voteparty start:
+        sound: ENDERDRAGON_DEATH
+        channel: HOSTILE
+      vote received:
+        sound: NOTE_PIANO
+        channel: AMBIENT
 
 Rewards:
   Worlds: #By world name and service name (you can disable 'Services' if you want "disable_services: true". Only for the 'Services' section)

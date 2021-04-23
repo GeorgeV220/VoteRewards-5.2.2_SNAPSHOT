@@ -58,7 +58,7 @@ public class VoteParty extends BukkitCommand {
                     MessagesUtil.VOTEPARTY_CLAIM.msg(sender, placeholders, true);
                     placeholders.clear();
                 } else {
-                    MessagesUtil.VOTEPARTY_NOTHINGTOCLAIM.msg(sender);
+                    MessagesUtil.VOTEPARTY_NOTHING_TO_CLAIM.msg(sender);
                 }
                 return true;
             } else if (args[0].equalsIgnoreCase("give")) {

@@ -1,7 +1,6 @@
 package com.georgev22.voterewards.utilities;
 
-import com.georgev22.voterewards.configmanager.FileManager;
-import org.bukkit.configuration.file.FileConfiguration;
+import com.georgev22.voterewards.VoteRewardPlugin;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -153,7 +152,11 @@ public enum OptionsUtil {
 
     VOTEPARTY_COOLDOWN("voteparty.cooldown.enabled", true),
 
-    VOTEPARTY_COOLDOWN_SECONDS("voteparty.cooldown.seconds", 5L),
+    VOTEPARTY_COOLDOWN_SECONDS("voteparty.cooldown.seconds", 5),
+
+    VOTEPARTY_PLAYERS("voteparty.players.enabled", false),
+
+    VOTEPARTY_PLAYERS_NEED("voteparty.players.need", 5),
 
     VOTEPARTY_SOUND_START("sound.voteparty", false),
 
@@ -179,15 +182,22 @@ public enum OptionsUtil {
 
     VOTEPARTY_REWARDS("voteparty.rewards", Arrays.asList("eco give %player% 6547", "give %player% minecraft:nether_star 31")),
 
-    SOUND_VOTE("sound.sounds.vote received", "NOTE_PIANO"),
+    SOUND_VOTE("sound.sounds.vote received.sound", "NOTE_PIANO"),
 
-    SOUND_CRATE_OPEN("sound.sounds.crate open", "CHEST_OPEN"),
+    SOUND_VOTE_CHANNEL("sound.sounds.vote received.channel", "AMBIENT"),
 
-    SOUND_VOTEPARTY_START("sound.sounds.voteparty start", "ENDERDRAGON_DEATH"),
+    SOUND_CRATE_OPEN("sound.sounds.crate open.sound", "CHEST_OPEN"),
+
+    SOUND_CRATE_OPEN_CHANNEL("sound.sounds.crate open.channel", "AMBIENT"),
+
+    SOUND_VOTEPARTY_START("sound.sounds.voteparty start.sound", "ENDERDRAGON_DEATH"),
+
+    SOUND_VOTEPARTY_START_CHANNEL("sound.sounds.voteparty start.channel", "HOSTILE"),
 
     ;
     private final String pathName;
     private final Object value;
+    private static final VoteRewardPlugin voteRewardPlugin = VoteRewardPlugin.getInstance();
 
     OptionsUtil(final String pathName, final Object value) {
         this.pathName = pathName;
@@ -195,33 +205,27 @@ public enum OptionsUtil {
     }
 
     public boolean isEnabled() {
-        final FileConfiguration file = FileManager.getInstance().getConfig().getFileConfiguration();
-        return file.getBoolean(getPath(), true);
+        return voteRewardPlugin.getConfig().getBoolean(getPath(), true);
     }
 
     public Object getObjectValue() {
-        final FileConfiguration file = FileManager.getInstance().getConfig().getFileConfiguration();
-        return file.get(getPath(), getDefaultValue());
+        return voteRewardPlugin.getConfig().get(getPath(), getDefaultValue());
     }
 
     public String getStringValue() {
-        final FileConfiguration file = FileManager.getInstance().getConfig().getFileConfiguration();
-        return file.getString(getPath(), String.valueOf(getDefaultValue()));
+        return voteRewardPlugin.getConfig().getString(getPath(), String.valueOf(getDefaultValue()));
     }
 
     public Long getLongValue() {
-        final FileConfiguration file = FileManager.getInstance().getConfig().getFileConfiguration();
-        return file.getLong(getPath(), (Long) getDefaultValue());
+        return voteRewardPlugin.getConfig().getLong(getPath(), (Long) getDefaultValue());
     }
 
     public Integer getIntValue() {
-        final FileConfiguration file = FileManager.getInstance().getConfig().getFileConfiguration();
-        return file.getInt(getPath(), (Integer) getDefaultValue());
+        return voteRewardPlugin.getConfig().getInt(getPath(), (Integer) getDefaultValue());
     }
 
     public List<String> getStringList() {
-        final FileConfiguration file = FileManager.getInstance().getConfig().getFileConfiguration();
-        return file.getStringList(getPath());
+        return voteRewardPlugin.getConfig().getStringList(getPath());
     }
 
     /**

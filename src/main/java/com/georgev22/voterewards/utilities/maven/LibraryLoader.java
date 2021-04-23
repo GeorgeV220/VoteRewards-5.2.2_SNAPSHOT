@@ -128,14 +128,14 @@ public final class LibraryLoader {
         }
 
         if (!saveLocation.exists()) {
-            throw new RuntimeException("[" + plugin.getName() + "] Unable to download dependency: " + d.toString());
+            throw new RuntimeException("[" + plugin.getName() + "] Unable to download dependency: " + d);
         }
 
         URLClassLoader classLoader = (URLClassLoader) plugin.getClass().getClassLoader();
         try {
             ADD_URL_METHOD.invoke(classLoader, saveLocation.toURI().toURL());
         } catch (Exception e) {
-            throw new RuntimeException("[" + plugin.getName() + "] Unable to load dependency: " + saveLocation.toString(), e);
+            throw new RuntimeException("[" + plugin.getName() + "] Unable to load dependency: " + saveLocation, e);
         }
 
         Bukkit.getLogger().info("[" + plugin.getName() + "] Loaded dependency '" + name + "' successfully.");
@@ -144,7 +144,7 @@ public final class LibraryLoader {
     private File getLibFolder() {
         File pluginDataFolder = plugin.getDataFolder();
 
-        File libs = new File(pluginDataFolder, "libraries");
+        File libs = new File(pluginDataFolder.getParentFile(), "GeorgeV22-libraries");
         if (libs.mkdirs()) {
             Bukkit.getLogger().info("[" + plugin.getName() + "] libraries folder created!");
         }

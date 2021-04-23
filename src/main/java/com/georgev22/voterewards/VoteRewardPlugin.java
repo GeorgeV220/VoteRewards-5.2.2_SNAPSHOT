@@ -30,13 +30,12 @@ import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.ZoneId;
 import java.util.Calendar;
-import java.util.Map;
 
 @MavenLibrary(groupId = "org.mongodb", artifactId = "mongo-java-driver", version = "3.12.7")
 @MavenLibrary(groupId = "mysql", artifactId = "mysql-connector-java", version = "8.0.22")
@@ -128,9 +127,7 @@ public class VoteRewardPlugin extends JavaPlugin {
 
         if (Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays")) {
             if (data.get("Holograms") != null) {
-                for (String b : data.getConfigurationSection("Holograms").getKeys(false)) {
-                    HolographicDisplays.create(b, (Location) data.get("Holograms." + b + ".location"), data.getString("Holograms." + b + ".type"), false);
-                }
+                data.getConfigurationSection("Holograms").getKeys(false).forEach(s -> HolographicDisplays.create(s, (Location) data.get("Holograms." + s + ".location"), data.getString("Holograms." + s + ".type"), false));
             }
             HolographicDisplays.setHook(true);
             Bukkit.getLogger().info("[VoteRewards] Hooked into HolographicDisplays!");
@@ -151,44 +148,38 @@ public class VoteRewardPlugin extends JavaPlugin {
         }
 
         if (OptionsUtil.REMINDER.isEnabled()) {
-            Bukkit.getScheduler().runTaskTimerAsynchronously(instance, () -> {
-                for (Map.Entry<Player, Long> entry : reminderMap.entrySet()) {
-                    Player player = entry.getKey();
-                    Long reminderTimer = entry.getValue();
-                    if (reminderTimer <= System.currentTimeMillis()) {
-                        UserVoteData userVoteData = UserVoteData.getUser(player.getUniqueId());
-                        if (System.currentTimeMillis() >= userVoteData.getLastVote() + (24 * 60 * 60 * 1000)) {
-                            ObjectMap<String, String> placeholders = ObjectMap.newHashObjectMap();
-                            placeholders.append("%player%", player.getName());
-                            MessagesUtil.REMINDER.msg(player, placeholders, true);
-                        }
-                        reminderMap.replace(player, System.currentTimeMillis() + (OptionsUtil.REMINDER_SEC.getIntValue() * 1000));
+            Bukkit.getScheduler().runTaskTimerAsynchronously(instance, () -> reminderMap.forEach((key, value) -> {
+                if (value <= System.currentTimeMillis()) {
+                    UserVoteData userVoteData = UserVoteData.getUser(key.getUniqueId());
+                    if (System.currentTimeMillis() >= userVoteData.getLastVote() + (24 * 60 * 60 * 1000)) {
+                        ObjectMap<String, String> placeholders = ObjectMap.newHashObjectMap();
+                        placeholders.append("%player%", key.getName());
+                        MessagesUtil.REMINDER.msg(key, placeholders, true);
                     }
+                    reminderMap.replace(key, System.currentTimeMillis() + (OptionsUtil.REMINDER_SEC.getIntValue() * 1000));
                 }
-            }, 20, 20);
+            }), 20, 20);
         }
 
         if (OptionsUtil.DAILY.isEnabled()) {
-            Bukkit.getScheduler().runTaskTimerAsynchronously(instance, () -> {
-                for (Player player : Bukkit.getOnlinePlayers()) {
-                    UserVoteData userVoteData = UserVoteData.getUser(player.getUniqueId());
-                    if (System.currentTimeMillis() >= userVoteData.getLastVote() + (OptionsUtil.DAILY_HOURS.getIntValue() * 60 * 60 * 1000)) {
-                        if (userVoteData.getDailyVotes() != 0) {
-                            userVoteData.setDailyVotes(0);
-                        }
+            Bukkit.getScheduler().runTaskTimerAsynchronously(instance, () -> Bukkit.getOnlinePlayers().forEach(player -> {
+                UserVoteData userVoteData = UserVoteData.getUser(player.getUniqueId());
+                if (System.currentTimeMillis() >= userVoteData.getLastVote() + (OptionsUtil.DAILY_HOURS.getIntValue() * 60 * 60 * 1000)) {
+                    if (userVoteData.getDailyVotes() != 0) {
+                        userVoteData.setDailyVotes(0);
                     }
                 }
-            }, 20, 20);
+            }), 20, 20);
         }
 
     }
 
     @Override
     public void onDisable() {
-        for (Player player : Bukkit.getOnlinePlayers()) {
+        Bukkit.getOnlinePlayers().forEach(player -> {
             UserVoteData userVoteData = UserVoteData.getUser(player.getUniqueId());
             userVoteData.save(false);
-        }
+        });
         Bukkit.getScheduler().cancelTasks(this);
         if (HolographicDisplays.isHooked())
             HolographicDisplays.getHologramMap().forEach((name, hologram) -> HolographicDisplays.remove(name, false));
@@ -301,21 +292,25 @@ public class VoteRewardPlugin extends JavaPlugin {
 
         UserVoteData.loadAllUsers();
 
-        for (Player player : Bukkit.getOnlinePlayers()) {
+        Bukkit.getOnlinePlayers().forEach(player -> {
             UserVoteData userVoteData = UserVoteData.getUser(player.getUniqueId());
-            userVoteData.load(new Callback() {
-                @Override
-                public void onSuccess() {
-                    if (OptionsUtil.DEBUG_LOAD.isEnabled())
-                        Utils.debug(VoteRewardPlugin.getInstance(), "Successfully loaded user " + userVoteData.getUser().getPlayer().getName());
-                }
+            try {
+                userVoteData.load(new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        if (OptionsUtil.DEBUG_LOAD.isEnabled())
+                            Utils.debug(VoteRewardPlugin.getInstance(), "Successfully loaded user " + userVoteData.getUser().getPlayer().getName());
+                    }
 
-                @Override
-                public void onFailure(Throwable throwable) {
-                    throwable.printStackTrace();
-                }
-            });
-        }
+                    @Override
+                    public void onFailure(Throwable throwable) {
+                        throwable.printStackTrace();
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
 
         HolographicDisplays.updateAll();
 
@@ -366,9 +361,14 @@ public class VoteRewardPlugin extends JavaPlugin {
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public FileConfiguration getConfig() {
         return FileManager.getInstance().getConfig().getFileConfiguration();
+    }
+
+    @Override
+    public void saveConfig() {
+        FileManager.getInstance().getConfig().saveFile();
     }
 
     /**

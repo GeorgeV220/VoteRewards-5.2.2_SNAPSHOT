@@ -1,6 +1,5 @@
 package com.georgev22.voterewards.listeners;
 
-import com.georgev22.externals.xseries.XSound;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.OptionsUtil;
@@ -28,7 +27,7 @@ public class VotifierListener implements Listener {
         final Vote vote = e.getVote();
         final OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(vote.getUsername());
         if (OptionsUtil.DEBUG_VOTE_PRE.isEnabled())
-            Utils.debug(voteRewardPlugin, "Pre process of vote " + vote.toString());
+            Utils.debug(voteRewardPlugin, "Pre process of vote " + vote);
 
         if (!offlinePlayer.isOnline()) {
             if (OptionsUtil.DEBUG_USELESS.isEnabled())
@@ -52,9 +51,6 @@ public class VotifierListener implements Listener {
             MessagesUtil.VOTE.msgAll(placeholders, true);
 
         placeholders.clear();
-        if (OptionsUtil.SOUND.isEnabled()) {
-            offlinePlayer.getPlayer().playSound(offlinePlayer.getPlayer().getLocation(), XSound.matchXSound(OptionsUtil.SOUND_VOTE.getStringValue()).get().parseSound(), 1000, 1);
-        }
     }
 
 }

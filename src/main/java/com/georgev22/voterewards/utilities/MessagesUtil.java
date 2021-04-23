@@ -33,9 +33,9 @@ public enum MessagesUtil {
 
     VOTEPARTY_CLAIM("Messages.VoteParty-Claim", "&a&l(!) &7You have claimed %crates%!"),
 
-    VOTEPARTY_NOTHINGTOCLAIM("Messages.VoteParty-NothingToClaim", "&c&l(!) &cYou don't have crates to claim!"),
+    VOTEPARTY_NOTHING_TO_CLAIM("Messages.VoteParty-NothingToClaim", "&c&l(!) &cYou don't have voteparty rewards to claim!"),
 
-    VOTEPARTY_UNCLAIM("Messages.VoteParty-UNCLAIM", "&c&l(!) &cYou have unclaimed crates!"),
+    VOTEPARTY_UNCLAIMED("Messages.VoteParty-UNCLAIM", "&c&l(!) &cYou have unclaimed voteparty rewards!"),
 
     VOTEPARTY_VOTES_NEED("Messages.VoteParty-VotesNeed", "&a&l(!) &7Votes needed for party: &f%votes%"),
 

@@ -104,9 +104,9 @@ public class PlayerListeners implements Listener {
             return;
         }
 
-        final Player p = event.getPlayer();
+        final Player player = event.getPlayer();
 
-        final ItemStack item = p.getInventory().getItemInHand();
+        final ItemStack item = player.getInventory().getItemInHand();
 
         if (item.getType() != XMaterial.matchXMaterial(Objects.requireNonNull(OptionsUtil.VOTEPARTY_CRATE_ITEM.getStringValue())).get()
                 .parseMaterial()) {
@@ -131,15 +131,31 @@ public class PlayerListeners implements Listener {
         final int amount = item.getAmount();
 
         if (amount == 1) {
-            p.getInventory().clear(p.getInventory().getHeldItemSlot());
+            player.getInventory().clear(player.getInventory().getHeldItemSlot());
         } else {
             item.setAmount(amount - 1);
         }
 
-        VotePartyUtils.getInstance().chooseRandom(OptionsUtil.VOTEPARTY_RANDOM.isEnabled(), p);
+        VotePartyUtils.getInstance().chooseRandom(OptionsUtil.VOTEPARTY_RANDOM.isEnabled(), player);
 
         if (OptionsUtil.VOTEPARTY_SOUND_CRATE.isEnabled()) {
-            p.playSound(p.getLocation(), XSound.matchXSound(OptionsUtil.SOUND_VOTEPARTY_START.getStringValue()).get().parseSound(), 1000, 1);
+            try {
+                player.getPlayer().playSound(player.getPlayer().getLocation(), XSound
+                                .matchXSound(OptionsUtil.SOUND_CRATE_OPEN.getStringValue()).get().parseSound(),
+                        org.bukkit.SoundCategory.valueOf(OptionsUtil.SOUND_CRATE_OPEN_CHANNEL.getStringValue()),
+                        1000, 1);
+            } catch (NoClassDefFoundError error) {
+                player.getPlayer().playSound(player.getPlayer().getLocation(), XSound
+                                .matchXSound(OptionsUtil.SOUND_CRATE_OPEN.getStringValue()).get().parseSound(),
+                        1000, 1);
+                if (OptionsUtil.DEBUG_USELESS.isEnabled()) {
+                    Utils.debug(voteRewardPlugin, "========================================================");
+                    Utils.debug(voteRewardPlugin, "SoundCategory doesn't exists in versions below 1.12");
+                    error.printStackTrace();
+                    Utils.debug(voteRewardPlugin, "SoundCategory doesn't exists in versions below 1.12");
+                    Utils.debug(voteRewardPlugin, "========================================================");
+                }
+            }
         }
 
         event.setCancelled(true);

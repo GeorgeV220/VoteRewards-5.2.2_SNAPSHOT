@@ -15,6 +15,7 @@ import org.bson.BsonDocument;
 import org.bson.BsonString;
 import org.bson.Document;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -54,6 +55,17 @@ public class UserVoteData {
         allUsersMap.putAll(voteRewardPlugin.getIDatabaseType().getAllUsers());
         if (OptionsUtil.DEBUG_LOAD.isEnabled())
             Utils.debug(voteRewardPlugin, getAllUsersMap().toString());
+    }
+
+    /**
+     * Returns a copy of this UserVoteData class for a specific user.
+     *
+     * @param offlinePlayer Offline player object
+     * @return a copy of this UserVoteData class for a specific user.
+     * @since v4.7.0
+     */
+    public static UserVoteData getUser(OfflinePlayer offlinePlayer) {
+        return getUser(offlinePlayer.getUniqueId());
     }
 
     /**
