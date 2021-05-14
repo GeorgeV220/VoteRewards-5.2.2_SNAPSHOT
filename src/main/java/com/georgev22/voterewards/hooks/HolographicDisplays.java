@@ -1,11 +1,11 @@
 package com.georgev22.voterewards.hooks;
 
+import com.georgev22.externals.utilities.maps.ObjectMap;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.configmanager.CFG;
 import com.georgev22.voterewards.configmanager.FileManager;
 import com.georgev22.voterewards.utilities.OptionsUtil;
 import com.georgev22.voterewards.utilities.Utils;
-import com.georgev22.voterewards.utilities.interfaces.ObjectMap;
 import com.georgev22.voterewards.utilities.player.VoteUtils;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;

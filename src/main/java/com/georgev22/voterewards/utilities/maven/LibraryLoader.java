@@ -142,9 +142,7 @@ public final class LibraryLoader {
     }
 
     private File getLibFolder() {
-        File pluginDataFolder = plugin.getDataFolder();
-
-        File libs = new File(pluginDataFolder.getParentFile(), "GeorgeV22-libraries");
+        File libs = new File(plugin.getDataFolder(), "libraries");
         if (libs.mkdirs()) {
             Bukkit.getLogger().info("[" + plugin.getName() + "] libraries folder created!");
         }

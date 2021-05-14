@@ -1,11 +1,11 @@
 package com.georgev22.voterewards.utilities.player;
 
+import com.georgev22.externals.utilities.maps.ObjectMap;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.utilities.OptionsUtil;
 import com.georgev22.voterewards.utilities.Utils;
 import com.georgev22.voterewards.utilities.interfaces.Callback;
 import com.georgev22.voterewards.utilities.interfaces.IDatabaseType;
-import com.georgev22.voterewards.utilities.interfaces.ObjectMap;
 import com.google.common.collect.Lists;
 import com.mongodb.BasicDBObject;
 import com.mongodb.Block;
@@ -680,11 +680,6 @@ public class UserVoteData {
                                 "All time votes: " + user.getAllTimeVotes(),
                                 "Services: " + user.getServices().toString());
                     }
-                    try {
-                        save(user);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
                 }
 
                 @Override
@@ -727,8 +722,14 @@ public class UserVoteData {
                         .append("voteparty", 0)
                         .append("daily", 0)
                         .append("totalvotes", 0);
+                this.yamlConfiguration = YamlConfiguration.loadConfiguration(file);
+                try {
+                    save(user);
+                } catch (IOException exception) {
+                    callback.onFailure(exception.getCause());
+                }
             }
-            yamlConfiguration = YamlConfiguration.loadConfiguration(file);
+            this.yamlConfiguration = YamlConfiguration.loadConfiguration(file);
             callback.onSuccess();
         }
 

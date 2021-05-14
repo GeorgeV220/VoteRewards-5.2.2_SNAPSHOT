@@ -1,5 +1,6 @@
 package com.georgev22.voterewards.utilities.player;
 
+import com.georgev22.externals.utilities.maps.ObjectMap;
 import com.georgev22.externals.xseries.XMaterial;
 import com.georgev22.externals.xseries.XSound;
 import com.georgev22.voterewards.VoteRewardPlugin;
@@ -9,7 +10,6 @@ import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.OptionsUtil;
 import com.georgev22.voterewards.utilities.Regions;
 import com.georgev22.voterewards.utilities.Utils;
-import com.georgev22.voterewards.utilities.interfaces.ObjectMap;
 import com.google.common.collect.Lists;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -48,16 +48,23 @@ public class VotePartyUtils {
      */
     public void run(@Nullable OfflinePlayer offlinePlayer, boolean start) {
         Bukkit.getScheduler().runTaskAsynchronously(voteRewardPlugin, () -> {
-            dataFile.set("VoteParty-Votes", dataFile.getInt("VoteParty-Votes", 0) + 1);
-            fm.getData().saveFile();
+            if ((!start & !OptionsUtil.VOTEPARTY_PLAYERS_NEED.isEnabled()) & Bukkit.getOnlinePlayers().size() > OptionsUtil.VOTEPARTY_PLAYERS_NEED.getIntValue()) {
+                //TODO NOT ENOUGH PLAYERS MESSAGE
+                //return;
+            }
 
-            int maxVotes = OptionsUtil.VOTEPARTY_VOTES.getIntValue();
+            if (!start) {
+                dataFile.set("VoteParty-Votes", dataFile.getInt("VoteParty-Votes", 0) + 1);
+                fm.getData().saveFile();
+            }
+
+            int votesThatNeed = OptionsUtil.VOTEPARTY_VOTES.getIntValue();
             int currentVotes = dataFile.getInt("VoteParty-Votes", 0);
 
             if (!start) {
                 if (OptionsUtil.MESSAGE_VOTEPARTY.isEnabled()) {
-                    if (maxVotes - currentVotes > 0) {
-                        placeholders.append("%votes%", Utils.formatNumber(maxVotes - currentVotes));
+                    if (votesThatNeed - currentVotes > 0) {
+                        placeholders.append("%votes%", Utils.formatNumber(votesThatNeed - currentVotes));
                         MessagesUtil.VOTEPARTY_VOTES_NEED.msgAll(placeholders, true);
                         placeholders.clear();
                     }
@@ -68,7 +75,7 @@ public class VotePartyUtils {
                         players.add(offlinePlayer);
                 }
 
-                if (currentVotes < maxVotes) {
+                if (currentVotes < votesThatNeed) {
                     return;
                 }
             }

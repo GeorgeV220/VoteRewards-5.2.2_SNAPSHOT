@@ -1,5 +1,6 @@
 package com.georgev22.voterewards.utilities.interfaces;
 
+import com.georgev22.externals.utilities.maps.ObjectMap;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.utilities.Utils;
 import com.georgev22.voterewards.utilities.player.User;

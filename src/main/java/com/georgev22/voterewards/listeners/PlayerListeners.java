@@ -84,13 +84,13 @@ public class PlayerListeners implements Listener {
             }
         }
 
-        voteRewardPlugin.reminderMap.append(event.getPlayer(), System.currentTimeMillis());
+        VoteUtils.reminderMap.append(event.getPlayer(), System.currentTimeMillis());
     }
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         UserVoteData.getUser(event.getPlayer().getUniqueId()).save(true);
-        voteRewardPlugin.reminderMap.remove(event.getPlayer());
+        VoteUtils.reminderMap.remove(event.getPlayer());
     }
 
 

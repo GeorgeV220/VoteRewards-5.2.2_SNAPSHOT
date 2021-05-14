@@ -1,5 +1,8 @@
 package com.georgev22.voterewards.utilities.player;
 
+import com.georgev22.externals.utilities.maps.ConcurrentObjectMap;
+import com.georgev22.externals.utilities.maps.LinkedObjectMap;
+import com.georgev22.externals.utilities.maps.ObjectMap;
 import com.georgev22.externals.xseries.XSound;
 import com.georgev22.externals.xseries.messages.Titles;
 import com.georgev22.voterewards.VoteRewardPlugin;
@@ -10,11 +13,10 @@ import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.OptionsUtil;
 import com.georgev22.voterewards.utilities.Utils;
 import com.georgev22.voterewards.utilities.interfaces.Callback;
-import com.georgev22.voterewards.utilities.interfaces.ObjectMap;
-import com.georgev22.voterewards.utilities.maps.LinkedObjectMap;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 
 import java.time.Instant;
 import java.time.ZoneId;
@@ -34,7 +36,7 @@ public class VoteUtils {
      * @param serviceName   the service name (dah)
      */
     public static void processVote(OfflinePlayer offlinePlayer, String serviceName) {
-        processVote(offlinePlayer, serviceName, true);
+        processVote(offlinePlayer, serviceName, OptionsUtil.VOTEPARTY.isEnabled());
     }
 
     /**
@@ -50,6 +52,7 @@ public class VoteUtils {
         userVoteData.setVotes(userVoteData.getVotes() + 1);
         userVoteData.setLastVoted(System.currentTimeMillis());
         userVoteData.setAllTimeVotes(userVoteData.getAllTimeVotes() + 1);
+        userVoteData.setDailyVotes(userVoteData.getDailyVotes() + 1);
         UserVoteData.getAllUsersMap().replace(offlinePlayer.getUniqueId(), UserVoteData.getUser(offlinePlayer.getUniqueId()).getUser());
 
         if (OptionsUtil.VOTE_TITLE.isEnabled()) {
@@ -105,10 +108,9 @@ public class VoteUtils {
 
         // CUMULATIVE REWARDS
         if (OptionsUtil.CUMULATIVE.isEnabled()) {
-            int votes = userVoteData.getVotes();
             for (String s2 : voteRewardPlugin.getConfig().getConfigurationSection("Rewards.Cumulative")
                     .getKeys(false)) {
-                if (Integer.valueOf(s2).equals(votes)) {
+                if (Integer.valueOf(s2).equals(userVoteData.getVotes())) {
                     userVoteData.runCommands(voteRewardPlugin.getConfig()
                             .getStringList("Rewards.Cumulative." + s2 + ".commands"));
                 }
@@ -286,5 +288,26 @@ public class VoteUtils {
             return getTopPlayer(0);
         }
     }
+
+    public static void reminder() {
+        Bukkit.getScheduler().runTaskTimerAsynchronously(voteRewardPlugin, () -> reminderMap.forEach((key, value) -> {
+            if (value <= System.currentTimeMillis()) {
+                UserVoteData userVoteData = UserVoteData.getUser(key.getUniqueId());
+                if (System.currentTimeMillis() >= userVoteData.getLastVote() + (24 * 60 * 60 * 1000)) {
+                    ObjectMap<String, String> placeholders = ObjectMap.newHashObjectMap();
+                    placeholders.append("%player%", key.getName());
+                    MessagesUtil.REMINDER.msg(key, placeholders, true);
+                }
+                reminderMap.replace(key, System.currentTimeMillis() + (OptionsUtil.REMINDER_SEC.getIntValue() * 1000));
+            }
+        }), 20, 20);
+    }
+
+    /**
+     * Creates the reminder map
+     * <p>
+     * creates a new, empty {@link ConcurrentObjectMap#ConcurrentObjectMap()}
+     */
+    public static final ObjectMap<Player, Long> reminderMap = ObjectMap.newConcurrentObjectMap();
 
 }

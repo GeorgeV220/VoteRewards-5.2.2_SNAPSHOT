@@ -99,6 +99,9 @@ Options:
       bar symbol: "|"
     participate: true
     regions: false
+    players:
+      enabled: false
+      need: 5
     cooldown:
       enabled: true
       seconds: 5

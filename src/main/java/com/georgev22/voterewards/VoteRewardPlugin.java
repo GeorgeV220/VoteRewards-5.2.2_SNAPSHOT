@@ -17,8 +17,6 @@ import com.georgev22.voterewards.utilities.Updater;
 import com.georgev22.voterewards.utilities.Utils;
 import com.georgev22.voterewards.utilities.interfaces.Callback;
 import com.georgev22.voterewards.utilities.interfaces.IDatabaseType;
-import com.georgev22.voterewards.utilities.interfaces.ObjectMap;
-import com.georgev22.voterewards.utilities.maps.ConcurrentObjectMap;
 import com.georgev22.voterewards.utilities.maven.LibraryLoader;
 import com.georgev22.voterewards.utilities.maven.MavenLibrary;
 import com.georgev22.voterewards.utilities.maven.Repository;
@@ -28,7 +26,6 @@ import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,7 +39,7 @@ import java.util.Calendar;
 @MavenLibrary(groupId = "org.xerial", artifactId = "sqlite-jdbc", version = "3.34.0")
 @MavenLibrary(groupId = "com.google.guava", artifactId = "guava", version = "30.1.1-jre")
 @MavenLibrary(groupId = "org.postgresql", artifactId = "postgresql", version = "42.2.18")
-@MavenLibrary(groupId = "com.georgev22", artifactId = "Externals", version = "1.3", repo = @Repository(url = "https://artifactory.georgev22.com/artifactory/georgev22/"))
+@MavenLibrary(groupId = "com.georgev22", artifactId = "Externals", version = "1.4", repo = @Repository(url = "https://artifactory.georgev22.com/artifactory/georgev22/"))
 @MavenLibrary(groupId = "com.georgev22", artifactId = "Interfaces", version = "1.0", repo = @Repository(url = "https://artifactory.georgev22.com/artifactory/georgev22/"))
 @MavenLibrary(groupId = "com.georgev22", artifactId = "LegacyWorldEdit", version = "1.0", repo = @Repository(url = "https://artifactory.georgev22.com/artifactory/georgev22/"))
 @MavenLibrary(groupId = "com.georgev22", artifactId = "NewWorldEdit", version = "1.0", repo = @Repository(url = "https://artifactory.georgev22.com/artifactory/georgev22/"))
@@ -147,25 +144,11 @@ public class VoteRewardPlugin extends JavaPlugin {
             Bukkit.getLogger().info("[VoteRewards] Metrics are enabled!");
         }
 
-        if (OptionsUtil.REMINDER.isEnabled()) {
-            Bukkit.getScheduler().runTaskTimerAsynchronously(instance, () -> reminderMap.forEach((key, value) -> {
-                if (value <= System.currentTimeMillis()) {
-                    UserVoteData userVoteData = UserVoteData.getUser(key.getUniqueId());
-                    if (System.currentTimeMillis() >= userVoteData.getLastVote() + (24 * 60 * 60 * 1000)) {
-                        ObjectMap<String, String> placeholders = ObjectMap.newHashObjectMap();
-                        placeholders.append("%player%", key.getName());
-                        MessagesUtil.REMINDER.msg(key, placeholders, true);
-                    }
-                    reminderMap.replace(key, System.currentTimeMillis() + (OptionsUtil.REMINDER_SEC.getIntValue() * 1000));
-                }
-            }), 20, 20);
-        }
-
         if (OptionsUtil.DAILY.isEnabled()) {
             Bukkit.getScheduler().runTaskTimerAsynchronously(instance, () -> Bukkit.getOnlinePlayers().forEach(player -> {
                 UserVoteData userVoteData = UserVoteData.getUser(player.getUniqueId());
                 if (System.currentTimeMillis() >= userVoteData.getLastVote() + (OptionsUtil.DAILY_HOURS.getIntValue() * 60 * 60 * 1000)) {
-                    if (userVoteData.getDailyVotes() != 0) {
+                    if (userVoteData.getDailyVotes() < 0) {
                         userVoteData.setDailyVotes(0);
                     }
                 }
@@ -319,6 +302,10 @@ public class VoteRewardPlugin extends JavaPlugin {
 
         if (OptionsUtil.MONTHLY_ENABLED.isEnabled())
             VoteUtils.monthlyReset();
+
+        if (OptionsUtil.REMINDER.isEnabled()) {
+            VoteUtils.reminder();
+        }
     }
 
     /**
@@ -370,13 +357,6 @@ public class VoteRewardPlugin extends JavaPlugin {
     public void saveConfig() {
         FileManager.getInstance().getConfig().saveFile();
     }
-
-    /**
-     * Creates the reminder map
-     * <p>
-     * creates a new, empty {@link ConcurrentObjectMap#ConcurrentObjectMap()}
-     */
-    public final ObjectMap<Player, Long> reminderMap = ObjectMap.newConcurrentObjectMap();
 
 
 }

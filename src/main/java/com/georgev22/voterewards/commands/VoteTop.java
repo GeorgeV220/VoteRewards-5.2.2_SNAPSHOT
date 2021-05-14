@@ -1,9 +1,9 @@
 package com.georgev22.voterewards.commands;
 
+import com.georgev22.externals.utilities.maps.ObjectMap;
 import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.OptionsUtil;
 import com.georgev22.voterewards.utilities.Utils;
-import com.georgev22.voterewards.utilities.interfaces.ObjectMap;
 import com.georgev22.voterewards.utilities.player.VoteUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
