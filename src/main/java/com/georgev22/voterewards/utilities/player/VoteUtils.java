@@ -35,7 +35,7 @@ public class VoteUtils {
      * @param offlinePlayer the player who voted
      * @param serviceName   the service name (dah)
      */
-    public static void processVote(OfflinePlayer offlinePlayer, String serviceName) {
+    public void processVote(OfflinePlayer offlinePlayer, String serviceName) {
         processVote(offlinePlayer, serviceName, OptionsUtil.VOTEPARTY.isEnabled());
     }
 
@@ -47,7 +47,9 @@ public class VoteUtils {
      * @param addVoteParty  count the vote on voteparty
      * @since v4.7.0
      */
-    public static void processVote(OfflinePlayer offlinePlayer, String serviceName, boolean addVoteParty) {
+    public void processVote(OfflinePlayer offlinePlayer, String serviceName, boolean addVoteParty) {
+        if (OptionsUtil.DEBUG_VOTES_REGULAR.isEnabled())
+            Utils.debug(voteRewardPlugin, "VOTE OF: " + offlinePlayer.getName());
         UserVoteData userVoteData = UserVoteData.getUser(offlinePlayer.getUniqueId());
         userVoteData.setVotes(userVoteData.getVotes() + 1);
         userVoteData.setLastVoted(System.currentTimeMillis());

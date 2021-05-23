@@ -44,7 +44,7 @@ public class VotifierListener implements Listener {
             return;
         }
 
-        VoteUtils.processVote(offlinePlayer, vote.getServiceName());
+        new VoteUtils().processVote(offlinePlayer, vote.getServiceName());
         ObjectMap<String, String> placeholders = ObjectMap.newHashObjectMap();
         placeholders.append("%player%", vote.getUsername()).append("%servicename%", vote.getServiceName());
         if (OptionsUtil.MESSAGE_VOTE.isEnabled())

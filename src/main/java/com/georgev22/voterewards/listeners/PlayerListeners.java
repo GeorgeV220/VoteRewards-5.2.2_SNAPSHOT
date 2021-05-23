@@ -45,7 +45,7 @@ public class PlayerListeners implements Listener {
                     //OFFLINE VOTING
                     if (OptionsUtil.OFFLINE.isEnabled() && !Bukkit.getPluginManager().isPluginEnabled("AuthMeReloaded")) {
                         for (String serviceName : userVoteData.getOfflineServices()) {
-                            VoteUtils.processVote(event.getPlayer(), serviceName, false);
+                            new VoteUtils().processVote(event.getPlayer(), serviceName, false);
                         }
                         userVoteData.setOfflineServices(Lists.newArrayList());
                     }

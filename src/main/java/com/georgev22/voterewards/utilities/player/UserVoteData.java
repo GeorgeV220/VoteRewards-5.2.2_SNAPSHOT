@@ -84,6 +84,8 @@ public class UserVoteData {
     private final User user;
 
     private UserVoteData(User user) {
+        if (OptionsUtil.DEBUG_USELESS.isEnabled())
+            Utils.debug(voteRewardPlugin, user.toString());
         this.user = user;
     }
 
@@ -244,8 +246,9 @@ public class UserVoteData {
      * @param s the list with all the commands
      */
     public void runCommands(List<String> s) {
+        Utils.debug(voteRewardPlugin, "RUNNING COMMANDS FOR PLAYER: " + user.getName());
         for (String b : s) {
-            Bukkit.getScheduler().runTask(voteRewardPlugin, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Utils.colorize(b.replace("%player%", user.getName()))));
+            Bukkit.getScheduler().runTask(voteRewardPlugin, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), b.replace("%player%", user.getName())));
         }
     }
 
