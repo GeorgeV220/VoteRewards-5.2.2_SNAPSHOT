@@ -16,6 +16,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <baseRevision>5.0</baseRevision>
         <revision>v${baseRevision}</revision>
+        <maven.compiler.source>16</maven.compiler.source>
+        <maven.compiler.target>16</maven.compiler.target>
     </properties>
 
     <distributionManagement>
@@ -42,15 +44,6 @@
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
-                <configuration>
-                    <source>16</source>
-                    <target>16</target>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -147,13 +140,6 @@
             <url>https://repo.codemc.io/repository/maven-public/</url>
         </repository>
     </repositories>
-
-    <pluginRepositories>
-        <pluginRepository>
-            <id>apache.snapshots</id>
-            <url>https://repository.apache.org/snapshots/</url>
-        </pluginRepository>
-    </pluginRepositories>
 
     <dependencies>
         <dependency>
@@ -291,54 +277,5 @@
             <systemPath>${pom.basedir}/libs/LeaderHeadsAPI.jar</systemPath>
         </dependency>
 
-
-        <dependency>
-            <groupId>org.apache.maven.shared</groupId>
-            <artifactId>maven-artifact-transfer</artifactId>
-            <version>0.13.1</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.ow2.asm</groupId>
-            <artifactId>asm</artifactId>
-            <version>9.1</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.ow2.asm</groupId>
-            <artifactId>asm-commons</artifactId>
-            <version>9.1</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.vafer</groupId>
-            <artifactId>jdependency</artifactId>
-            <version>2.6.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.8.1</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven.shared</groupId>
-            <artifactId>maven-common-artifact-filters</artifactId>
-            <version>3.1.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.ow2.asm</groupId>
-            <artifactId>asm-tree</artifactId>
-            <version>9.1</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.ow2.asm</groupId>
-            <artifactId>asm-analysis</artifactId>
-            <version>9.1</version>
-            <scope>provided</scope>
-        </dependency>
     </dependencies>
 </project>
