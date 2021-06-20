@@ -399,18 +399,10 @@ public final class Utils {
         final int progressBars = (int) (totalBars * percent);
         final int leftOver = totalBars - progressBars;
 
-        final StringBuilder sb = new StringBuilder();
-
-        sb.append(colorize(completedColor));
-        for (int i = 0; i < progressBars; i++) {
-            sb.append(symbol);
-        }
-
-        sb.append(colorize(notCompletedColor));
-        for (int i = 0; i < leftOver; i++) {
-            sb.append(symbol);
-        }
-        return sb.toString();
+        return colorize(completedColor) +
+                String.valueOf(symbol).repeat(Math.max(0, progressBars)) +
+                colorize(notCompletedColor) +
+                String.valueOf(symbol).repeat(Math.max(0, leftOver));
     }
 
     /**
@@ -544,4 +536,23 @@ public final class Utils {
         }
     }
 
+    public static void kickAll(String kickMessage) {
+        Bukkit.getOnlinePlayers().forEach(player -> player.kickPlayer(colorize(kickMessage)));
+    }
+
+    private static boolean join = false;
+    private static String disableJoinMessage = "";
+
+    public static void disableJoin(boolean b, String message) {
+        join = b;
+        disableJoinMessage = message;
+    }
+
+    public static boolean isJoinDisabled() {
+        return join;
+    }
+
+    public static String getDisableJoinMessage() {
+        return disableJoinMessage;
+    }
 }

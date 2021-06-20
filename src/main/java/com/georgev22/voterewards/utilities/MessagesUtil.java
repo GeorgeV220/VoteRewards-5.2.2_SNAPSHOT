@@ -8,9 +8,6 @@ import java.util.Map;
 
 public enum MessagesUtil {
 
-    /*
-     */
-
     NO_PERMISSION("Messages.No-Permission", "&c&l(!) &cYou do not have the correct permissions to do this!"),
 
     ONLY_PLAYER_COMMAND("Messages.Only-Player-Command", "&c&l(!) &cOnly players can run this command!"),
@@ -220,7 +217,7 @@ public enum MessagesUtil {
     }
 
     /**
-     * Sends a translated message to a target commandsender with placeholders gained
+     * Sends a translated message to a target with placeholders gained
      * from a map. If the map is null, no placeholder will be set and it will still
      * execute.
      *

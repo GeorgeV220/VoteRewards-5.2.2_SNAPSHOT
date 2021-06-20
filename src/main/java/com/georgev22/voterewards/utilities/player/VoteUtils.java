@@ -14,7 +14,6 @@ import com.georgev22.voterewards.utilities.OptionsUtil;
 import com.georgev22.voterewards.utilities.Utils;
 import com.georgev22.voterewards.utilities.interfaces.Callback;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
@@ -25,57 +24,55 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
-public class VoteUtils {
+public record VoteUtils(User user) {
 
     private static final VoteRewardPlugin voteRewardPlugin = VoteRewardPlugin.getInstance();
 
     /**
      * Process player vote
      *
-     * @param offlinePlayer the player who voted
-     * @param serviceName   the service name (dah)
+     * @param serviceName the service name (dah)
      */
-    public void processVote(OfflinePlayer offlinePlayer, String serviceName) {
-        processVote(offlinePlayer, serviceName, OptionsUtil.VOTEPARTY.isEnabled());
+    public void processVote(String serviceName) {
+        processVote(serviceName, OptionsUtil.VOTEPARTY.isEnabled());
     }
 
     /**
      * Process player vote
      *
-     * @param offlinePlayer the player who voted
-     * @param serviceName   the service name (dah)
-     * @param addVoteParty  count the vote on voteparty
+     * @param serviceName  the service name (dah)
+     * @param addVoteParty count the vote on voteparty
      * @since v4.7.0
      */
-    public void processVote(OfflinePlayer offlinePlayer, String serviceName, boolean addVoteParty) {
+    public void processVote(String serviceName, boolean addVoteParty) {
         if (OptionsUtil.DEBUG_VOTES_REGULAR.isEnabled())
-            Utils.debug(voteRewardPlugin, "VOTE OF: " + offlinePlayer.getName());
-        UserVoteData userVoteData = UserVoteData.getUser(offlinePlayer.getUniqueId());
+            Utils.debug(voteRewardPlugin, "VOTE OF: " + user.getName());
+        UserVoteData userVoteData = UserVoteData.getUser(user.getUniqueId());
         userVoteData.setVotes(userVoteData.getVotes() + 1);
         userVoteData.setLastVoted(System.currentTimeMillis());
         userVoteData.setAllTimeVotes(userVoteData.getAllTimeVotes() + 1);
         userVoteData.setDailyVotes(userVoteData.getDailyVotes() + 1);
-        UserVoteData.getAllUsersMap().replace(offlinePlayer.getUniqueId(), UserVoteData.getUser(offlinePlayer.getUniqueId()).getUser());
+        UserVoteData.getAllUsersMap().replace(user.getUniqueId(), UserVoteData.getUser(user.getUniqueId()).user());
 
         if (OptionsUtil.VOTE_TITLE.isEnabled()) {
-            Titles.sendTitle(offlinePlayer.getPlayer(),
-                    Utils.colorize(MessagesUtil.VOTE_TITLE.getMessages()[0]).replace("%player%", offlinePlayer.getName()),
-                    Utils.colorize(MessagesUtil.VOTE_SUBTITLE.getMessages()[0]).replace("%player%", offlinePlayer.getName()));
+            Titles.sendTitle(user.getPlayer(),
+                    Utils.colorize(MessagesUtil.VOTE_TITLE.getMessages()[0]).replace("%player%", user.getName()),
+                    Utils.colorize(MessagesUtil.VOTE_SUBTITLE.getMessages()[0]).replace("%player%", user.getName()));
         }
 
         // WORLD REWARDS (WITH SERVICES)
         if (OptionsUtil.WORLD.isEnabled()) {
-            if (voteRewardPlugin.getConfig().getString("Rewards.Worlds." + offlinePlayer.getPlayer().getWorld() + "." + serviceName) != null) {
+            if (voteRewardPlugin.getConfig().getString("Rewards.Worlds." + user.getPlayer().getWorld() + "." + serviceName) != null && OptionsUtil.WORLD_SERVICES.isEnabled()) {
                 userVoteData.runCommands(voteRewardPlugin.getConfig()
-                        .getStringList("Rewards.Worlds." + offlinePlayer.getPlayer().getWorld() + "." + serviceName));
+                        .getStringList("Rewards.Worlds." + user.getPlayer().getWorld().getName() + "." + serviceName));
             } else {
                 userVoteData.runCommands(voteRewardPlugin.getConfig()
-                        .getStringList("Rewards.Worlds." + offlinePlayer.getPlayer().getWorld() + ".default"));
+                        .getStringList("Rewards.Worlds." + user.getPlayer().getWorld().getName() + ".default"));
             }
         }
 
         // SERVICE REWARDS
-        if (!OptionsUtil.DISABLE_SERVICES.isEnabled()) {
+        if (OptionsUtil.SERVICES.isEnabled()) {
             if (voteRewardPlugin.getConfig().getString("Rewards.Services." + serviceName) != null) {
                 userVoteData.runCommands(voteRewardPlugin.getConfig()
                         .getStringList("Rewards.Services." + serviceName + ".commands"));
@@ -101,7 +98,7 @@ public class VoteUtils {
         // PERMISSIONS REWARDS
         if (OptionsUtil.PERMISSIONS.isEnabled()) {
             for (String s2 : voteRewardPlugin.getConfig().getConfigurationSection("Rewards.Permission").getKeys(false)) {
-                if (offlinePlayer.getPlayer().hasPermission("voterewards.permission." + s2)) {
+                if (user.getPlayer().hasPermission("voterewards.permission." + s2)) {
                     userVoteData.runCommands(voteRewardPlugin.getConfig()
                             .getStringList("Rewards.Permission." + s2 + ".commands"));
                 }
@@ -121,24 +118,23 @@ public class VoteUtils {
 
         // PLAY SOUND
         if (OptionsUtil.SOUND.isEnabled()) {
-            if (offlinePlayer.isOnline())
-                try {
-                    offlinePlayer.getPlayer().playSound(offlinePlayer.getPlayer().getLocation(), XSound
-                                    .matchXSound(OptionsUtil.SOUND_VOTE.getStringValue()).get().parseSound(),
-                            org.bukkit.SoundCategory.valueOf(OptionsUtil.SOUND_VOTE_CHANNEL.getStringValue()),
-                            1000, 1);
-                } catch (NoClassDefFoundError error) {
-                    offlinePlayer.getPlayer().playSound(offlinePlayer.getPlayer().getLocation(), XSound
-                                    .matchXSound(OptionsUtil.SOUND_VOTE.getStringValue()).get().parseSound(),
-                            1000, 1);
-                    if (OptionsUtil.DEBUG_USELESS.isEnabled()) {
-                        Utils.debug(voteRewardPlugin, "========================================================");
-                        Utils.debug(voteRewardPlugin, "SoundCategory doesn't exists in versions below 1.12");
-                        error.printStackTrace();
-                        Utils.debug(voteRewardPlugin, "SoundCategory doesn't exists in versions below 1.12");
-                        Utils.debug(voteRewardPlugin, "========================================================");
-                    }
+            try {
+                user.getPlayer().playSound(user.getPlayer().getLocation(), XSound
+                                .matchXSound(OptionsUtil.SOUND_VOTE.getStringValue()).get().parseSound(),
+                        org.bukkit.SoundCategory.valueOf(OptionsUtil.SOUND_VOTE_CHANNEL.getStringValue()),
+                        1000, 1);
+            } catch (NoClassDefFoundError error) {
+                user.getPlayer().playSound(user.getPlayer().getLocation(), XSound
+                                .matchXSound(OptionsUtil.SOUND_VOTE.getStringValue()).get().parseSound(),
+                        1000, 1);
+                if (OptionsUtil.DEBUG_USELESS.isEnabled()) {
+                    Utils.debug(voteRewardPlugin, "========================================================");
+                    Utils.debug(voteRewardPlugin, "SoundCategory doesn't exists in versions below 1.12");
+                    error.printStackTrace();
+                    Utils.debug(voteRewardPlugin, "SoundCategory doesn't exists in versions below 1.12");
+                    Utils.debug(voteRewardPlugin, "========================================================");
                 }
+            }
         }
 
         if (OptionsUtil.DAILY.isEnabled()) {
@@ -154,7 +150,7 @@ public class VoteUtils {
 
         // VOTE PARTY
         if (addVoteParty)
-            VotePartyUtils.getInstance().run(offlinePlayer, false);
+            new VotePartyUtils(user.getOfflinePlayer()).run(false);
 
         //HOLOGRAM UPDATE
         if (Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays"))
@@ -162,7 +158,7 @@ public class VoteUtils {
 
         if (OptionsUtil.DEBUG_VOTE_AFTER.isEnabled()) {
             Utils.debug(voteRewardPlugin,
-                    "Vote for player " + offlinePlayer.getPlayer(),
+                    "Vote for player " + user.getOfflinePlayer(),
                     "Votes: " + userVoteData.getVotes(),
                     "Last Voted: " + Instant.ofEpochMilli(userVoteData.getLastVote()).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())));
         }
@@ -173,20 +169,37 @@ public class VoteUtils {
      * <p>
      * Process player offline vote
      *
-     * @param offlinePlayer player who voted
-     * @param serviceName   service name (dah)
+     * @param serviceName service name (dah)
      * @throws Exception When something goes wrong
      */
-    public static void processOfflineVote(OfflinePlayer offlinePlayer, final String serviceName) throws Exception {
-        UserVoteData userVoteData = UserVoteData.getUser(offlinePlayer.getUniqueId());
+    public void processOfflineVote(final String serviceName) throws Exception {
+        UserVoteData userVoteData = UserVoteData.getUser(user.getUniqueId());
         userVoteData.load(new Callback() {
             @Override
             public void onSuccess() {
                 List<String> services = userVoteData.getOfflineServices();
                 services.add(serviceName);
                 userVoteData.setOfflineServices(services);
-                userVoteData.save(true);
-                VotePartyUtils.getInstance().run(offlinePlayer, false);
+                userVoteData.save(true, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        if (OptionsUtil.DEBUG_SAVE.isEnabled()) {
+                            Utils.debug(voteRewardPlugin,
+                                    "User " + user.getName() + " successfully saved!",
+                                    "Votes: " + user.getVotes(),
+                                    "Daily Votes: " + user.getDailyVotes(),
+                                    "Last Voted: " + Instant.ofEpochMilli(user.getLastVoted()).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())) + user.getLastVoted(),
+                                    "Vote Parties: " + user.getVoteParties(),
+                                    "All time votes: " + user.getAllTimeVotes());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Throwable throwable) {
+                        throwable.printStackTrace();
+                    }
+                });
+                new VotePartyUtils(user.getOfflinePlayer()).run(false);
             }
 
             @Override

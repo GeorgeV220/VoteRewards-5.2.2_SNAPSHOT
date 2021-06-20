@@ -26,12 +26,11 @@ public class Vote extends BukkitCommand {
 
     public boolean execute(@NotNull final CommandSender sender, @NotNull final String label, final String[] args) {
         if (!testPermission(sender)) return true;
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player player)) {
             Utils.msg(sender, MessagesUtil.ONLY_PLAYER_COMMAND.getMessages()[0]);
             return true;
         }
 
-        Player player = (Player) sender;
         ObjectMap<String, String> placeholders = ObjectMap.newHashObjectMap();
         UserVoteData userVoteData = UserVoteData.getUser(player.getUniqueId());
         placeholders.append("%votes%", String.valueOf(userVoteData.getVotes()));

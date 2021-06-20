@@ -5,6 +5,7 @@ import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.OptionsUtil;
 import com.georgev22.voterewards.utilities.Utils;
+import com.georgev22.voterewards.utilities.player.UserVoteData;
 import com.georgev22.voterewards.utilities.player.VoteUtils;
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.model.VotifierEvent;
@@ -29,14 +30,16 @@ public class VotifierListener implements Listener {
         if (OptionsUtil.DEBUG_VOTE_PRE.isEnabled())
             Utils.debug(voteRewardPlugin, "Pre process of vote " + vote);
 
+        UserVoteData userVoteData = UserVoteData.getUser(offlinePlayer);
         if (!offlinePlayer.isOnline()) {
+
             if (OptionsUtil.DEBUG_USELESS.isEnabled())
                 Utils.debug(voteRewardPlugin, "Player " + offlinePlayer.getName() + " is offline!");
             if (OptionsUtil.OFFLINE.isEnabled()) {
                 try {
                     if (OptionsUtil.DEBUG_USELESS.isEnabled())
                         Utils.debug(voteRewardPlugin, "Process " + vote.getUsername() + " vote with " + vote.getServiceName() + " service name!");
-                    VoteUtils.processOfflineVote(offlinePlayer, vote.getServiceName());
+                    new VoteUtils(userVoteData.user()).processOfflineVote(vote.getServiceName());
                 } catch (Exception ioException) {
                     ioException.printStackTrace();
                 }
@@ -44,7 +47,7 @@ public class VotifierListener implements Listener {
             return;
         }
 
-        new VoteUtils().processVote(offlinePlayer, vote.getServiceName());
+        new VoteUtils(userVoteData.user()).processVote(vote.getServiceName());
         ObjectMap<String, String> placeholders = ObjectMap.newHashObjectMap();
         placeholders.append("%player%", vote.getUsername()).append("%servicename%", vote.getServiceName());
         if (OptionsUtil.MESSAGE_VOTE.isEnabled())

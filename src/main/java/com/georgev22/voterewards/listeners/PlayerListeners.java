@@ -19,9 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -35,6 +33,11 @@ public class PlayerListeners implements Listener {
     private final VoteRewardPlugin voteRewardPlugin = VoteRewardPlugin.getInstance();
 
     @EventHandler
+    public void onPreLogin(PlayerPreLoginEvent event) {
+        event.disallow(PlayerPreLoginEvent.Result.KICK_OTHER, Utils.colorize(Utils.getDisableJoinMessage()));
+    }
+
+    @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         UserVoteData userVoteData = UserVoteData.getUser(event.getPlayer().getUniqueId());
         final Stopwatch sw = Stopwatch.createStarted();
@@ -45,13 +48,26 @@ public class PlayerListeners implements Listener {
                     //OFFLINE VOTING
                     if (OptionsUtil.OFFLINE.isEnabled() && !Bukkit.getPluginManager().isPluginEnabled("AuthMeReloaded")) {
                         for (String serviceName : userVoteData.getOfflineServices()) {
-                            new VoteUtils().processVote(event.getPlayer(), serviceName, false);
+                            new VoteUtils(userVoteData.user()).processVote(serviceName, false);
                         }
                         userVoteData.setOfflineServices(Lists.newArrayList());
                     }
-                    userVoteData.save(true);
+                    userVoteData.save(true, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            if (OptionsUtil.DEBUG_SAVE.isEnabled()) {
+                                Utils.debug(voteRewardPlugin, "User " + event.getPlayer().getName() + " saved!",
+                                        userVoteData.user().toString());
+                            }
+                        }
 
-                    UserVoteData.getAllUsersMap().append(event.getPlayer().getUniqueId(), userVoteData.getUser());
+                        @Override
+                        public void onFailure(Throwable throwable) {
+                            throwable.printStackTrace();
+                        }
+                    });
+
+                    UserVoteData.getAllUsersMap().append(event.getPlayer().getUniqueId(), userVoteData.user());
                     //HOLOGRAMS
                     if (Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays")) {
                         if (!HolographicDisplays.getHolograms().isEmpty()) {
@@ -89,8 +105,23 @@ public class PlayerListeners implements Listener {
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
-        UserVoteData.getUser(event.getPlayer().getUniqueId()).save(true);
-        VoteUtils.reminderMap.remove(event.getPlayer());
+        UserVoteData userVoteData = UserVoteData.getUser(event.getPlayer().getUniqueId());
+        userVoteData.save(true, new Callback() {
+            @Override
+            public void onSuccess() {
+                VoteUtils.reminderMap.remove(event.getPlayer());
+                if (OptionsUtil.DEBUG_SAVE.isEnabled()) {
+                    Utils.debug(voteRewardPlugin, "User " + event.getPlayer().getName() + " saved!",
+                            userVoteData.user().toString());
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                throwable.printStackTrace();
+            }
+        });
+
     }
 
 
@@ -136,7 +167,7 @@ public class PlayerListeners implements Listener {
             item.setAmount(amount - 1);
         }
 
-        VotePartyUtils.getInstance().chooseRandom(OptionsUtil.VOTEPARTY_RANDOM.isEnabled(), player);
+        new VotePartyUtils(player).chooseRandom(OptionsUtil.VOTEPARTY_RANDOM.isEnabled());
 
         if (OptionsUtil.VOTEPARTY_SOUND_CRATE.isEnabled()) {
             try {

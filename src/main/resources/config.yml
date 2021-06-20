@@ -52,8 +52,10 @@ Options:
     voteparty: true
   cumulative message: true #cumulative must be enabled
   votes:
-    world: false #Per world rewards
-    disable services: false #Disable 'Services' section if you are using per world rewards
+    world:
+      enabled: false
+      services: false #Services on per world rewards
+    services: true #Enable/Disable 'Services' section
     daily: #Daily vote
       enabled: false
       hours: 12

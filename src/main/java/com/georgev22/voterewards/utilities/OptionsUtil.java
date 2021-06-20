@@ -60,9 +60,11 @@ public enum OptionsUtil {
 
     PERMISSIONS("votes.permissions", false),
 
-    WORLD("votes.world", false),
+    WORLD("votes.world.enabled", false),
 
-    DISABLE_SERVICES("votes.disable services", false),
+    WORLD_SERVICES("votes.world.services", false),
+
+    SERVICES("votes.services", false),
 
     LUCKY("votes.lucky.enabled", false),
 

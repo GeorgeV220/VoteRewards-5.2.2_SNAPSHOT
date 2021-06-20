@@ -4,6 +4,7 @@ import com.georgev22.externals.utilities.maps.ConcurrentObjectMap;
 import com.georgev22.externals.utilities.maps.ObjectMap;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,7 +44,7 @@ public class User extends ConcurrentObjectMap {
      *
      * @return User's Unique ID
      */
-    public UUID getUniqueID() {
+    public UUID getUniqueId() {
         return uuid;
     }
 
@@ -57,8 +58,12 @@ public class User extends ConcurrentObjectMap {
      * @return an offline player
      */
     @NotNull
-    public OfflinePlayer getPlayer() {
-        return Bukkit.getOfflinePlayer(getUniqueID());
+    public OfflinePlayer getOfflinePlayer() {
+        return Bukkit.getOfflinePlayer(getUniqueId());
+    }
+
+    public Player getPlayer() {
+        return getOfflinePlayer().getPlayer();
     }
 
     /**
@@ -68,7 +73,7 @@ public class User extends ConcurrentObjectMap {
      */
     @Nullable
     public String getName() {
-        return getString("name", getPlayer().getName());
+        return getString("name", getOfflinePlayer().getName());
     }
 
     /**

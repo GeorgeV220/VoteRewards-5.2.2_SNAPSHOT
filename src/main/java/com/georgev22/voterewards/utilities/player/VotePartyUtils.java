@@ -24,29 +24,24 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-public class VotePartyUtils {
+public record VotePartyUtils(@Nullable OfflinePlayer offlinePlayer) {
 
     private static VotePartyUtils instance;
 
-    public static VotePartyUtils getInstance() {
-        return instance == null ? instance = new VotePartyUtils() : instance;
-    }
+    private static final VoteRewardPlugin voteRewardPlugin = VoteRewardPlugin.getInstance();
 
-    private final VoteRewardPlugin voteRewardPlugin = VoteRewardPlugin.getInstance();
+    private static final List<OfflinePlayer> players = Lists.newArrayList();
 
-    private final List<OfflinePlayer> players = Lists.newArrayList();
+    private static final ObjectMap<String, String> placeholders = ObjectMap.newHashObjectMap();
 
-    private final ObjectMap<String, String> placeholders = ObjectMap.newHashObjectMap();
+    private static final FileManager fm = FileManager.getInstance();
 
-    private final FileManager fm = FileManager.getInstance();
-
-    private final FileConfiguration dataFile = fm.getData().getFileConfiguration();
+    private static final FileConfiguration dataFile = fm.getData().getFileConfiguration();
 
     /**
-     * @param offlinePlayer Player to add in participation list.
-     * @param start         Set true to start the voteparty without the required votes.
+     * @param start Set true to start the voteparty without the required votes.
      */
-    public void run(@Nullable OfflinePlayer offlinePlayer, boolean start) {
+    public void run(boolean start) {
         Bukkit.getScheduler().runTaskAsynchronously(voteRewardPlugin, () -> {
             if ((!start & !OptionsUtil.VOTEPARTY_PLAYERS_NEED.isEnabled()) & Bukkit.getOnlinePlayers().size() > OptionsUtil.VOTEPARTY_PLAYERS_NEED.getIntValue()) {
                 //TODO NOT ENOUGH PLAYERS MESSAGE
@@ -144,7 +139,7 @@ public class VotePartyUtils {
                         userVoteData.setVoteParties(userVoteData.getVoteParty() + 1);
                     }
                 } else {
-                    chooseRandom(OptionsUtil.VOTEPARTY_RANDOM.isEnabled(), player);
+                    chooseRandom(OptionsUtil.VOTEPARTY_RANDOM.isEnabled());
                 }
             });
 
@@ -156,10 +151,9 @@ public class VotePartyUtils {
     /**
      * Choose a random voteparty reward
      *
-     * @param enable        The boolean of random rewards
-     * @param offlinePlayer Player to give the rewards
+     * @param enable The boolean of random rewards
      */
-    public void chooseRandom(boolean enable, OfflinePlayer offlinePlayer) {
+    public void chooseRandom(boolean enable) {
         List<String> list = OptionsUtil.VOTEPARTY_REWARDS.getStringList();
         if (enable) {
             Random random = new Random();
@@ -202,7 +196,7 @@ public class VotePartyUtils {
      * @param amount item amount
      * @return a custom item crate
      */
-    public ItemStack crate(int amount) {
+    public static ItemStack crate(int amount) {
         ItemStack itemStack = new ItemStack(
                 Objects.requireNonNull(
                         XMaterial.matchXMaterial(

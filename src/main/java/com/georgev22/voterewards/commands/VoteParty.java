@@ -39,7 +39,7 @@ public class VoteParty extends BukkitCommand {
                     MessagesUtil.NO_PERMISSION.msg(sender);
                     return true;
                 }
-                VotePartyUtils.getInstance().run(null, true);
+                new VotePartyUtils(null).run(true);
             } else if (args[0].equalsIgnoreCase("claim")) {
                 if (!(sender instanceof Player)) {
                     MessagesUtil.ONLY_PLAYER_COMMAND.msg(sender);
@@ -52,7 +52,7 @@ public class VoteParty extends BukkitCommand {
                 final UserVoteData userVoteData = UserVoteData.getUser(((Player) sender).getUniqueId());
                 if (userVoteData.getVoteParty() > 0) {
                     ((Player) sender).getInventory()
-                            .addItem(VotePartyUtils.getInstance().crate(userVoteData.getVoteParty()));
+                            .addItem(VotePartyUtils.crate(userVoteData.getVoteParty()));
                     placeholders.append("%crates%", String.valueOf(userVoteData.getVoteParty()));
                     userVoteData.setVoteParties(0);
                     MessagesUtil.VOTEPARTY_CLAIM.msg(sender, placeholders, true);
@@ -77,7 +77,7 @@ public class VoteParty extends BukkitCommand {
                         return true;
                     }
                     if (args.length == 2) {
-                        target.getInventory().addItem(VotePartyUtils.getInstance().crate(1));
+                        target.getInventory().addItem(VotePartyUtils.crate(1));
                         placeholders.append("%amount%", "1");
                         MessagesUtil.VOTEPARTY_GIVE.msg(target, placeholders, true);
                         placeholders.clear();
@@ -90,7 +90,7 @@ public class VoteParty extends BukkitCommand {
                     return true;
                 }
                 if (args.length == 1) {
-                    ((Player) sender).getInventory().addItem(VotePartyUtils.getInstance().crate(1));
+                    ((Player) sender).getInventory().addItem(VotePartyUtils.crate(1));
                     placeholders.append("%amount%", "1");
                     MessagesUtil.VOTEPARTY_GIVE.msg(sender, placeholders, true);
                     placeholders.clear();
@@ -102,7 +102,7 @@ public class VoteParty extends BukkitCommand {
                     return true;
                 }
                 if (args.length == 2) {
-                    target.getInventory().addItem(VotePartyUtils.getInstance().crate(1));
+                    target.getInventory().addItem(VotePartyUtils.crate(1));
                     placeholders.append("%amount%", "1");
                     MessagesUtil.VOTEPARTY_GIVE.msg(target, placeholders, true);
                     placeholders.clear();
@@ -112,7 +112,7 @@ public class VoteParty extends BukkitCommand {
                     Utils.msg(sender, "&c&l(!) &cEnter a valid number");
                     return true;
                 }
-                ((Player) sender).getInventory().addItem(VotePartyUtils.getInstance().crate(Integer.parseInt(args[2])));
+                ((Player) sender).getInventory().addItem(VotePartyUtils.crate(Integer.parseInt(args[2])));
                 placeholders.append("%amount%", args[2]);
                 MessagesUtil.VOTEPARTY_GIVE.msg(target, placeholders, true);
                 placeholders.clear();

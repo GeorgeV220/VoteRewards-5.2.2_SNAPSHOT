@@ -31,7 +31,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.time.Instant;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.Calendar;
 
 @MavenLibrary(groupId = "org.mongodb", artifactId = "mongo-java-driver", version = "3.12.7")
@@ -63,7 +65,7 @@ public class VoteRewardPlugin extends JavaPlugin {
 
     @Override
     public void onLoad() {
-        new LibraryLoader(this).loadAll(this);
+        new LibraryLoader(this).loadAll();
     }
 
     @Override
@@ -161,7 +163,25 @@ public class VoteRewardPlugin extends JavaPlugin {
     public void onDisable() {
         Bukkit.getOnlinePlayers().forEach(player -> {
             UserVoteData userVoteData = UserVoteData.getUser(player.getUniqueId());
-            userVoteData.save(false);
+            userVoteData.save(false, new Callback() {
+                @Override
+                public void onSuccess() {
+                    if (OptionsUtil.DEBUG_SAVE.isEnabled()) {
+                        Utils.debug(VoteRewardPlugin.getInstance(),
+                                "User " + userVoteData.user().getName() + " successfully saved!",
+                                "Votes: " + userVoteData.user().getVotes(),
+                                "Daily Votes: " + userVoteData.user().getDailyVotes(),
+                                "Last Voted: " + Instant.ofEpochMilli(userVoteData.user().getLastVoted()).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())) + userVoteData.user().getLastVoted(),
+                                "Vote Parties: " + userVoteData.user().getVoteParties(),
+                                "All time votes: " + userVoteData.user().getAllTimeVotes());
+                    }
+                }
+
+                @Override
+                public void onFailure(Throwable throwable) {
+                    throwable.printStackTrace();
+                }
+            });
         });
         Bukkit.getScheduler().cancelTasks(this);
         if (HolographicDisplays.isHooked())
@@ -204,7 +224,7 @@ public class VoteRewardPlugin extends JavaPlugin {
         if (OptionsUtil.DEBUG_USELESS.isEnabled())
             Utils.debug(this, "Setup database Thread ID: " + Thread.currentThread().getId());
         switch (OptionsUtil.DATABASE_TYPE.getStringValue()) {
-            case "MySQL": {
+            case "MySQL" -> {
                 if (connection == null || connection.isClosed()) {
                     database = new MySQL(
                             OptionsUtil.DATABASE_HOST.getStringValue(),
@@ -217,9 +237,8 @@ public class VoteRewardPlugin extends JavaPlugin {
                     database.createTable();
                     Utils.debug(this, "Database: MySQL");
                 }
-                break;
             }
-            case "PostgreSQL": {
+            case "PostgreSQL" -> {
                 if (connection == null || connection.isClosed()) {
                     database = new PostgreSQL(
                             OptionsUtil.DATABASE_HOST.getStringValue(),
@@ -232,9 +251,8 @@ public class VoteRewardPlugin extends JavaPlugin {
                     database.createTable();
                     Utils.debug(this, "Database: PostgreSQL");
                 }
-                break;
             }
-            case "SQLite": {
+            case "SQLite" -> {
                 if (connection == null || connection.isClosed()) {
                     database = new SQLite(
                             getDataFolder(),
@@ -244,9 +262,8 @@ public class VoteRewardPlugin extends JavaPlugin {
                     database.createTable();
                     Utils.debug(this, "Database: SQLite");
                 }
-                break;
             }
-            case "MongoDB": {
+            case "MongoDB" -> {
                 mongoDB = new MongoDB(
                         OptionsUtil.DATABASE_MONGO_HOST.getStringValue(),
                         OptionsUtil.DATABASE_MONGO_PORT.getIntValue(),
@@ -257,19 +274,16 @@ public class VoteRewardPlugin extends JavaPlugin {
                 database = null;
                 iDatabaseType = new UserVoteData.MongoDBUtils();
                 Utils.debug(this, "Database: MongoDB");
-                break;
             }
-            case "File": {
+            case "File" -> {
                 database = null;
                 iDatabaseType = new UserVoteData.FileUserUtils();
                 Utils.debug(this, "Database: File");
-                break;
             }
-            default: {
+            default -> {
                 Utils.debug(this, "Please use one of the available databases", "Available databases: File, MySQL, SQLite, PostgreSQL and MongoDB");
                 database = null;
                 iDatabaseType = null;
-                break;
             }
         }
 
@@ -282,7 +296,7 @@ public class VoteRewardPlugin extends JavaPlugin {
                     @Override
                     public void onSuccess() {
                         if (OptionsUtil.DEBUG_LOAD.isEnabled())
-                            Utils.debug(VoteRewardPlugin.getInstance(), "Successfully loaded user " + userVoteData.getUser().getPlayer().getName());
+                            Utils.debug(VoteRewardPlugin.getInstance(), "Successfully loaded user " + userVoteData.user().getOfflinePlayer().getName());
                     }
 
                     @Override

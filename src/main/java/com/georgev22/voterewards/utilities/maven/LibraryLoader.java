@@ -41,24 +41,22 @@ import java.util.Objects;
 /**
  * Resolves {@link MavenLibrary} annotations for a class, and loads the dependency
  * into the classloader.
+ *
+ * @deprecated Probably will be removed in feature release
  */
 @NotNull
-public final class LibraryLoader {
+@Deprecated
+public final record LibraryLoader(Plugin plugin) {
 
-    private final Method ADD_URL_METHOD;
-    private final Plugin plugin;
+    private static final Method ADD_URL_METHOD;
 
-    {
+    static {
         try {
             ADD_URL_METHOD = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
             ADD_URL_METHOD.setAccessible(true);
         } catch (NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public LibraryLoader(Plugin plugin) {
-        this.plugin = plugin;
     }
 
     /**
@@ -68,6 +66,18 @@ public final class LibraryLoader {
      */
     public void loadAll(Object object) {
         loadAll(object.getClass());
+    }
+
+    /**
+     * Resolves all {@link MavenLibrary} annotations on the Class that extends {@link Plugin}.
+     *
+     * @see #LibraryLoader(Plugin)
+     */
+    public void loadAll() {
+        if (plugin == null) {
+            throw new RuntimeException("Plugin is null!");
+        }
+        loadAll(plugin.getClass());
     }
 
     /**
@@ -91,14 +101,14 @@ public final class LibraryLoader {
     }
 
     public void load(Dependency d) {
-        Bukkit.getLogger().info(String.format("[" + plugin.getName() + "] Loading dependency %s:%s:%s from %s", d.getGroupId(), d.getArtifactId(), d.getVersion(), d.getRepoUrl()));
+        Bukkit.getLogger().info(String.format("[" + plugin.getName() + "] Loading dependency %s:%s:%s from %s", d.groupId(), d.artifactId(), d.version(), d.repoUrl()));
 
         for (File file : getLibFolder().listFiles((dir, name) -> name.endsWith(".jar"))) {
             String[] fileandversion = file.getName().replace(".jar", "").split("_");
             String dependencyName = fileandversion[0];
             String version = fileandversion[1];
-            if (d.getArtifactId().equalsIgnoreCase(dependencyName)) {
-                if (!d.getVersion().equalsIgnoreCase(version)) {
+            if (d.artifactId().equalsIgnoreCase(dependencyName)) {
+                if (!d.version().equalsIgnoreCase(version)) {
                     Bukkit.getLogger().info("[" + plugin.getName() + "] An old version of the dependency exists. Attempting to delete...");
                     if (file.delete()) {
                         Bukkit.getLogger().info("[" + plugin.getName() + "] Dependency '" + dependencyName + "' with version '" + version + "' has been deleted!\nA new version will be downloaded.");
@@ -107,14 +117,14 @@ public final class LibraryLoader {
             }
         }
 
-        String name = d.getArtifactId() + "_" + d.getVersion();
+        String name = d.artifactId() + "_" + d.version();
 
         File saveLocation = new File(getLibFolder(), name + ".jar");
         if (!saveLocation.exists()) {
 
             try {
                 Bukkit.getLogger().info("[" + plugin.getName() + "] Dependency '" + name + "' is not already in the libraries folder. Attempting to download...");
-                URL url = d.getUrl();
+                URL url = d.url();
 
                 try (InputStream is = url.openStream()) {
                     Files.copy(is, saveLocation.toPath());
@@ -150,36 +160,16 @@ public final class LibraryLoader {
     }
 
     @NotNull
-    private static final class Dependency {
-        private final String groupId;
-        private final String artifactId;
-        private final String version;
-        private final String repoUrl;
-
-        public Dependency(String groupId, String artifactId, String version, String repoUrl) {
+    private record Dependency(String groupId, String artifactId, String version,
+                              String repoUrl) {
+        private Dependency(String groupId, String artifactId, String version, String repoUrl) {
             this.groupId = Objects.requireNonNull(groupId, "groupId");
             this.artifactId = Objects.requireNonNull(artifactId, "artifactId");
             this.version = Objects.requireNonNull(version, "version");
             this.repoUrl = Objects.requireNonNull(repoUrl, "repoUrl");
         }
 
-        public String getGroupId() {
-            return this.groupId;
-        }
-
-        public String getArtifactId() {
-            return this.artifactId;
-        }
-
-        public String getVersion() {
-            return this.version;
-        }
-
-        public String getRepoUrl() {
-            return this.repoUrl;
-        }
-
-        public URL getUrl() throws MalformedURLException {
+        public URL url() throws MalformedURLException {
             String repo = this.repoUrl;
             if (!repo.endsWith("/")) {
                 repo += "/";
@@ -193,32 +183,31 @@ public final class LibraryLoader {
         @Override
         public boolean equals(Object o) {
             if (o == this) return true;
-            if (!(o instanceof Dependency)) return false;
-            final Dependency other = (Dependency) o;
-            return this.getGroupId().equals(other.getGroupId()) &&
-                    this.getArtifactId().equals(other.getArtifactId()) &&
-                    this.getVersion().equals(other.getVersion()) &&
-                    this.getRepoUrl().equals(other.getRepoUrl());
+            if (!(o instanceof final Dependency other)) return false;
+            return this.groupId().equals(other.groupId()) &&
+                    this.artifactId().equals(other.artifactId()) &&
+                    this.version().equals(other.version()) &&
+                    this.repoUrl().equals(other.repoUrl());
         }
 
         @Override
         public int hashCode() {
             final int PRIME = 59;
             int result = 1;
-            result = result * PRIME + this.getGroupId().hashCode();
-            result = result * PRIME + this.getArtifactId().hashCode();
-            result = result * PRIME + this.getVersion().hashCode();
-            result = result * PRIME + this.getRepoUrl().hashCode();
+            result = result * PRIME + this.groupId().hashCode();
+            result = result * PRIME + this.artifactId().hashCode();
+            result = result * PRIME + this.version().hashCode();
+            result = result * PRIME + this.repoUrl().hashCode();
             return result;
         }
 
         @Override
         public String toString() {
             return "LibraryLoader.Dependency(" +
-                    "groupId=" + this.getGroupId() + ", " +
-                    "artifactId=" + this.getArtifactId() + ", " +
-                    "version=" + this.getVersion() + ", " +
-                    "repoUrl=" + this.getRepoUrl() + ")";
+                    "groupId=" + this.groupId() + ", " +
+                    "artifactId=" + this.artifactId() + ", " +
+                    "version=" + this.version() + ", " +
+                    "repoUrl=" + this.repoUrl() + ")";
         }
     }
 
