@@ -75,7 +75,7 @@ public class VoteRewards extends BukkitCommand {
 
             Bukkit.getScheduler().runTaskAsynchronously(VoteRewardPlugin.getInstance(), () -> {
                 Utils.kickAll("Backup started!");
-                Utils.disableJoin(true, "Backup ongoing!");
+                Utils.disallowLogin(true, "Backup ongoing!");
                 boolean saving = !VoteUtils.reminderMap.isEmpty();
                 while (saving) {
                     if (VoteUtils.reminderMap.isEmpty())
@@ -86,13 +86,13 @@ public class VoteRewards extends BukkitCommand {
                     new Backup("backup" + zonedDateTime.format(DateTimeFormatter.ofPattern("MM-dd-yyyy--h-mm-a"))).backup(new Callback() {
                         @Override
                         public void onSuccess() {
-                            Utils.disableJoin(false, "");
+                            Utils.disallowLogin(false, "");
                         }
 
                         @Override
                         public void onFailure(Throwable throwable) {
                             throwable.printStackTrace();
-                            Utils.disableJoin(false, "");
+                            Utils.disallowLogin(false, "");
                         }
                     });
                 }
@@ -105,17 +105,17 @@ public class VoteRewards extends BukkitCommand {
                 return true;
             }
             Utils.kickAll("Restore started!");
-            Utils.disableJoin(true, "Restore ongoing!");
+            Utils.disallowLogin(true, "Restore ongoing!");
             new Backup(args[1] + ".yml").restore(new Callback() {
                 @Override
                 public void onSuccess() {
-                    Utils.disableJoin(false, "");
+                    Utils.disallowLogin(false, "");
                 }
 
                 @Override
                 public void onFailure(Throwable throwable) {
                     throwable.printStackTrace();
-                    Utils.disableJoin(false, "");
+                    Utils.disallowLogin(false, "");
                 }
             });
 

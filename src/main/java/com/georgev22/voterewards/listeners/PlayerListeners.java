@@ -17,6 +17,7 @@ import com.google.common.collect.Lists;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.*;
@@ -32,9 +33,10 @@ public class PlayerListeners implements Listener {
 
     private final VoteRewardPlugin voteRewardPlugin = VoteRewardPlugin.getInstance();
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPreLogin(PlayerPreLoginEvent event) {
-        event.disallow(PlayerPreLoginEvent.Result.KICK_OTHER, Utils.colorize(Utils.getDisableJoinMessage()));
+        if (Utils.isLoginDisallowed())
+            event.disallow(PlayerPreLoginEvent.Result.KICK_OTHER, Utils.colorize(Utils.getDisallowLoginMessage()));
     }
 
     @EventHandler

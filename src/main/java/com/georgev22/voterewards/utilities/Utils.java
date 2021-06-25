@@ -536,23 +536,44 @@ public final class Utils {
         }
     }
 
+    /**
+     * Kick all players.
+     *
+     * @param kickMessage The kick message to display.
+     * @since v5.0
+     */
     public static void kickAll(String kickMessage) {
-        Bukkit.getOnlinePlayers().forEach(player -> player.kickPlayer(colorize(kickMessage)));
+        Bukkit.getScheduler().runTask(m, () -> Bukkit.getOnlinePlayers().forEach(player -> player.kickPlayer(colorize(kickMessage))));
     }
 
     private static boolean join = false;
     private static String disableJoinMessage = "";
 
-    public static void disableJoin(boolean b, String message) {
+    /**
+     * Disallow or allow the player login to the server with a custom message.
+     *
+     * @param b       True -> disallow player login. False -> allow player login.
+     * @param message The message to display when the player is disallowed to login.
+     * @since v5.0
+     */
+    public static void disallowLogin(boolean b, String message) {
         join = b;
         disableJoinMessage = message;
     }
 
-    public static boolean isJoinDisabled() {
+    /**
+     * @return true if the player login is disallowed or false if the player login is allowed.
+     * @since v5.0
+     */
+    public static boolean isLoginDisallowed() {
         return join;
     }
 
-    public static String getDisableJoinMessage() {
+    /**
+     * @return The message to display when the player is disallowed to login.
+     * @since v5.0
+     */
+    public static String getDisallowLoginMessage() {
         return disableJoinMessage;
     }
 }

@@ -13,13 +13,12 @@ public class Updater {
 
     private final VoteRewardPlugin voteRewardPlugin = VoteRewardPlugin.getInstance();
     private final String localVersion = voteRewardPlugin.getDescription().getVersion();
+    private final String BASE_URL = "https://raw.githubusercontent.com/GeorgeV220/VoteRewards/master/version.md";
     private String onlineVersion;
 
     public Updater() {
         Bukkit.getScheduler().runTaskAsynchronously(voteRewardPlugin, () -> {
-            final String BASE_URL = "https://raw.githubusercontent.com/GeorgeV220/VoteRewards/master/version.md";
             voteRewardPlugin.getLogger().info("Checking for Updates ... ");
-
             try {
                 System.setProperty("http.agent", "Chrome");
                 HttpsURLConnection con = (HttpsURLConnection) new URL(BASE_URL).openConnection();
@@ -73,9 +72,7 @@ public class Updater {
 
     public Updater(Player player) {
         Bukkit.getScheduler().runTaskAsynchronously(voteRewardPlugin, () -> {
-            final String BASE_URL = "https://raw.githubusercontent.com/GeorgeV220/VoteRewards/master/version.md";
             Utils.msg(player, "&e&lUpdater &8» &6Checking for Updates ...");
-
             try {
                 System.setProperty("http.agent", "Chrome");
                 HttpsURLConnection con = (HttpsURLConnection) new URL(BASE_URL).openConnection();
