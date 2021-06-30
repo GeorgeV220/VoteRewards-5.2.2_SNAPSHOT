@@ -1,4 +1,4 @@
-package com.georgev22.voterewards.database;
+package com.georgev22.voterewards.utilities.database;
 
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.utilities.OptionsUtil;

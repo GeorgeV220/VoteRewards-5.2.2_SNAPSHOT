@@ -1,6 +1,6 @@
-package com.georgev22.voterewards.database.sql.sqlite;
+package com.georgev22.voterewards.utilities.database.sql.sqlite;
 
-import com.georgev22.voterewards.database.Database;
+import com.georgev22.voterewards.utilities.database.Database;
 
 import java.io.File;
 import java.sql.Connection;

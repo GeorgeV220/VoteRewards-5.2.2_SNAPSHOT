@@ -1,4 +1,4 @@
-package com.georgev22.voterewards.configmanager;
+package com.georgev22.voterewards.utilities.configmanager;
 
 import org.bukkit.plugin.java.JavaPlugin;
 

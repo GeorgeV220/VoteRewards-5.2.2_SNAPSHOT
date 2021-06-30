@@ -1,13 +1,13 @@
 package com.georgev22.voterewards;
 
 import com.georgev22.voterewards.commands.*;
-import com.georgev22.voterewards.configmanager.CFG;
-import com.georgev22.voterewards.configmanager.FileManager;
-import com.georgev22.voterewards.database.Database;
-import com.georgev22.voterewards.database.mongo.MongoDB;
-import com.georgev22.voterewards.database.sql.mysql.MySQL;
-import com.georgev22.voterewards.database.sql.postgresql.PostgreSQL;
-import com.georgev22.voterewards.database.sql.sqlite.SQLite;
+import com.georgev22.voterewards.utilities.configmanager.CFG;
+import com.georgev22.voterewards.utilities.configmanager.FileManager;
+import com.georgev22.voterewards.utilities.database.Database;
+import com.georgev22.voterewards.utilities.database.mongo.MongoDB;
+import com.georgev22.voterewards.utilities.database.sql.mysql.MySQL;
+import com.georgev22.voterewards.utilities.database.sql.postgresql.PostgreSQL;
+import com.georgev22.voterewards.utilities.database.sql.sqlite.SQLite;
 import com.georgev22.voterewards.hooks.*;
 import com.georgev22.voterewards.listeners.PlayerListeners;
 import com.georgev22.voterewards.listeners.VotifierListener;

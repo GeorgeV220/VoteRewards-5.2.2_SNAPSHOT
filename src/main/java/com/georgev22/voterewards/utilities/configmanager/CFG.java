@@ -1,4 +1,4 @@
-package com.georgev22.voterewards.configmanager;
+package com.georgev22.voterewards.utilities.configmanager;
 
 import com.georgev22.voterewards.utilities.Utils;
 import com.google.common.collect.Sets;

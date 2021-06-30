@@ -1,4 +1,4 @@
-package com.georgev22.voterewards.database.mongo;
+package com.georgev22.voterewards.utilities.database.mongo;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;

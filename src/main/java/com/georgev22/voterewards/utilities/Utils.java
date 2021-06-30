@@ -475,11 +475,6 @@ public final class Utils {
         return result;
     }
 
-    public static boolean isLegacy() {
-        String version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3] + ".";
-        return version.contains("1_8") || version.contains("1_9") || version.contains("1_11") || version.contains("1_12");
-    }
-
 
     /**
      * Register listeners
@@ -522,7 +517,7 @@ public final class Utils {
             field1.setAccessible(true);
             Object result = field1.get(Bukkit.getServer().getPluginManager());
             SimpleCommandMap commandMap = (SimpleCommandMap) result;
-            Field field = Utils.isLegacy() ? commandMap.getClass().getDeclaredField("knownCommands") : commandMap.getClass().getSuperclass().getDeclaredField("knownCommands");
+            Field field = MinecraftVersion.getCurrentVersion().isBelowOrEqual(MinecraftVersion.V1_12_R1) ? commandMap.getClass().getDeclaredField("knownCommands") : commandMap.getClass().getSuperclass().getDeclaredField("knownCommands");
             field.setAccessible(true);
             Object map = field.get(commandMap);
             HashMap<String, Command> knownCommands = (HashMap<String, Command>) map;

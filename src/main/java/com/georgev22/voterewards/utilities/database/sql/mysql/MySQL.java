@@ -1,22 +1,22 @@
-package com.georgev22.voterewards.database.sql.postgresql;
+package com.georgev22.voterewards.utilities.database.sql.mysql;
 
-import com.georgev22.voterewards.database.Database;
+import com.georgev22.voterewards.utilities.database.Database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
-public class PostgreSQL extends Database {
+public class MySQL extends Database {
 
     private final String user, password, database, hostname;
     private final int port;
 
-    public PostgreSQL(String hostname, int port, String username, String password) {
+    public MySQL(String hostname, int port, String username, String password) {
         this(hostname, port, null, username, password);
     }
 
-    public PostgreSQL(String hostname, int port, String database, String username, String password) {
+    public MySQL(String hostname, int port, String database, String username, String password) {
         this.hostname = hostname;
         this.port = port;
         this.database = database;
@@ -31,12 +31,13 @@ public class PostgreSQL extends Database {
                 return connection;
         }
 
-        Class.forName("org.postgresql.Driver");
+        Class.forName("com.mysql.jdbc.Driver");
         final Properties prop = new Properties();
-        prop.setProperty("user", this.user);
-        prop.setProperty("password", this.password);
+        prop.setProperty("user", user);
+        prop.setProperty("password", password);
+        prop.setProperty("useSSL", "false");
+        prop.setProperty("autoReconnect", "true");
         prop.setProperty("connectTimeout", String.valueOf(Integer.MAX_VALUE));
-        prop.setProperty("autosave", "always");
-        return connection = DriverManager.getConnection("jdbc:postgresql://" + this.hostname + ":" + this.port + "/" + this.database, prop);
+        return connection = DriverManager.getConnection("jdbc:mysql://" + this.hostname + ":" + this.port + "/" + this.database, prop);
     }
 }

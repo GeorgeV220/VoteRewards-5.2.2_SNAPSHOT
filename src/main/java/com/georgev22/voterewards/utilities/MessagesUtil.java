@@ -1,6 +1,6 @@
 package com.georgev22.voterewards.utilities;
 
-import com.georgev22.voterewards.configmanager.CFG;
+import com.georgev22.voterewards.utilities.configmanager.CFG;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 

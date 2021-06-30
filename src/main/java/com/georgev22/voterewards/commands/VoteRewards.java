@@ -1,9 +1,9 @@
 package com.georgev22.voterewards.commands;
 
 import com.georgev22.voterewards.VoteRewardPlugin;
-import com.georgev22.voterewards.configmanager.CFG;
-import com.georgev22.voterewards.configmanager.FileManager;
-import com.georgev22.voterewards.database.Backup;
+import com.georgev22.voterewards.utilities.configmanager.CFG;
+import com.georgev22.voterewards.utilities.configmanager.FileManager;
+import com.georgev22.voterewards.utilities.database.Backup;
 import com.georgev22.voterewards.hooks.WorldEditHook;
 import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.OptionsUtil;
