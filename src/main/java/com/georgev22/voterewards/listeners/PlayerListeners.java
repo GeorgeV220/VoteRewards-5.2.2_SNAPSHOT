@@ -4,6 +4,7 @@ import com.georgev22.externals.xseries.XMaterial;
 import com.georgev22.externals.xseries.XSound;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.hooks.HolographicDisplays;
+import com.georgev22.voterewards.utilities.MinecraftVersion;
 import com.georgev22.voterewards.utilities.OptionsUtil;
 import com.georgev22.voterewards.utilities.Updater;
 import com.georgev22.voterewards.utilities.Utils;
@@ -172,22 +173,21 @@ public class PlayerListeners implements Listener {
         new VotePartyUtils(player).chooseRandom(OptionsUtil.VOTEPARTY_RANDOM.isEnabled());
 
         if (OptionsUtil.VOTEPARTY_SOUND_CRATE.isEnabled()) {
-            try {
-                player.getPlayer().playSound(player.getPlayer().getLocation(), XSound
-                                .matchXSound(OptionsUtil.SOUND_CRATE_OPEN.getStringValue()).get().parseSound(),
-                        org.bukkit.SoundCategory.valueOf(OptionsUtil.SOUND_CRATE_OPEN_CHANNEL.getStringValue()),
-                        1000, 1);
-            } catch (NoClassDefFoundError error) {
+            if (MinecraftVersion.getCurrentVersion().isBelow(MinecraftVersion.V1_12_R1)) {
                 player.getPlayer().playSound(player.getPlayer().getLocation(), XSound
                                 .matchXSound(OptionsUtil.SOUND_CRATE_OPEN.getStringValue()).get().parseSound(),
                         1000, 1);
                 if (OptionsUtil.DEBUG_USELESS.isEnabled()) {
                     Utils.debug(voteRewardPlugin, "========================================================");
                     Utils.debug(voteRewardPlugin, "SoundCategory doesn't exists in versions below 1.12");
-                    error.printStackTrace();
                     Utils.debug(voteRewardPlugin, "SoundCategory doesn't exists in versions below 1.12");
                     Utils.debug(voteRewardPlugin, "========================================================");
                 }
+            } else {
+                player.getPlayer().playSound(player.getPlayer().getLocation(), XSound
+                                .matchXSound(OptionsUtil.SOUND_CRATE_OPEN.getStringValue()).get().parseSound(),
+                        org.bukkit.SoundCategory.valueOf(OptionsUtil.SOUND_CRATE_OPEN_CHANNEL.getStringValue()),
+                        1000, 1);
             }
         }
 

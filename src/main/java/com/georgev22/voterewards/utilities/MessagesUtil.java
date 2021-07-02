@@ -32,7 +32,7 @@ public enum MessagesUtil {
 
     VOTEPARTY_NOTHING_TO_CLAIM("Messages.VoteParty-NothingToClaim", "&c&l(!) &cYou don't have voteparty rewards to claim!"),
 
-    VOTEPARTY_UNCLAIMED("Messages.VoteParty-UNCLAIM", "&c&l(!) &cYou have unclaimed voteparty rewards!"),
+    VOTEPARTY_UNCLAIMED("Messages.VoteParty-Unclaimed", "&c&l(!) &cYou have unclaimed voteparty rewards!"),
 
     VOTEPARTY_VOTES_NEED("Messages.VoteParty-VotesNeed", "&a&l(!) &7Votes needed for party: &f%votes%"),
 
@@ -42,6 +42,8 @@ public enum MessagesUtil {
     VOTEPARTY_CRATE("Messages.VoteParty-CrateOpen", "&a&l(!) &7Your vote rewards have been applied!"),
 
     VOTEPARTY_CRATE_GIVE("Messages.VoteParty-CrateGive", "&a&l(!) &7A reward crate has been added to your inventory!"),
+
+    VOTEPARTY_NOT_ENOUGH_PLAYERS("Messages.VoteParty-Not-Enough-Players", "&c&l(!)&c VoteParty cannot start without the minimum required players! (%required%)"),
 
     VOTES("Messages.Votes", "=======", " %player% ", " %votes% ", "======="),
 

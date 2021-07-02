@@ -244,13 +244,14 @@ public record UserVoteData(User user) {
 
     /**
      * Run the commands from config
+     * Check {@link Utils#runCommand(String)}
      *
      * @param s the list with all the commands
      */
     public void runCommands(List<String> s) {
         Utils.debug(voteRewardPlugin, "RUNNING COMMANDS FOR PLAYER: " + user.getName());
         for (String b : s) {
-            Bukkit.getScheduler().runTask(voteRewardPlugin, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), b.replace("%player%", user.getName())));
+            Utils.runCommand(b.replace("%player%", user.getName()));
         }
     }
 

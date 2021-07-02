@@ -531,6 +531,21 @@ public final class Utils {
         }
     }
 
+
+    /**
+     * Run the commands from config
+     *
+     * @param s Command to run
+     * @since v5.0
+     */
+    public static void runCommand(String s) {
+        Bukkit.getScheduler().runTask(VoteRewardPlugin.getInstance(), () -> {
+            if (s == null)
+                return;
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), s);
+        });
+    }
+
     /**
      * Kick all players.
      *

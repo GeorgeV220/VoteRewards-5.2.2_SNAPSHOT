@@ -4,12 +4,9 @@ import com.georgev22.externals.utilities.maps.ObjectMap;
 import com.georgev22.externals.xseries.XMaterial;
 import com.georgev22.externals.xseries.XSound;
 import com.georgev22.voterewards.VoteRewardPlugin;
+import com.georgev22.voterewards.utilities.*;
 import com.georgev22.voterewards.utilities.configmanager.CFG;
 import com.georgev22.voterewards.utilities.configmanager.FileManager;
-import com.georgev22.voterewards.utilities.MessagesUtil;
-import com.georgev22.voterewards.utilities.OptionsUtil;
-import com.georgev22.voterewards.utilities.Regions;
-import com.georgev22.voterewards.utilities.Utils;
 import com.google.common.collect.Lists;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -45,7 +42,8 @@ public record VotePartyUtils(@Nullable OfflinePlayer offlinePlayer) {
         Bukkit.getScheduler().runTaskAsynchronously(voteRewardPlugin, () -> {
             if ((!start & !OptionsUtil.VOTEPARTY_PLAYERS_NEED.isEnabled()) & Bukkit.getOnlinePlayers().size() > OptionsUtil.VOTEPARTY_PLAYERS_NEED.getIntValue()) {
                 //TODO NOT ENOUGH PLAYERS MESSAGE
-                //return;
+                MessagesUtil.VOTEPARTY_NOT_ENOUGH_PLAYERS.msgAll();
+                return;
             }
 
             if (!start) {
@@ -111,22 +109,21 @@ public record VotePartyUtils(@Nullable OfflinePlayer offlinePlayer) {
                 if (OptionsUtil.VOTEPARTY_CRATE.isEnabled()) {
                     if (player.isOnline()) {
                         if (OptionsUtil.VOTEPARTY_SOUND_START.isEnabled()) {
-                            try {
+                            if (MinecraftVersion.getCurrentVersion().isBelow(MinecraftVersion.V1_12_R1)) {
+                                if (OptionsUtil.DEBUG_USELESS.isEnabled()) {
+                                    Utils.debug(voteRewardPlugin, "========================================================");
+                                    Utils.debug(voteRewardPlugin, "SoundCategory doesn't exists in versions below 1.12");
+                                    Utils.debug(voteRewardPlugin, "SoundCategory doesn't exists in versions below 1.12");
+                                    Utils.debug(voteRewardPlugin, "========================================================");
+                                }
+                                player.getPlayer().playSound(player.getPlayer().getLocation(), XSound
+                                                .matchXSound(OptionsUtil.SOUND_VOTEPARTY_START.getStringValue()).get().parseSound(),
+                                        1000, 1);
+                            } else {
                                 player.getPlayer().playSound(player.getPlayer().getLocation(), XSound
                                                 .matchXSound(OptionsUtil.SOUND_VOTEPARTY_START.getStringValue()).get().parseSound(),
                                         org.bukkit.SoundCategory.valueOf(OptionsUtil.SOUND_VOTEPARTY_START_CHANNEL.getStringValue()),
                                         1000, 1);
-                            } catch (NoClassDefFoundError error) {
-                                player.getPlayer().playSound(player.getPlayer().getLocation(), XSound
-                                                .matchXSound(OptionsUtil.SOUND_VOTEPARTY_START.getStringValue()).get().parseSound(),
-                                        1000, 1);
-                                if (OptionsUtil.DEBUG_USELESS.isEnabled()) {
-                                    Utils.debug(voteRewardPlugin, "========================================================");
-                                    Utils.debug(voteRewardPlugin, "SoundCategory doesn't exists in versions below 1.12");
-                                    error.printStackTrace();
-                                    Utils.debug(voteRewardPlugin, "SoundCategory doesn't exists in versions below 1.12");
-                                    Utils.debug(voteRewardPlugin, "========================================================");
-                                }
                             }
                         }
                         if (isInLocation(player.getPlayer().getLocation())) {
@@ -158,10 +155,10 @@ public record VotePartyUtils(@Nullable OfflinePlayer offlinePlayer) {
         if (enable) {
             Random random = new Random();
             int selector = random.nextInt(list.size());
-            runCommands(list.get(selector).replace("%player%", offlinePlayer.getName()));
+            Utils.runCommand(list.get(selector).replace("%player%", offlinePlayer.getName()));
         } else {
             for (String s : list) {
-                runCommands(s.replace("%player%", offlinePlayer.getName()));
+                Utils.runCommand(s.replace("%player%", offlinePlayer.getName()));
             }
         }
     }
@@ -209,16 +206,4 @@ public record VotePartyUtils(@Nullable OfflinePlayer offlinePlayer) {
         return itemStack;
     }
 
-    /**
-     * Run the commands from config
-     *
-     * @param s Command to run
-     */
-    private void runCommands(String s) {
-        Bukkit.getScheduler().runTask(VoteRewardPlugin.getInstance(), () -> {
-            if (s == null)
-                return;
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Utils.colorize(s));
-        });
-    }
 }

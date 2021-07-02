@@ -1,6 +1,7 @@
 package com.georgev22.voterewards.hooks;
 
 import com.georgev22.interfaces.WorldEditInterface;
+import com.georgev22.voterewards.utilities.MinecraftVersion;
 import com.georgev22.voterewards.utilities.Utils;
 import com.georgev22.worldedit.LegacyWorldEdit;
 import com.georgev22.worldedit.NewWorldEdit;
@@ -15,7 +16,7 @@ public class WorldEditHook {
     private final WorldEditInterface worldEditInterface;
 
     public WorldEditHook(Player player) {
-        if (Utils.isLegacy()) {
+        if (MinecraftVersion.getCurrentVersion().isBelowOrEqual(MinecraftVersion.V1_12_R1)) {
             worldEditInterface = new LegacyWorldEdit(player);
         } else {
             worldEditInterface = new NewWorldEdit(player);

@@ -1,6 +1,10 @@
 package com.georgev22.voterewards;
 
 import com.georgev22.voterewards.commands.*;
+import com.georgev22.voterewards.hooks.*;
+import com.georgev22.voterewards.listeners.PlayerListeners;
+import com.georgev22.voterewards.listeners.VotifierListener;
+import com.georgev22.voterewards.utilities.*;
 import com.georgev22.voterewards.utilities.configmanager.CFG;
 import com.georgev22.voterewards.utilities.configmanager.FileManager;
 import com.georgev22.voterewards.utilities.database.Database;
@@ -8,18 +12,10 @@ import com.georgev22.voterewards.utilities.database.mongo.MongoDB;
 import com.georgev22.voterewards.utilities.database.sql.mysql.MySQL;
 import com.georgev22.voterewards.utilities.database.sql.postgresql.PostgreSQL;
 import com.georgev22.voterewards.utilities.database.sql.sqlite.SQLite;
-import com.georgev22.voterewards.hooks.*;
-import com.georgev22.voterewards.listeners.PlayerListeners;
-import com.georgev22.voterewards.listeners.VotifierListener;
-import com.georgev22.voterewards.utilities.MessagesUtil;
-import com.georgev22.voterewards.utilities.OptionsUtil;
-import com.georgev22.voterewards.utilities.Updater;
-import com.georgev22.voterewards.utilities.Utils;
 import com.georgev22.voterewards.utilities.interfaces.Callback;
 import com.georgev22.voterewards.utilities.interfaces.IDatabaseType;
 import com.georgev22.voterewards.utilities.maven.LibraryLoader;
 import com.georgev22.voterewards.utilities.maven.MavenLibrary;
-import com.georgev22.voterewards.utilities.maven.Repository;
 import com.georgev22.voterewards.utilities.player.UserVoteData;
 import com.georgev22.voterewards.utilities.player.VoteUtils;
 import org.bstats.bukkit.Metrics;
@@ -41,10 +37,6 @@ import java.util.Calendar;
 @MavenLibrary(groupId = "org.xerial", artifactId = "sqlite-jdbc", version = "3.34.0")
 @MavenLibrary(groupId = "com.google.guava", artifactId = "guava", version = "30.1.1-jre")
 @MavenLibrary(groupId = "org.postgresql", artifactId = "postgresql", version = "42.2.18")
-@MavenLibrary(groupId = "com.georgev22", artifactId = "Externals", version = "1.4", repo = @Repository(url = "https://artifactory.georgev22.com/artifactory/georgev22/"))
-@MavenLibrary(groupId = "com.georgev22", artifactId = "Interfaces", version = "1.0", repo = @Repository(url = "https://artifactory.georgev22.com/artifactory/georgev22/"))
-@MavenLibrary(groupId = "com.georgev22", artifactId = "LegacyWorldEdit", version = "1.0", repo = @Repository(url = "https://artifactory.georgev22.com/artifactory/georgev22/"))
-@MavenLibrary(groupId = "com.georgev22", artifactId = "NewWorldEdit", version = "1.0", repo = @Repository(url = "https://artifactory.georgev22.com/artifactory/georgev22/"))
 public class VoteRewardPlugin extends JavaPlugin {
 
     private static VoteRewardPlugin instance = null;
@@ -65,7 +57,8 @@ public class VoteRewardPlugin extends JavaPlugin {
 
     @Override
     public void onLoad() {
-        new LibraryLoader(this).loadAll();
+        if (MinecraftVersion.getCurrentVersion().isBelow(MinecraftVersion.V1_16_R1))
+            new LibraryLoader(this).loadAll();
     }
 
     @Override

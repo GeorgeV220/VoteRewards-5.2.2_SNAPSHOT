@@ -59,7 +59,19 @@
                     <relocations>
                         <relocation>
                             <pattern>org.bstats</pattern>
-                            <shadedPattern>com.georgev22.bstats</shadedPattern>
+                            <shadedPattern>com.georgev22.voterewards.bstats</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>com.georgev22.externals</pattern>
+                            <shadedPattern>com.georgev22.voterewards.externals</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>com.georgev22.interfaces</pattern>
+                            <shadedPattern>com.georgev22.voterewards.interfaces</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>com.georgev22.worldedit</pattern>
+                            <shadedPattern>com.georgev22.voterewards.worldedit</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>
@@ -76,6 +88,7 @@
                                     <artifact>*:*</artifact>
                                     <excludes>
                                         <exclude>META-INF/**</exclude>
+                                        <exclude>com/cryptomorin/**</exclude>
                                     </excludes>
                                 </filter>
                             </filters>
@@ -160,28 +173,24 @@
             <groupId>com.georgev22</groupId>
             <artifactId>Externals</artifactId>
             <version>1.4</version>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>com.georgev22</groupId>
             <artifactId>Interfaces</artifactId>
             <version>1.0</version>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>com.georgev22</groupId>
             <artifactId>LegacyWorldEdit</artifactId>
             <version>1.0</version>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>com.georgev22</groupId>
             <artifactId>NewWorldEdit</artifactId>
             <version>1.0</version>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>

@@ -43,11 +43,11 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.ow2.asm:asm-tree:9.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.ow2.asm:asm-analysis:9.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.logging.log4j:log4j-api:2.14.1" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.georgev22:Externals:1.4" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.github.cryptomorin:XSeries:7.6.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.georgev22:Interfaces:1.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.georgev22:LegacyWorldEdit:1.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.georgev22:NewWorldEdit:1.0" level="project" />
+    <orderEntry type="library" name="Maven: com.georgev22:Externals:1.4" level="project" />
+    <orderEntry type="library" name="Maven: com.github.cryptomorin:XSeries:7.6.0" level="project" />
+    <orderEntry type="library" name="Maven: com.georgev22:Interfaces:1.0" level="project" />
+    <orderEntry type="library" name="Maven: com.georgev22:LegacyWorldEdit:1.0" level="project" />
+    <orderEntry type="library" name="Maven: com.georgev22:NewWorldEdit:1.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: me.clip:placeholderapi:2.10.5" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: fr.xephi:authme:5.6.0-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.github.nuvotifier.nuvotifier:nuvotifier-bukkit:2.7.2" level="project" />

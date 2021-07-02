@@ -29,8 +29,16 @@ public enum MinecraftVersion {
         return this.ordinal() >= minecraftVersion.ordinal();
     }
 
+    public boolean isAbove(MinecraftVersion minecraftVersion) {
+        return this.ordinal() > minecraftVersion.ordinal();
+    }
+
     public boolean isBelowOrEqual(MinecraftVersion minecraftVersion) {
         return this.ordinal() <= minecraftVersion.ordinal();
+    }
+
+    public boolean isBelow(MinecraftVersion minecraftVersion) {
+        return this.ordinal() < minecraftVersion.ordinal();
     }
 
     public static MinecraftVersion getCurrentVersion() {
