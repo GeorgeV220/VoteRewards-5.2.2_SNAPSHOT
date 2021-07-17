@@ -318,6 +318,11 @@ public final class Utils {
         return ChatColor.translateAlternateColorCodes('&', msg);
     }
 
+    public static String unColorize(final String msg) {
+        Validate.notNull(msg, "The string can't be null!");
+        return ChatColor.stripColor(msg);
+    }
+
     /**
      * Returns a translated string array.
      *
@@ -334,6 +339,16 @@ public final class Utils {
         return newarr;
     }
 
+    public static String[] unColorize(final String... array) {
+        Validate.notNull(array, "The string array can't be null!");
+        Validate.noNullElements(array, "The string array can't have null elements!");
+        final String[] newarr = Arrays.copyOf(array, array.length);
+        for (int i = 0; i < newarr.length; i++) {
+            newarr[i] = unColorize(newarr[i]);
+        }
+        return newarr;
+    }
+
     /**
      * Returns a translated string collection.
      *
@@ -345,6 +360,14 @@ public final class Utils {
         Validate.noNullElements(coll, "The string collection can't have null elements!");
         final List<String> newColl = Lists.newArrayList(coll);
         newColl.replaceAll(Utils::colorize);
+        return newColl;
+    }
+
+    public static List<String> unColorize(final List<String> coll) {
+        Validate.notNull(coll, "The string collection can't be null!");
+        Validate.noNullElements(coll, "The string collection can't have null elements!");
+        final List<String> newColl = Lists.newArrayList(coll);
+        newColl.replaceAll(Utils::unColorize);
         return newColl;
     }
 

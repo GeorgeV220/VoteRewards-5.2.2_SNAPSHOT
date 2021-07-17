@@ -14,6 +14,7 @@ import com.georgev22.voterewards.utilities.database.sql.postgresql.PostgreSQL;
 import com.georgev22.voterewards.utilities.database.sql.sqlite.SQLite;
 import com.georgev22.voterewards.utilities.interfaces.Callback;
 import com.georgev22.voterewards.utilities.interfaces.IDatabaseType;
+import com.georgev22.voterewards.utilities.inventory.PagedInventoryAPI;
 import com.georgev22.voterewards.utilities.maven.LibraryLoader;
 import com.georgev22.voterewards.utilities.maven.MavenLibrary;
 import com.georgev22.voterewards.utilities.player.UserVoteData;
@@ -45,6 +46,7 @@ public class VoteRewardPlugin extends JavaPlugin {
     private IDatabaseType iDatabaseType = null;
     private Connection connection = null;
     private MongoDB mongoDB = null;
+    private PagedInventoryAPI api = null;
 
     /**
      * Return the VoteRewardPlugin instance
@@ -59,6 +61,8 @@ public class VoteRewardPlugin extends JavaPlugin {
     public void onLoad() {
         if (MinecraftVersion.getCurrentVersion().isBelow(MinecraftVersion.V1_16_R1))
             new LibraryLoader(this).loadAll();
+        else
+            Utils.debug(this, "Minecraft Version: " + MinecraftVersion.getCurrentVersion().name());
     }
 
     @Override
@@ -68,6 +72,7 @@ public class VoteRewardPlugin extends JavaPlugin {
         MessagesUtil.repairPaths(fm.getMessages());
         CFG dataCFG = fm.getData();
         FileConfiguration data = dataCFG.getFileConfiguration();
+        api = new PagedInventoryAPI(this);
         if (OptionsUtil.DEBUG_USELESS.isEnabled())
             Utils.debug(this, "onEnable Thread ID: " + Thread.currentThread().getId());
         Utils.registerListeners(new VotifierListener(), new PlayerListeners());
@@ -110,11 +115,6 @@ public class VoteRewardPlugin extends JavaPlugin {
         if (Bukkit.getPluginManager().isPluginEnabled("MVdWPlaceholderAPI")) {
             new MVdWPlaceholder().register();
             Bukkit.getLogger().info("[VoteRewards] Hooked into MVdWPlaceholderAPI!");
-        }
-
-        if (Bukkit.getPluginManager().isPluginEnabled("LeaderHeads")) {
-            new LeaderHeadsHook().register();
-            Bukkit.getLogger().info("[VoteRewards] Hooked into LeaderHeads!");
         }
 
         if (Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays")) {
@@ -352,6 +352,10 @@ public class VoteRewardPlugin extends JavaPlugin {
      */
     public MongoDB getMongoDB() {
         return mongoDB;
+    }
+
+    public PagedInventoryAPI getInventoryAPI() {
+        return api;
     }
 
     @Override

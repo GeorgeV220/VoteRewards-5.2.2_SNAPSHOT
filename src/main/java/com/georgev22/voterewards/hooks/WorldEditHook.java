@@ -2,7 +2,6 @@ package com.georgev22.voterewards.hooks;
 
 import com.georgev22.interfaces.WorldEditInterface;
 import com.georgev22.voterewards.utilities.MinecraftVersion;
-import com.georgev22.voterewards.utilities.Utils;
 import com.georgev22.worldedit.LegacyWorldEdit;
 import com.georgev22.worldedit.NewWorldEdit;
 import org.bukkit.Location;

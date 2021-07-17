@@ -1,5 +1,6 @@
 package com.georgev22.voterewards.utilities.player;
 
+import com.georgev22.externals.utilities.maps.HashObjectMap;
 import com.georgev22.externals.utilities.maps.ObjectMap;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.utilities.OptionsUtil;
@@ -24,10 +25,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Used to handle all user's data and anything related to them.
@@ -44,6 +42,14 @@ public record UserVoteData(User user) {
      */
     public static ObjectMap<UUID, User> getAllUsersMap() {
         return allUsersMap;
+    }
+
+    public static ObjectMap<String, User> getAllUsersMapWithName() {
+        ObjectMap<String, User> objectMap = new HashObjectMap<>();
+        for (Map.Entry<UUID, User> entry : allUsersMap.entrySet()) {
+            objectMap.append(entry.getValue().getName(), entry.getValue());
+        }
+        return objectMap;
     }
 
     /**

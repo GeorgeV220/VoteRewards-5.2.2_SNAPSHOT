@@ -2,8 +2,6 @@ package com.georgev22.voterewards.utilities;
 
 import org.bukkit.Bukkit;
 
-import java.io.File;
-
 public enum MinecraftVersion {
     UNKNOWN,
     V1_8_R1,
@@ -47,13 +45,7 @@ public enum MinecraftVersion {
 
     static {
         try {
-            File serverVersion = new File("server.properties");
-            File bukkitVersion = new File("bukkit.yml");
-            if (serverVersion.exists() && bukkitVersion.exists()) {
-                currentVersion = valueOf(Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].toUpperCase());
-            } else {
-                currentVersion = UNKNOWN;
-            }
+            currentVersion = valueOf(Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].toUpperCase());
         } catch (Exception var2) {
             currentVersion = UNKNOWN;
         }

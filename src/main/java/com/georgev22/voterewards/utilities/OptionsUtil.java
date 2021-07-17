@@ -1,6 +1,12 @@
 package com.georgev22.voterewards.utilities;
 
+import com.georgev22.externals.xseries.XMaterial;
 import com.georgev22.voterewards.VoteRewardPlugin;
+import com.georgev22.voterewards.utilities.colors.Color;
+import com.georgev22.voterewards.utilities.inventory.ItemBuilder;
+import com.google.common.collect.Lists;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -196,6 +202,43 @@ public enum OptionsUtil {
 
     SOUND_VOTEPARTY_START_CHANNEL("sound.sounds.voteparty start.channel", "HOSTILE"),
 
+    GUI_ANIMATION("gui.animation.enabled", false),
+
+    GUI_ANIMATION_TYPE("gui.animation.type", "wave"),
+
+    GUI_ANIMATION_COLORS_RANDOM("gui.animation.random colors", false),
+
+    GUI_ANIMATION_COLORS("gui.animation.colors", Arrays.asList("#84D12F", "#34JD14", "#61DF12")),
+
+    GUI_PLAYER_HEAD("gui.player",
+            new ItemBuilder(new ItemStack(XMaterial.PLAYER_HEAD.parseMaterial()))
+                    .title("%displayName%")
+                    .lores("Votes: %votes%")
+                    .showAllAttributes(false)
+                    .amount(1)
+                    .build()),
+
+    GUI_PLAYER_HEAD_ALL("gui.player all",
+            new ItemBuilder(new ItemStack(XMaterial.PLAYER_HEAD.parseMaterial()))
+                    .title("%displayName%")
+                    .lores("All time votes: %votes%")
+                    .showAllAttributes(false)
+                    .amount(1)
+                    .build()),
+
+    GUI_NAVIGATION_ITEMS_CANCEL("gui.navigation items.cancel",
+            new ItemBuilder(new ItemStack(Material.ANVIL))
+                    .title("&8&l» &e&lExit &8&l«").showAllAttributes(false).amount(1).build()),
+
+    GUI_NAVIGATION_ITEMS_BACK("gui.navigation items.back",
+            new ItemBuilder(new ItemStack(Material.PAPER))
+                    .title("&8&l» &e&lBack &8&l«").showAllAttributes(false).amount(1).build()),
+
+    GUI_NAVIGATION_ITEMS_NEXT("gui.navigation items.next",
+            new ItemBuilder(new ItemStack(Material.BOOK))
+                    .title("&8&l» &e&lNext &8&l«").showAllAttributes(false).amount(1).build()),
+
+
     ;
     private final String pathName;
     private final Object value;
@@ -230,6 +273,23 @@ public enum OptionsUtil {
         return voteRewardPlugin.getConfig().getStringList(getPath());
     }
 
+    public ItemStack getItemStack(boolean isSavedAsItemStack) {
+        if (isSavedAsItemStack) {
+            return voteRewardPlugin.getConfig().getItemStack(getPath(), (ItemStack) getDefaultValue());
+        } else {
+            if (voteRewardPlugin.getConfig().get(getPath()) == null) {
+                return (ItemStack) getDefaultValue();
+            }
+            ItemBuilder itemBuilder = new ItemBuilder(XMaterial.valueOf(voteRewardPlugin.getConfig().getString(getPath() + ".item")).parseMaterial())
+                    .amount(voteRewardPlugin.getConfig().getInt(getPath() + ".amount"))
+                    .title(voteRewardPlugin.getConfig().getString(getPath() + ".title"))
+                    .lores(voteRewardPlugin.getConfig().getStringList(getPath() + ".lores"))
+                    .showAllAttributes(voteRewardPlugin.getConfig().getBoolean(getPath() + ".show all attributes"))
+                    .glow(voteRewardPlugin.getConfig().getBoolean(getPath() + ".glow"));
+            return itemBuilder.build();
+        }
+    }
+
     /**
      * Returns the path.
      *
@@ -246,5 +306,14 @@ public enum OptionsUtil {
      */
     public Object getDefaultValue() {
         return value;
+    }
+
+    public List<Color> getColors() {
+        List<Color> colors = Lists.newArrayList();
+        for (String stringColor : getStringList()) {
+            colors.add(Color.from(stringColor));
+        }
+
+        return colors;
     }
 }

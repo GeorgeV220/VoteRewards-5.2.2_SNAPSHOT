@@ -35,15 +35,30 @@ public record VotePartyUtils(@Nullable OfflinePlayer offlinePlayer) {
 
     private static final FileConfiguration dataFile = fm.getData().getFileConfiguration();
 
+    private static boolean isWaitingForPlayers = false;
+
+    /**
+     * Checks if voteparty is waiting for more players.
+     *
+     * @return if voteparty is waiting for more players in order to start.
+     * @since v5.0
+     */
+    public static boolean isWaitingForPlayers() {
+        return isWaitingForPlayers;
+    }
+
     /**
      * @param start Set true to start the voteparty without the required votes.
      */
     public void run(boolean start) {
         Bukkit.getScheduler().runTaskAsynchronously(voteRewardPlugin, () -> {
-            if ((!start & !OptionsUtil.VOTEPARTY_PLAYERS_NEED.isEnabled()) & Bukkit.getOnlinePlayers().size() > OptionsUtil.VOTEPARTY_PLAYERS_NEED.getIntValue()) {
+            if ((!start & OptionsUtil.VOTEPARTY_PLAYERS.isEnabled()) & Bukkit.getOnlinePlayers().size() > OptionsUtil.VOTEPARTY_PLAYERS_NEED.getIntValue()) {
                 //TODO NOT ENOUGH PLAYERS MESSAGE
                 MessagesUtil.VOTEPARTY_NOT_ENOUGH_PLAYERS.msgAll();
+                isWaitingForPlayers = true;
                 return;
+            } else {
+                isWaitingForPlayers = false;
             }
 
             if (!start) {

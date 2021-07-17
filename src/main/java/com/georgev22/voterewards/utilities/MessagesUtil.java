@@ -45,6 +45,10 @@ public enum MessagesUtil {
 
     VOTEPARTY_NOT_ENOUGH_PLAYERS("Messages.VoteParty-Not-Enough-Players", "&c&l(!)&c VoteParty cannot start without the minimum required players! (%required%)"),
 
+    VOTEPARTY_WAITING_FOR_MORE_PLAYERS_PLACEHOLDER("Messages.VoteParty-Waiting-For-More-Players-Placeholder", "&c&l(!)&c Waiting for more players (%online%/%need%"),
+
+    VOTEPARTY_PLAYERS_FULL_PLACEHOLDER("Messages-VoteParty-Players-Full-Placeholder", "%total%/%need% {%until%}"),
+
     VOTES("Messages.Votes", "=======", " %player% ", " %votes% ", "======="),
 
     VOTE_TOP_HEADER("Messages.VoteTop-Header", "&8[&aTop Voters&8]"),

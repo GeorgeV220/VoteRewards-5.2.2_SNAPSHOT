@@ -260,7 +260,7 @@ public record VoteUtils(User user) {
 
     /**
      * @param limit number of top monthly voters in a Map.
-     * @return a {@link LinkedObjectMap} with {limit} top players.
+     * @return a {@link LinkedObjectMap} with {@param limit} top players.
      */
     public static LinkedObjectMap<String, Integer> getTopPlayers(int limit) {
         ObjectMap<String, Integer> objectMap = ObjectMap.newLinkedObjectMap();
@@ -275,8 +275,24 @@ public record VoteUtils(User user) {
     }
 
     /**
+     * @return a {@link LinkedObjectMap} of all players.
+     * @since v5.0
+     */
+    public static LinkedObjectMap<String, Integer> getPlayersByVotes() {
+        ObjectMap<String, Integer> objectMap = ObjectMap.newLinkedObjectMap();
+
+        for (Map.Entry<UUID, User> entry : UserVoteData.getAllUsersMap().entrySet()) {
+            objectMap.append(entry.getValue().getString("name"), entry.getValue().getInteger("votes"));
+        }
+
+        return objectMap.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())).collect(Collectors.toMap(
+                        Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue, LinkedObjectMap::new));
+    }
+
+    /**
      * @param limit number of top all time voters in a Map.
-     * @return a {@link LinkedObjectMap} with {limit} top players.
+     * @return a {@link LinkedObjectMap} with {@param limit} top players.
      */
     public static LinkedObjectMap<String, Integer> getAllTimeTopPlayers(int limit) {
         ObjectMap<String, Integer> objectMap = ObjectMap.newLinkedObjectMap();
@@ -287,6 +303,22 @@ public record VoteUtils(User user) {
 
         return objectMap.entrySet().stream()
                 .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())).limit(limit).collect(Collectors.toMap(
+                        Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue, LinkedObjectMap::new));
+    }
+
+    /**
+     * @return a {@link LinkedObjectMap} of all players.
+     * @since v5.0
+     */
+    public static LinkedObjectMap<String, Integer> getPlayersByAllTimeVotes() {
+        ObjectMap<String, Integer> objectMap = ObjectMap.newLinkedObjectMap();
+
+        for (Map.Entry<UUID, User> entry : UserVoteData.getAllUsersMap().entrySet()) {
+            objectMap.append(entry.getValue().getString("name"), entry.getValue().getInteger("totalvotes"));
+        }
+
+        return objectMap.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())).collect(Collectors.toMap(
                         Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue, LinkedObjectMap::new));
     }
 
