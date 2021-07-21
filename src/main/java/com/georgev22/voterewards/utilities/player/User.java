@@ -121,6 +121,10 @@ public class User extends ConcurrentObjectMap {
         return getInteger("totalvotes", 0);
     }
 
+    public ObjectMap<String, Long> getServicesLastVote() {
+        return (ObjectMap<String, Long>) get("servicesLastVote", ObjectMap.newHashObjectMap());
+    }
+
     /**
      * Get all services that the user have voted
      * when he was offline

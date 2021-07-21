@@ -51,6 +51,11 @@ public record VoteUtils(User user) {
         UserVoteData userVoteData = UserVoteData.getUser(user.getUniqueId());
         userVoteData.setVotes(userVoteData.getVotes() + 1);
         userVoteData.setLastVoted(System.currentTimeMillis());
+
+        //TODO REMOVE THAT LATER IF DOESN'T WORK
+        userVoteData.appendServiceLastVote(serviceName);
+        Utils.debug(VoteRewardPlugin.getInstance(), userVoteData.getServicesLastVote().toString());
+
         userVoteData.setAllTimeVotes(userVoteData.getAllTimeVotes() + 1);
         userVoteData.setDailyVotes(userVoteData.getDailyVotes() + 1);
         UserVoteData.getAllUsersMap().replace(user.getUniqueId(), UserVoteData.getUser(user.getUniqueId()).user());

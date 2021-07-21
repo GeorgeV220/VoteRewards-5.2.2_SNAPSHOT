@@ -38,6 +38,7 @@ import java.util.Calendar;
 @MavenLibrary(groupId = "org.xerial", artifactId = "sqlite-jdbc", version = "3.34.0")
 @MavenLibrary(groupId = "com.google.guava", artifactId = "guava", version = "30.1.1-jre")
 @MavenLibrary(groupId = "org.postgresql", artifactId = "postgresql", version = "42.2.18")
+@MavenLibrary(groupId = "commons-codec", artifactId = "commons-codec", version = "1.11")
 public class VoteRewardPlugin extends JavaPlugin {
 
     private static VoteRewardPlugin instance = null;

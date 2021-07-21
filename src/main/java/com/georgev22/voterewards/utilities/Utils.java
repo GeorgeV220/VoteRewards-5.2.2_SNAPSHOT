@@ -1,10 +1,14 @@
 package com.georgev22.voterewards.utilities;
 
+import com.georgev22.externals.utilities.maps.ObjectMap;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Doubles;
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
+import com.google.gson.Gson;
+import org.apache.commons.codec.binary.Base64InputStream;
+import org.apache.commons.codec.binary.Base64OutputStream;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
@@ -18,12 +22,19 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.text.NumberFormat;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 public final class Utils {
 
@@ -609,4 +620,92 @@ public final class Utils {
     public static String getDisallowLoginMessage() {
         return disableJoinMessage;
     }
+
+    /**
+     * Serialize Object to string using google Gson
+     *
+     * @param object object to serialize
+     * @return string output of the serialized object
+     * @since v5.0.1
+     */
+    public static String serialize(Object object) {
+        ByteArrayOutputStream byteaOut = new ByteArrayOutputStream();
+        GZIPOutputStream gzipOut = null;
+        try {
+            gzipOut = new GZIPOutputStream(new Base64OutputStream(byteaOut));
+            gzipOut.write(new Gson().toJson(object).getBytes(StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (gzipOut != null) try {
+                gzipOut.close();
+            } catch (IOException exception) {
+                exception.printStackTrace();
+            }
+        }
+        return byteaOut.toString();
+    }
+
+    /**
+     * Deserialize a string back to object
+     * see {@link #serialize(Object)}
+     *
+     * @param string serialized string before the serialization
+     * @param <T>    the original object type (eg: {@code deserialize(stringToDeserialize, new TypeToken<ObjectMap<String, Integer>>(){}.getType());})
+     * @return the deserialized object
+     * @since v5.0.1
+     */
+    public static <T> T deserialize(String string, Type type) {
+        ByteArrayOutputStream byteaOut = new ByteArrayOutputStream();
+        GZIPInputStream gzipIn = null;
+        try {
+            gzipIn = new GZIPInputStream(new Base64InputStream(new ByteArrayInputStream(string.getBytes(StandardCharsets.UTF_8))));
+            for (int data; (data = gzipIn.read()) > -1; ) {
+                byteaOut.write(data);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (gzipIn != null) try {
+                gzipIn.close();
+            } catch (IOException exception) {
+                exception.printStackTrace();
+            }
+        }
+        return new Gson().fromJson(byteaOut.toString(), type);
+    }
+
+    //====================
+    //TODO ADD COMMENTS
+    public static String stringListToString(List<String> stringList) {
+        return stringList.toString().replace("[", "").replace("]", "").replace(" ", "");
+    }
+
+    public static List<String> stringToStringList(String string) {
+        return string.replace(" ", "").isEmpty() ? Lists.newArrayList() : new ArrayList<>(Arrays.asList(string.split(",")));
+    }
+
+    public static List<String> mapToStringList(ObjectMap<?, ?> objectMap) {
+        List<String> stringList = Lists.newArrayList();
+        for (Map.Entry<?, ?> entry : objectMap.entrySet()) {
+            stringList.add(entry.getKey() + "=" + entry.getValue());
+        }
+        return stringList;
+    }
+
+    public static ObjectMap<?, ?> stringListToObjectMap(List<String> stringList) {
+        ObjectMap<String, String> objectMap = ObjectMap.newHashObjectMap();
+
+        if (stringList == null || stringList.isEmpty()) {
+            return objectMap;
+        }
+
+        for (String string : stringList) {
+            String[] entry = string.split("=");
+            objectMap.append(entry[0], entry[1]);
+        }
+
+        return objectMap;
+    }
+
 }

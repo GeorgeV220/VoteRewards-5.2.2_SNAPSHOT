@@ -92,6 +92,11 @@ public record UserVoteData(User user) {
             Utils.debug(voteRewardPlugin, user.toString());
     }
 
+    public UserVoteData appendServiceLastVote(String serviceName) {
+        user.append("servicesLastVote", user.getServicesLastVote().append(serviceName, user.getLastVoted()));
+        return this;
+    }
+
     /**
      * Set player name
      */
@@ -128,6 +133,10 @@ public record UserVoteData(User user) {
     public UserVoteData setLastVoted(long lastVoted) {
         user.append("last", lastVoted);
         return this;
+    }
+
+    public ObjectMap<String, Long> getServicesLastVote() {
+        return user.getServicesLastVote();
     }
 
     /**
@@ -283,6 +292,7 @@ public record UserVoteData(User user) {
                     voteRewardPlugin.getIDatabaseType().save(user);
                     callback.onSuccess();
                 } catch (Exception e) {
+                    e.printStackTrace();
                     callback.onFailure(e.getCause());
                 }
             });
@@ -291,6 +301,7 @@ public record UserVoteData(User user) {
                 voteRewardPlugin.getIDatabaseType().save(user);
                 callback.onSuccess();
             } catch (Exception e) {
+                e.printStackTrace();
                 callback.onFailure(e.getCause());
             }
         }
@@ -347,7 +358,8 @@ public record UserVoteData(User user) {
                             "`time` = '" + user.getLastVoted() + "', " +
                             "`voteparty` = '" + user.getVoteParties() + "', " +
                             "`daily` = '" + user.getDailyVotes() + "', " +
-                            "`services` = '" + user.getServices().toString().replace("[", "").replace("]", "").replace(" ", "") + "', " +
+                            "`services` = '" + Utils.stringListToString(user.getServices()) + "', " +
+                            "`servicesLastVote` = '" + Utils.stringListToString(Utils.mapToStringList(user.getServicesLastVote())) + "'" +
                             "`totalvotes` = '" + user.getAllTimeVotes() + "' " +
                             "WHERE `uuid` = '" + user.getUniqueId() + "'");
             if (OptionsUtil.DEBUG_SAVE.isEnabled()) {
@@ -388,7 +400,8 @@ public record UserVoteData(User user) {
                             user.append("votes", resultSet.getInt("votes"))
                                     .append("name", resultSet.getString("name"))
                                     .append("last", resultSet.getLong("time"))
-                                    .append("services", resultSet.getString("services").replace(" ", "").isEmpty() ? Lists.newArrayList() : new ArrayList<>(Arrays.asList(resultSet.getString("services").split(","))))
+                                    .append("servicesLastVote", Utils.stringListToObjectMap(Utils.stringToStringList(resultSet.getString("servicesLastVote"))))
+                                    .append("services", Utils.stringToStringList(resultSet.getString("services")))
                                     .append("voteparty", resultSet.getInt("voteparty"))
                                     .append("daily", resultSet.getInt("daily"))
                                     .append("totalvotes", resultSet.getInt("totalvotes"));
@@ -434,9 +447,9 @@ public record UserVoteData(User user) {
             try {
                 if (!playerExists(user)) {
                     voteRewardPlugin.getDatabase().updateSQL(
-                            "INSERT INTO `" + OptionsUtil.DATABASE_TABLE_NAME.getStringValue() + "` (`uuid`, `name`, `votes`, `time`, `daily`, `voteparty`, `services`, `totalvotes`)" +
+                            "INSERT INTO `" + OptionsUtil.DATABASE_TABLE_NAME.getStringValue() + "` (`uuid`, `name`, `votes`, `time`, `daily`, `voteparty`, `services`, `servicesLastVote`, `totalvotes`)" +
                                     " VALUES " +
-                                    "('" + user.getUniqueId().toString() + "', '" + user.getOfflinePlayer().getName() + "','0', '0', '0', '0', '" + Lists.newArrayList().toString().replace("[", "").replace("]", "").replace(" ", "") + "', '0'" + ");");
+                                    "('" + user.getUniqueId().toString() + "', '" + user.getOfflinePlayer().getName() + "','0', '0', '0', '0', '" + Utils.stringListToString(Lists.newArrayList()) + "', '" + Utils.stringListToString(Lists.newArrayList()) + "', '0'" + ");");
                 }
                 callback.onSuccess();
             } catch (SQLException | ClassNotFoundException throwables) {
@@ -495,6 +508,7 @@ public record UserVoteData(User user) {
                     .append("daily", user.getDailyVotes())
                     .append("last-vote", user.getLastVoted())
                     .append("services", user.getServices())
+                    .append("servicesLastVote", user.getServicesLastVote())
                     .append("totalvotes", user.getAllTimeVotes()));
 
             voteRewardPlugin.getMongoDB().getCollection().updateOne(query, updateObject);
@@ -530,6 +544,7 @@ public record UserVoteData(User user) {
                             .append("voteparty", document.getInteger("voteparty"))
                             .append("last", document.getLong("last-vote"))
                             .append("services", document.getList("services", String.class))
+                            .append("servicesLastVote", document.get("servicesLastVote"))
                             .append("totalvotes", document.getInteger("totalvotes"));
                     callback.onSuccess();
                     if (OptionsUtil.DEBUG_LOAD.isEnabled()) {
@@ -567,6 +582,7 @@ public record UserVoteData(User user) {
                         .append("daily", 0)
                         .append("last-vote", 0L)
                         .append("services", Lists.newArrayList())
+                        .append("servicesLastVote", ObjectMap.newHashObjectMap())
                         .append("totalvotes", 0));
             }
             callback.onSuccess();
@@ -647,14 +663,15 @@ public record UserVoteData(User user) {
          */
         @Override
         public void save(User user) throws IOException {
-            this.yamlConfiguration.set("votes", user.getVotes());
-            this.yamlConfiguration.set("name", user.getName());
-            this.yamlConfiguration.set("time", user.getLastVoted());
-            this.yamlConfiguration.set("services", user.getServices());
-            this.yamlConfiguration.set("voteparty", user.getVoteParties());
-            this.yamlConfiguration.set("daily", user.getDailyVotes());
-            this.yamlConfiguration.set("totalvotes", user.getAllTimeVotes());
-            this.yamlConfiguration.save(file);
+            yamlConfiguration.set("votes", user.getVotes());
+            yamlConfiguration.set("name", user.getName());
+            yamlConfiguration.set("time", user.getLastVoted());
+            yamlConfiguration.set("services", user.getServices());
+            yamlConfiguration.set("servicesLastVote", Utils.mapToStringList(user.getServicesLastVote()));
+            yamlConfiguration.set("voteparty", user.getVoteParties());
+            yamlConfiguration.set("daily", user.getDailyVotes());
+            yamlConfiguration.set("totalvotes", user.getAllTimeVotes());
+            yamlConfiguration.save(file);
             if (OptionsUtil.DEBUG_SAVE.isEnabled()) {
                 Utils.debug(voteRewardPlugin,
                         "User " + user.getName() + " successfully saved!",
@@ -680,6 +697,7 @@ public record UserVoteData(User user) {
                             .append("name", yamlConfiguration.getString("name"))
                             .append("last", yamlConfiguration.getLong("time"))
                             .append("services", yamlConfiguration.getStringList("services"))
+                            .append("servicesLastVote", Utils.stringListToObjectMap(yamlConfiguration.getStringList("servicesLastVote")))
                             .append("voteparty", yamlConfiguration.getInt("voteparty"))
                             .append("daily", yamlConfiguration.getInt("daily"))
                             .append("totalvotes", yamlConfiguration.getInt("totalvotes"));
@@ -733,6 +751,7 @@ public record UserVoteData(User user) {
                         .append("name", user.getOfflinePlayer().getName())
                         .append("last", 0L)
                         .append("services", Lists.newArrayList())
+                        .append("servicesLastVote", Utils.mapToStringList(ObjectMap.newHashObjectMap()))
                         .append("voteparty", 0)
                         .append("daily", 0)
                         .append("totalvotes", 0);

@@ -99,6 +99,7 @@ public abstract class Database {
                 " `voteparty` INT(10) DEFAULT 0,\n" +
                 " `daily` BIGINT(10) DEFAULT 0,\n" +
                 " `services` VARCHAR(10000) DEFAULT NULL,\n" +
+                " `servicesLastVote` VARCHAR(10000) DEFAULT NULL,\n" +
                 " `totalvotes` INT(10) DEFAULT 0\n)");
         ObjectMap<String, String> tableMap = ObjectMap.newHashObjectMap();
         tableMap.append("uuid", "VARCHAR(38) DEFAULT NULL")
@@ -108,6 +109,7 @@ public abstract class Database {
                 .append("voteparty", "INT(10) DEFAULT 0")
                 .append("daily", "BIGINT(10) DEFAULT 0")
                 .append("services", "VARCHAR(10000) DEFAULT NULL")
+                .append("servicesLastVote", "VARCHAR(10000) DEFAULT NULL")
                 .append("totalvotes", "INT(10) DEFAULT 0");
         tableMap.forEach((columnName, type) -> {
             try {

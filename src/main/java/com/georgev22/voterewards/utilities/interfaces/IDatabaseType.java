@@ -6,6 +6,8 @@ import com.georgev22.voterewards.utilities.Utils;
 import com.georgev22.voterewards.utilities.player.User;
 import com.google.common.collect.Lists;
 
+import java.util.UUID;
+
 public interface IDatabaseType {
 
     void save(User user) throws Exception;
@@ -19,6 +21,7 @@ public interface IDatabaseType {
                 .append("services", Lists.newArrayList())
                 .append("voteparty", 0)
                 .append("daily", 0)
+                .append("servicesLastVote", ObjectMap.newConcurrentObjectMap())
                 .appendIfTrue("totalvotes", 0, allTime);
         save(user);
         Utils.debug(VoteRewardPlugin.getInstance(), "User " + user.getName() + " has been reset!");
@@ -28,6 +31,6 @@ public interface IDatabaseType {
 
     boolean playerExists(User user) throws Exception;
 
-    ObjectMap getAllUsers() throws Exception;
+    ObjectMap<UUID, User> getAllUsers() throws Exception;
 
 }
