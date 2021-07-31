@@ -30,7 +30,7 @@ public class VotifierListener implements Listener {
         if (OptionsUtil.DEBUG_VOTE_PRE.isEnabled())
             Utils.debug(voteRewardPlugin, "Pre process of vote " + vote);
 
-        UserVoteData userVoteData = UserVoteData.getUser(offlinePlayer);
+        UserVoteData userVoteData = UserVoteData.getUser(offlinePlayer.getUniqueId());
         if (!offlinePlayer.isOnline()) {
 
             if (OptionsUtil.DEBUG_USELESS.isEnabled())

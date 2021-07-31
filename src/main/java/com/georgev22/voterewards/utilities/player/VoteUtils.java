@@ -58,7 +58,7 @@ public record VoteUtils(User user) {
 
         userVoteData.setAllTimeVotes(userVoteData.getAllTimeVotes() + 1);
         userVoteData.setDailyVotes(userVoteData.getDailyVotes() + 1);
-        UserVoteData.getAllUsersMap().replace(user.getUniqueId(), UserVoteData.getUser(user.getUniqueId()).user());
+        UserVoteData.getAllUsersMap().append(user.getUniqueId(), UserVoteData.getUser(user.getUniqueId()).user());
 
         if (OptionsUtil.VOTE_TITLE.isEnabled()) {
             Titles.sendTitle(user.getPlayer(),

@@ -751,7 +751,7 @@ public record UserVoteData(User user) {
                         .append("name", user.getOfflinePlayer().getName())
                         .append("last", 0L)
                         .append("services", Lists.newArrayList())
-                        .append("servicesLastVote", Utils.mapToStringList(ObjectMap.newHashObjectMap()))
+                        .append("servicesLastVote", ObjectMap.newHashObjectMap())
                         .append("voteparty", 0)
                         .append("daily", 0)
                         .append("totalvotes", 0);
