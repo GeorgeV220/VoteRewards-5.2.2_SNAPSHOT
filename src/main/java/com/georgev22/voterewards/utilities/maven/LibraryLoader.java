@@ -42,7 +42,8 @@ import java.util.Objects;
  * Resolves {@link MavenLibrary} annotations for a class, and loads the dependency
  * into the classloader.
  *
- * @deprecated Probably will be removed in feature release
+ * @deprecated 1.16.x provides a new way to load dependencies without shading to the plugin jar.
+ * for versions bellow 1.16 LibraryLoader will be used.
  */
 @NotNull
 @Deprecated

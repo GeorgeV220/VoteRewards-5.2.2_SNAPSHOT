@@ -10,6 +10,7 @@ import com.georgev22.voterewards.utilities.player.UserVoteData;
 import com.georgev22.voterewards.utilities.player.VotePartyUtils;
 import com.georgev22.voterewards.utilities.player.VoteUtils;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -51,6 +52,14 @@ public class PAPI extends PlaceholderExpansion {
     public String onPlaceholderRequest(Player player, String identifier) {
         if (player == null) {
             return "null";
+        }
+
+        if (StringUtils.startsWithIgnoreCase(identifier, "top_playerName_")) {
+            return VoteUtils.getTopPlayer(Integer.parseInt(identifier.split("_")[2]) - 1);
+        }
+
+        if (StringUtils.startsWithIgnoreCase(identifier, "top_playerVotes_")) {
+            return String.valueOf(UserVoteData.getUser(Bukkit.getOfflinePlayer(VoteUtils.getTopPlayer(Integer.parseInt(identifier.split("_")[2]) - 1))).user().getVotes());
         }
 
         if (identifier.equalsIgnoreCase("player_votes")) {
@@ -108,9 +117,9 @@ public class PAPI extends PlaceholderExpansion {
                     OptionsUtil.VOTEPARTY_NOT_COMPLETE_COLOR.getStringValue());
         }
 
-        if (identifier.equalsIgnoreCase("top_voter")) {
+        /*if (identifier.equalsIgnoreCase("top_voter")) {
             return VoteUtils.getTopPlayer(0);
-        }
+        }*/
 
         return "null";
     }

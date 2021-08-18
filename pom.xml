@@ -14,7 +14,7 @@
     <properties>
         <java.version>16</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <baseRevision>5.0.1</baseRevision>
+        <baseRevision>5.0.2</baseRevision>
         <revision>v${baseRevision}</revision>
         <maven.compiler.source>16</maven.compiler.source>
         <maven.compiler.target>16</maven.compiler.target>

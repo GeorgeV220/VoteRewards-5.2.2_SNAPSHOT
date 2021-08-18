@@ -12,6 +12,10 @@ import com.georgev22.voterewards.utilities.player.VotePartyUtils;
 import com.georgev22.voterewards.utilities.player.VoteUtils;
 import org.bukkit.Bukkit;
 
+/**
+ * @deprecated PAPI provides a better way to register placeholders. MVdWPlaceholder hook will stay for legacy reasons.
+ */
+@Deprecated
 public class MVdWPlaceholder {
 
     VoteRewardPlugin plugin = VoteRewardPlugin.getInstance();

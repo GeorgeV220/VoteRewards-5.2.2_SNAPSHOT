@@ -264,6 +264,48 @@ public record VoteUtils(User user) {
     }
 
     /**
+     * Reset daily votes
+     *
+     * @since v5.0.2
+     */
+    public static void dailyReset() {
+        Bukkit.getScheduler().runTaskTimer(voteRewardPlugin, () -> {
+            ObjectMap<UUID, User> objectMap = UserVoteData.getAllUsersMap();
+            objectMap.forEach((uuid, user) -> {
+                UserVoteData userVoteData = UserVoteData.getUser(uuid);
+                long time = userVoteData.getLastVote() + (OptionsUtil.DAILY_HOURS.getIntValue() * 60 * 60 * 1000);
+                if (OptionsUtil.DEBUG_USELESS.isEnabled()) {
+                    Utils.debug(voteRewardPlugin, Instant.ofEpochMilli(userVoteData.getLastVote()).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())).toString());
+                    Utils.debug(voteRewardPlugin, Instant.ofEpochMilli(time).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())).toString());
+                }
+
+                if (time <= System.currentTimeMillis()) {
+                    if (userVoteData.getDailyVotes() > 0) {
+                        userVoteData.setDailyVotes(0);
+                        if (user.getOfflinePlayer().isOnline()) {
+                            objectMap.append(uuid, userVoteData.user());
+                        } else {
+                            userVoteData.save(true, new Callback() {
+                                @Override
+                                public void onSuccess() {
+                                    if (OptionsUtil.DEBUG_VOTES_DAILY.isEnabled()) {
+                                        Utils.debug(voteRewardPlugin, "Daily vote reset!");
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Throwable throwable) {
+                                    throwable.printStackTrace();
+                                }
+                            });
+                        }
+                    }
+                }
+            });
+        }, 20, 20 * 1200L);
+    }
+
+    /**
      * @param limit number of top monthly voters in a Map.
      * @return a {@link LinkedObjectMap} with {@param limit} top players.
      */

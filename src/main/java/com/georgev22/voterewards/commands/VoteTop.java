@@ -4,7 +4,7 @@ import com.georgev22.externals.utilities.maps.ObjectMap;
 import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.OptionsUtil;
 import com.georgev22.voterewards.utilities.Utils;
-import com.georgev22.voterewards.utilities.inventory.InventoryManager;
+import com.georgev22.voterewards.utilities.inventory.inventories.VoteTopInventory;
 import com.georgev22.voterewards.utilities.player.VoteUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
@@ -33,9 +33,9 @@ public class VoteTop extends BukkitCommand {
             if (OptionsUtil.VOTETOP_GUI.isEnabled()) {
 
                 if (OptionsUtil.VOTETOP_GUI_TYPE.getStringValue().equalsIgnoreCase("monthly")) {
-                    new InventoryManager().openTopPlayersInventory(((Player) sender).getPlayer(), "Top Voters", VoteUtils.getPlayersByVotes(), OptionsUtil.GUI_PLAYER_HEAD);
+                    new VoteTopInventory().openTopPlayersInventory(((Player) sender).getPlayer(), "Top Voters", VoteUtils.getPlayersByVotes(), OptionsUtil.GUI_PLAYER_HEAD);
                 } else {
-                    new InventoryManager().openTopPlayersInventory(((Player) sender).getPlayer(), "All time voters", VoteUtils.getPlayersByAllTimeVotes(), OptionsUtil.GUI_PLAYER_HEAD_ALL);
+                    new VoteTopInventory().openTopPlayersInventory(((Player) sender).getPlayer(), "All time voters", VoteUtils.getPlayersByAllTimeVotes(), OptionsUtil.GUI_PLAYER_HEAD_ALL);
                 }
             } else {
                 sendMsg(sender);

@@ -2,6 +2,7 @@ package com.georgev22.voterewards;
 
 import com.georgev22.voterewards.commands.*;
 import com.georgev22.voterewards.hooks.*;
+import com.georgev22.voterewards.listeners.DeveloperInformListener;
 import com.georgev22.voterewards.listeners.PlayerListeners;
 import com.georgev22.voterewards.listeners.VotifierListener;
 import com.georgev22.voterewards.utilities.*;
@@ -62,8 +63,6 @@ public class VoteRewardPlugin extends JavaPlugin {
     public void onLoad() {
         if (MinecraftVersion.getCurrentVersion().isBelow(MinecraftVersion.V1_16_R1))
             new LibraryLoader(this).loadAll();
-        else
-            Utils.debug(this, "Minecraft Version: " + MinecraftVersion.getCurrentVersion().name());
     }
 
     @Override
@@ -76,7 +75,7 @@ public class VoteRewardPlugin extends JavaPlugin {
         api = new PagedInventoryAPI(this);
         if (OptionsUtil.DEBUG_USELESS.isEnabled())
             Utils.debug(this, "onEnable Thread ID: " + Thread.currentThread().getId());
-        Utils.registerListeners(new VotifierListener(), new PlayerListeners());
+        Utils.registerListeners(new VotifierListener(), new PlayerListeners(), new DeveloperInformListener());
 
         if (data.get("month") == null) {
             data.set("month", Calendar.getInstance().getTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getMonthValue());
@@ -140,17 +139,9 @@ public class VoteRewardPlugin extends JavaPlugin {
             Bukkit.getLogger().info("[VoteRewards] Metrics are enabled!");
         }
 
-        if (OptionsUtil.DAILY.isEnabled()) {
-            Bukkit.getScheduler().runTaskTimerAsynchronously(instance, () -> Bukkit.getOnlinePlayers().forEach(player -> {
-                UserVoteData userVoteData = UserVoteData.getUser(player.getUniqueId());
-                if (System.currentTimeMillis() >= userVoteData.getLastVote() + (OptionsUtil.DAILY_HOURS.getIntValue() * 60 * 60 * 1000)) {
-                    if (userVoteData.getDailyVotes() < 0) {
-                        userVoteData.setDailyVotes(0);
-                    }
-                }
-            }), 20, 20);
+        if (MinecraftVersion.getCurrentVersion().isBelow(MinecraftVersion.V1_12_R1)) {
+            Utils.debug(this, "This version of Minecraft is extremely outdated and support for it has reached its end of life. You will still be able to run VoteRewards on this Minecraft version(" + MinecraftVersion.getCurrentVersion().name().toLowerCase() + "). Please consider updating to give your players a better experience and to avoid issues that have long been fixed.");
         }
-
     }
 
     @Override
@@ -275,9 +266,10 @@ public class VoteRewardPlugin extends JavaPlugin {
                 Utils.debug(this, "Database: File");
             }
             default -> {
-                Utils.debug(this, "Please use one of the available databases", "Available databases: File, MySQL, SQLite, PostgreSQL and MongoDB");
                 database = null;
                 iDatabaseType = null;
+                setEnabled(false);
+                throw new RuntimeException("Please use one of the available databases\nAvailable databases: File, MySQL, SQLite, PostgreSQL and MongoDB");
             }
         }
 
@@ -313,6 +305,10 @@ public class VoteRewardPlugin extends JavaPlugin {
 
         if (OptionsUtil.REMINDER.isEnabled()) {
             VoteUtils.reminder();
+        }
+
+        if (OptionsUtil.DAILY.isEnabled()) {
+            VoteUtils.dailyReset();
         }
     }
 

@@ -135,10 +135,6 @@ public record UserVoteData(User user) {
         return this;
     }
 
-    public ObjectMap<String, Long> getServicesLastVote() {
-        return user.getServicesLastVote();
-    }
-
     /**
      * Set how many virtual crates a player have
      *
@@ -188,6 +184,10 @@ public record UserVoteData(User user) {
      */
     public int getAllTimeVotes() {
         return user.getAllTimeVotes();
+    }
+
+    public ObjectMap<String, Long> getServicesLastVote() {
+        return user.getServicesLastVote();
     }
 
     /**

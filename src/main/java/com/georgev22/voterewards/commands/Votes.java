@@ -20,7 +20,7 @@ public class Votes extends BukkitCommand {
         super("votes");
         this.description = "Votes command";
         this.usageMessage = "/votes";
-        this.setPermission("voterewards.vote");
+        this.setPermission("voterewards.votes");
         this.setPermissionMessage(Utils.colorize(MessagesUtil.NO_PERMISSION.getMessages()[0]));
         this.setAliases(Arrays.asList("vrvs", "vrvotes", "vvotes"));
     }

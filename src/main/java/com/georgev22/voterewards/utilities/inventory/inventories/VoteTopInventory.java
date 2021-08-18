@@ -1,10 +1,14 @@
-package com.georgev22.voterewards.utilities.inventory;
+package com.georgev22.voterewards.utilities.inventory.inventories;
 
 import com.georgev22.externals.utilities.maps.ObjectMap;
 import com.georgev22.externals.xseries.XMaterial;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.utilities.OptionsUtil;
 import com.georgev22.voterewards.utilities.Utils;
+import com.georgev22.voterewards.utilities.inventory.CustomItemInventory;
+import com.georgev22.voterewards.utilities.inventory.IPagedInventory;
+import com.georgev22.voterewards.utilities.inventory.ItemBuilder;
+import com.georgev22.voterewards.utilities.inventory.NavigationRow;
 import com.georgev22.voterewards.utilities.inventory.handlers.PagedInventoryCustomNavigationHandler;
 import com.georgev22.voterewards.utilities.inventory.navigationitems.*;
 import com.georgev22.voterewards.utilities.player.UserVoteData;
@@ -18,7 +22,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 import java.util.Map;
 
-public class InventoryManager {
+public class VoteTopInventory {
 
     private final VoteRewardPlugin voteRewardPlugin = VoteRewardPlugin.getInstance();
 

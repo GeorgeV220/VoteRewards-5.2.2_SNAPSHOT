@@ -129,7 +129,7 @@ public class PlayerListeners implements Listener {
 
 
     private final Set<Action> clicks = EnumSet.of(Action.RIGHT_CLICK_AIR, Action.RIGHT_CLICK_BLOCK,
-            Action.LEFT_CLICK_AIR, Action.RIGHT_CLICK_BLOCK);
+            Action.LEFT_CLICK_AIR, Action.LEFT_CLICK_BLOCK);
 
     @SuppressWarnings("deprecation")
     @EventHandler

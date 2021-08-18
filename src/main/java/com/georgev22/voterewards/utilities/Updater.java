@@ -39,28 +39,13 @@ public class Updater {
 
             }
             if (compareVersions(onlineVersion.replace("v", ""), localVersion.replace("v", "")) == 0) {
-                if (localVersion.contains("Beta")) {
-                    Utils.debug(voteRewardPlugin, "You are running the newest beta build.");
-                } else {
-                    Utils.debug(voteRewardPlugin, "You are running the newest stable build.");
-                }
+                Utils.debug(voteRewardPlugin, "You are running the newest build.");
             } else if (compareVersions(onlineVersion.replace("v", ""), localVersion.replace("v", "")) == 1) {
-                if (onlineVersion.contains("Beta")) {
-
-                    Utils.debug(voteRewardPlugin,
-                            "New beta version available!",
-                            "Beta Version: " + onlineVersion + ". You are running version: " + localVersion,
-                            "Update at: https://github.com/GeorgeV220/VoteRewards/releases/");
-
-                } else {
-
-                    Utils.debug(voteRewardPlugin,
-                            "New stable version available!",
-                            "Stable Version: " + onlineVersion + ". You are running version: " + localVersion,
-                            "Update at: https://github.com/GeorgeV220/VoteRewards/releases/");
-                }
+                Utils.debug(voteRewardPlugin,
+                        "New stable version available!",
+                        "Version: " + onlineVersion + ". You are running version: " + localVersion,
+                        "Update at: https://github.com/GeorgeV220/VoteRewards/releases/");
             } else {
-
                 Utils.debug(voteRewardPlugin, "You are currently using the " + localVersion + " version which is under development.",
                         "Your version is " + localVersion,
                         "Latest released version is " + onlineVersion,
@@ -93,25 +78,14 @@ public class Updater {
 
             }
             if (compareVersions(onlineVersion.replace("v", ""), localVersion.replace("v", "")) == 0) {
-                if (localVersion.contains("Beta")) {
-                    Utils.msg(player, "&e&lUpdater &8» &6You are running the newest beta build.");
-                } else {
-                    Utils.msg(player, "&e&lUpdater &8» &6You are running the newest stable build.");
-                }
+                Utils.msg(player, "&e&lUpdater &8» &6You are running the newest build.");
             } else if (compareVersions(onlineVersion.replace("v", ""), localVersion.replace("v", "")) == 1) {
-                if (onlineVersion.contains("Beta")) {
-                    Utils.msg(player, "&e&lUpdater &8» &6New beta version available!");
-                    Utils.msg(player, "&e&lUpdater &8» &6Beta Version: &c"
-                            + onlineVersion + ". &6You are running version: &c" + localVersion);
-                    Utils.msg(player, "&e&lUpdater &8» &6Update at: https://github.com/GeorgeV220/VoteRewards/releases/");
-                } else {
-                    Utils.msg(player,
-                            "&e&lUpdater &8» &6New stable version available!");
-                    Utils.msg(player, "&e&lUpdater &8» &6Stable Version: &c"
-                            + onlineVersion + ". &6You are running version: &c" + localVersion);
-                    Utils.msg(player, "&e&lUpdater &8» &6Update at: https://github.com/GeorgeV220/VoteRewards/releases/");
+                Utils.msg(player,
+                        "&e&lUpdater &8» &6New version available!");
+                Utils.msg(player, "&e&lUpdater &8» &6Version: &c"
+                        + onlineVersion + ". &6You are running version: &c" + localVersion);
+                Utils.msg(player, "&e&lUpdater &8» &6Update at: https://github.com/GeorgeV220/VoteRewards/releases/");
 
-                }
             } else {
                 Utils.msg(player, "&e&lUpdater &8» &6You are currently using the &c" + localVersion + " &6version which is under development. If you have problems contact me on discord or github");
                 Utils.msg(player, "&e&lUpdater &8» &6Your version is &c" + localVersion);
@@ -122,6 +96,10 @@ public class Updater {
 
 
     private int compareVersions(String version1, String version2) {
+        if (version1.contains("b") | version2.contains("b")) {
+            return -1;
+        }
+
         int comparisonResult = 0;
 
         String[] version1Splits = version1.split("\\.");
