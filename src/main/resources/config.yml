@@ -58,6 +58,10 @@ Options:
     services: true #Enable/Disable 'Services' section
     daily: #Daily vote
       enabled: false
+      services: #This is an example, Please change it to the correct values!
+        Minecraft-MP: 12
+        fakeVote: 1
+        PlanetMinecraft: 24
       hours: 12
     offline: false
     permissions: false
