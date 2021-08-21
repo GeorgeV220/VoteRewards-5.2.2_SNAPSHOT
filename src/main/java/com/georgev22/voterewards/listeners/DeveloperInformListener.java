@@ -62,7 +62,7 @@ public class DeveloperInformListener implements Listener {
                     .append("%author%", String.join(", ", VoteRewardPlugin.getInstance().getDescription().getAuthors()))
                     .append("%main%", VoteRewardPlugin.getInstance().getDescription().getMain())
                     .append("%javaversion%", System.getProperty("java.version"))
-                    .append("%serverversion%", MinecraftVersion.getCurrentVersion()), false);
+                    .append("%serverversion%", MinecraftVersion.getCurrentVersion().name()), false);
         }, 20L * 10L);
 
     }

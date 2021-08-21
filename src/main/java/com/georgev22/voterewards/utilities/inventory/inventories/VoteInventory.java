@@ -32,7 +32,7 @@ public class VoteInventory {
 
         Inventory inventory = Bukkit.createInventory(null, 54, "Vote Inventory");
 
-        for (String serviceName : VoteRewardPlugin.getInstance().getConfig().getConfigurationSection("Options.daily.services").getKeys(false)) {
+        for (String serviceName : VoteRewardPlugin.getInstance().getConfig().getConfigurationSection("Options.votes.daily.services").getKeys(false)) {
             ItemBuilder itemBuilder = new ItemBuilder(randomEnum(Material.class));
             itemBuilder.title(serviceName);
             boolean exists = (userVoteData.getServicesLastVote().get(serviceName) != null);
@@ -47,18 +47,6 @@ public class VoteInventory {
             }
             inventory.addItem(itemBuilder.build());
         }
-        /*for (Map.Entry<String, Long> b : userVoteData.getServicesLastVote().entrySet()) {
-            String serviceName = b.getKey();
-            Long serviceLastVote = b.getValue();
-
-            ItemBuilder itemBuilder = new ItemBuilder(Material.DIRT);
-            itemBuilder.title(serviceName);
-            itemBuilder.lores(
-                    "Last Vote:" + Instant.ofEpochMilli(serviceLastVote).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())),
-                    serviceLastVote + (OptionsUtil.DAILY_HOURS.getIntValue() * 60 * 60 * 1000) > System.currentTimeMillis() ? "You cannot vote yet" : "You can vote again");
-
-            inventory.addItem(itemBuilder.build());
-        }*/
 
         player.openInventory(inventory);
     }
