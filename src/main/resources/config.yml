@@ -32,7 +32,7 @@ Options:
   updater: true
   purge: #Purge old data
     enabled: false
-    minutes: 30 #Every how many minutes to check whether the days has passed
+    minutes: 30 #Every how many minutes to check whether the days have passed
     days: 60 #How many days from the last vote to purge player data
   monthly: #Reset votes each month
     enabled: false
@@ -150,7 +150,7 @@ Rewards:
         - 'broadcast %player% voted for the server!'
         - 'msg %player% you got special rewards cause you are in the OverWorld'
 
-      # If Minecraft-MP is the service name. This is case insensitive.
+      # If Minecraft-MP is the service name. This is case-insensitive.
       Minecraft-MP:
         - 'eco give %player% 600'
         - 'broadcast %player% voted for the server in Minecraft-MP!'
@@ -162,7 +162,7 @@ Rewards:
         - 'broadcast %player% voted for the server!'
         - 'msg %player% you got special rewards cause you are in the Nether'
 
-      # If Minecraft-MP is the service name. This is case insensitive.
+      # If Minecraft-MP is the service name. This is case-insensitive.
       Minecraft-MP:
         - 'give %player% nether_star 5'
         - 'broadcast %player% voted for the server in Minecraft-MP!'
@@ -174,7 +174,7 @@ Rewards:
       commands:
         - 'eco give %player% 400'
         - 'broadcast %player% voted for the server!'
-    # If Minecraft-MP is the service name. This is case insensitive.
+    # If Minecraft-MP is the service name. This is case-insensitive.
     Minecraft-MP:
       commands:
         - 'eco give %player% 600'
@@ -216,7 +216,7 @@ Rewards:
         - 'give %player% minecraft:nether_star 100'
 
 # Hologram examples
-# Suggest more placeholders on github
+# Suggest more placeholders on GitHub
 Holograms:
   votetop:
     - 'VoteTop'

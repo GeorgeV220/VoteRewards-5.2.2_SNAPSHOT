@@ -15,18 +15,13 @@ public class InventoryUtil {
         Preconditions.checkArgument(navigationType != null);
         Preconditions.checkArgument(size % 9 == 0);
 
-        switch (navigationType) {
+        return switch (navigationType) {
+            case NEXT -> size - 1;
+            case PREVIOUS -> size - 9;
+            case CLOSE -> size - 5;
+            default -> -1;
+        };
 
-            case NEXT:
-                return size - 1;
-            case PREVIOUS:
-                return size - 9;
-            case CLOSE:
-                return size - 5;
-
-        }
-
-        return -1;
     }
 
 }

@@ -25,7 +25,7 @@ public class VoteTopInventory {
 
     private final VoteRewardPlugin voteRewardPlugin = VoteRewardPlugin.getInstance();
 
-    public void openTopPlayersInventory(Player player, String inventoryName, boolean allTimeVotes) {
+    public void openTopPlayersInventory(Player player, boolean allTimeVotes) {
 
         List<NavigationItem> navigationItemList = Lists.newArrayList();
         final FileManager fileManager = FileManager.getInstance();
