@@ -30,12 +30,11 @@ public class VoteTop extends BukkitCommand {
         if (!(sender instanceof Player)) {
             sendMsg(sender);
         } else {
-            if (OptionsUtil.VOTETOP_GUI.isEnabled()) {
-
+            if (OptionsUtil.EXPERIMENTAL_FEATURES.isEnabled() && OptionsUtil.VOTETOP_GUI.isEnabled()) {
                 if (OptionsUtil.VOTETOP_GUI_TYPE.getStringValue().equalsIgnoreCase("monthly")) {
-                    new VoteTopInventory().openTopPlayersInventory(((Player) sender).getPlayer(), "Top Voters", VoteUtils.getPlayersByVotes(), OptionsUtil.GUI_PLAYER_HEAD);
+                    new VoteTopInventory().openTopPlayersInventory(((Player) sender).getPlayer(), "Top Voters", false);
                 } else {
-                    new VoteTopInventory().openTopPlayersInventory(((Player) sender).getPlayer(), "All time voters", VoteUtils.getPlayersByAllTimeVotes(), OptionsUtil.GUI_PLAYER_HEAD_ALL);
+                    new VoteTopInventory().openTopPlayersInventory(((Player) sender).getPlayer(), "All time voters", true);
                 }
             } else {
                 sendMsg(sender);

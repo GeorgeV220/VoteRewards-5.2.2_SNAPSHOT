@@ -4,17 +4,22 @@ import com.georgev22.externals.utilities.maps.ObjectMap;
 import com.georgev22.externals.xseries.XEnchantment;
 import com.georgev22.externals.xseries.XMaterial;
 import com.georgev22.voterewards.utilities.Utils;
+import com.georgev22.voterewards.utilities.colors.Colors;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import de.tr7zw.changeme.nbtapi.NBTItem;
 import org.bukkit.Material;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 public class ItemBuilder {
     private final ItemStack itemStack;
@@ -27,6 +32,7 @@ public class ItemBuilder {
     private final ObjectMap<Enchantment, Integer> enchantments;
     private boolean unbreakable;
     private int customModelData;
+    private NBTItem nbtItem;
 
     public ItemBuilder(XMaterial material) {
         this(material.parseMaterial());
@@ -50,6 +56,7 @@ public class ItemBuilder {
         Preconditions.checkArgument(material != null, "ItemStack cannot be null");
         this.itemStack = new ItemStack(material);
         this.showAllAttributes(showAllAttributes);
+        nbtItem = new NBTItem(itemStack, true);
     }
 
     public ItemBuilder(ItemStack itemStack) {
@@ -66,6 +73,35 @@ public class ItemBuilder {
         Preconditions.checkArgument(itemStack != null, "ItemStack cannot be null");
         this.itemStack = itemStack;
         this.showAllAttributes(showAllAttributes);
+    }
+
+    public static ItemBuilder buildItemFromConfig(@NotNull FileConfiguration fileConfiguration, @NotNull String path) {
+        return buildItemFromConfig(fileConfiguration, path, ObjectMap.newHashObjectMap(), ObjectMap.newHashObjectMap(), false);
+    }
+
+    public static ItemBuilder buildItemFromConfig(@NotNull FileConfiguration fileConfiguration, @NotNull String path, boolean randomColors) {
+        return buildItemFromConfig(fileConfiguration, path, ObjectMap.newHashObjectMap(), ObjectMap.newHashObjectMap(), randomColors);
+    }
+
+    public static ItemBuilder buildItemFromConfig(@NotNull FileConfiguration fileConfiguration, @NotNull String path, @NotNull ObjectMap<String, String> loresReplacements) {
+        return buildItemFromConfig(fileConfiguration, path, loresReplacements, ObjectMap.newHashObjectMap(), false);
+    }
+
+    public static ItemBuilder buildItemFromConfig(@NotNull FileConfiguration fileConfiguration, @NotNull String path, @NotNull ObjectMap<String, String> loresReplacements, @NotNull ObjectMap<String, String> titleReplacements, boolean randomColors) {
+        if (fileConfiguration == null || fileConfiguration.get(path) == null) {
+            return new ItemBuilder(Material.PAPER).title(Utils.colorize("&c&l&nInvalid item!!"));
+        }
+        List<String> randomColorList = Lists.newArrayList();
+        for (int i = 0; i < 3; i++) {
+            randomColorList.add(Colors.values()[new Random().nextInt(Colors.values().length)].getColor().getTag());
+        }
+        return new ItemBuilder(XMaterial.valueOf(fileConfiguration.getString(path + ".item")).parseMaterial())
+                .amount(fileConfiguration.getInt(path + ".amount"))
+                .title(Utils.colorize(Utils.placeHolder(fileConfiguration.getString(path + ".title"), titleReplacements, true)))
+                .lores(Utils.colorize(Utils.placeHolder(fileConfiguration.getStringList(path + ".lores"), loresReplacements, true)))
+                .showAllAttributes(fileConfiguration.getBoolean(path + ".show all attributes"))
+                .glow(fileConfiguration.getBoolean(path + ".glow"))
+                .colors(fileConfiguration.getBoolean(path + ".animated") ? (randomColors ? Arrays.toString(randomColorList.toArray(new String[0])) : Arrays.toString(fileConfiguration.getStringList(path + ".colors").toArray(new String[0]))) : "");
     }
 
     public ItemBuilder material(XMaterial material) {
@@ -154,6 +190,13 @@ public class ItemBuilder {
             this.itemStack.setItemMeta(skullMeta);
         }
 
+        return this;
+    }
+
+    public ItemBuilder colors(String... colors) {
+        if (!(colors.length > 2)) {
+            nbtItem.setString("colors", Utils.stringListToString(Arrays.stream(colors).toList()));
+        }
         return this;
     }
 

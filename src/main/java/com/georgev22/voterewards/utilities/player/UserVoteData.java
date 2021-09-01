@@ -400,7 +400,7 @@ public record UserVoteData(User user) {
                             user.append("votes", resultSet.getInt("votes"))
                                     .append("name", resultSet.getString("name"))
                                     .append("last", resultSet.getLong("time"))
-                                    .append("servicesLastVote", Utils.stringListToObjectMap(Utils.stringToStringList(resultSet.getString("servicesLastVote"))))
+                                    .append("servicesLastVote", Utils.stringListToObjectMap(Utils.stringToStringList(resultSet.getString("servicesLastVote")), Long.class))
                                     .append("services", Utils.stringToStringList(resultSet.getString("services")))
                                     .append("voteparty", resultSet.getInt("voteparty"))
                                     .append("daily", resultSet.getInt("daily"))
@@ -697,7 +697,7 @@ public record UserVoteData(User user) {
                             .append("name", yamlConfiguration.getString("name"))
                             .append("last", yamlConfiguration.getLong("time"))
                             .append("services", yamlConfiguration.getStringList("services"))
-                            .append("servicesLastVote", Utils.stringListToObjectMap(yamlConfiguration.getStringList("servicesLastVote")))
+                            .append("servicesLastVote", Utils.stringListToObjectMap(yamlConfiguration.getStringList("servicesLastVote"), Long.class))
                             .append("voteparty", yamlConfiguration.getInt("voteparty"))
                             .append("daily", yamlConfiguration.getInt("daily"))
                             .append("totalvotes", yamlConfiguration.getInt("totalvotes"));

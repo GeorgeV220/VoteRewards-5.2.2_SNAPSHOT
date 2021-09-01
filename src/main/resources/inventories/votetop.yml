@@ -1,0 +1,114 @@
+name: "tests"
+animation:
+  enabled: false
+  type: wave
+  random colors: false
+  colors:
+    - "#F3F8FA"
+    - "#A2CCE3"
+    - "#68A4C4"
+    - "#32627B"
+    - "#1E4356"
+gui:
+  player:
+    item: PLAYER_HEAD
+    title: "%displayName%"
+    lores:
+      - "Votes: %votes%"
+    show all attributes: false
+    amount: 1
+    glow: false
+    animated: true
+    colors:
+      - "#48D1CC"
+      - "#778899"
+      - "#55FF55"
+      - "#FF1493"
+  player all:
+    item: PLAYER_HEAD
+    title: "%displayName%"
+    lores:
+      - "All time votes: %votes%"
+    show all attributes: false
+    amount: 1
+    glow: false
+    animated: true
+    colors:
+      - "#48D1CC"
+      - "#778899"
+      - "#55FF55"
+      - "#FF1493"
+navigation:
+  cancel:
+    item: ANVIL
+    title: "&8&l» &e&lExit &8&l«"
+    amount: 1
+    lores: [ ]
+    show all attributes: false
+    glow: false
+    slot: 4
+    animated: true
+    colors:
+      - "#48D1CC"
+      - "#778899"
+      - "#55FF55"
+      - "#FF1493"
+  back:
+    item: PAPER
+    title: "&8&l» &e&lBack &8&l«"
+    amount: 1
+    lores: [ ]
+    show all attributes: false
+    glow: false
+    slot: 2
+    animated: true
+    colors:
+      - "#48D1CC"
+      - "#778899"
+      - "#55FF55"
+      - "#FF1493"
+  next:
+    item: BOOK
+    title: "&8&l» &e&lNext &8&l«"
+    amount: 1
+    lores: [ ]
+    show all attributes: false
+    glow: false
+    slot: 6
+    animated: true
+    colors:
+      - "#48D1CC"
+      - "#778899"
+      - "#55FF55"
+      - "#FF1493"
+custom item:
+  gui:
+    0:
+      item: CHAIN
+      title: " "
+      amount: 1
+      lores: [ ]
+      show all attributes: false
+      glow: false
+      commands: [ ]
+      animated: true
+      colors:
+        - "#48D1CC"
+        - "#778899"
+        - "#55FF55"
+        - "#FF1493"
+  navigation:
+    0:
+      item: PAPER
+      title: "Exit"
+      amount: 1
+      lores: [ ]
+      show all attributes: false
+      glow: true
+      commands: [ ]
+      animated: true
+      colors:
+        - "#48D1CC"
+        - "#778899"
+        - "#55FF55"
+        - "#FF1493"

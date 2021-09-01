@@ -5,7 +5,6 @@ import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.utilities.colors.Color;
 import com.georgev22.voterewards.utilities.inventory.ItemBuilder;
 import com.google.common.collect.Lists;
-import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
@@ -202,42 +201,7 @@ public enum OptionsUtil {
 
     SOUND_VOTEPARTY_START_CHANNEL("sound.sounds.voteparty start.channel", "HOSTILE"),
 
-    GUI_ANIMATION("gui.animation.enabled", false),
-
-    GUI_ANIMATION_TYPE("gui.animation.type", "wave"),
-
-    GUI_ANIMATION_COLORS_RANDOM("gui.animation.random colors", false),
-
-    GUI_ANIMATION_COLORS("gui.animation.colors", Arrays.asList("#84D12F", "#34JD14", "#61DF12")),
-
-    GUI_PLAYER_HEAD("gui.player",
-            new ItemBuilder(new ItemStack(XMaterial.PLAYER_HEAD.parseMaterial()))
-                    .title("%displayName%")
-                    .lores("Votes: %votes%")
-                    .showAllAttributes(false)
-                    .amount(1)
-                    .build()),
-
-    GUI_PLAYER_HEAD_ALL("gui.player all",
-            new ItemBuilder(new ItemStack(XMaterial.PLAYER_HEAD.parseMaterial()))
-                    .title("%displayName%")
-                    .lores("All time votes: %votes%")
-                    .showAllAttributes(false)
-                    .amount(1)
-                    .build()),
-
-    GUI_NAVIGATION_ITEMS_CANCEL("gui.navigation items.cancel",
-            new ItemBuilder(new ItemStack(Material.ANVIL))
-                    .title("&8&l» &e&lExit &8&l«").showAllAttributes(false).amount(1).build()),
-
-    GUI_NAVIGATION_ITEMS_BACK("gui.navigation items.back",
-            new ItemBuilder(new ItemStack(Material.PAPER))
-                    .title("&8&l» &e&lBack &8&l«").showAllAttributes(false).amount(1).build()),
-
-    GUI_NAVIGATION_ITEMS_NEXT("gui.navigation items.next",
-            new ItemBuilder(new ItemStack(Material.BOOK))
-                    .title("&8&l» &e&lNext &8&l«").showAllAttributes(false).amount(1).build()),
-
+    EXPERIMENTAL_FEATURES("experimental features", false),
 
     ;
     private final String pathName;

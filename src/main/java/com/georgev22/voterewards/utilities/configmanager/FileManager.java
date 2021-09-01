@@ -2,6 +2,8 @@ package com.georgev22.voterewards.utilities.configmanager;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
+
 public final class FileManager {
 
     private static FileManager instance;
@@ -13,6 +15,8 @@ public final class FileManager {
     private CFG config;
     private CFG data;
     private CFG messages;
+    private CFG voteInventory;
+    private CFG voteTopInventory;
 
     private FileManager() {
     }
@@ -21,6 +25,8 @@ public final class FileManager {
         this.messages = new CFG(plugin, "messages", false);
         this.config = new CFG(plugin, "config", true);
         this.data = new CFG(plugin, "data", true);
+        this.voteInventory = new CFG(plugin, "inventories" + File.separator + "vote", true);
+        this.voteTopInventory = new CFG(plugin, "inventories" + File.separator + "votetop", true);
     }
 
     public CFG getMessages() {
@@ -35,4 +41,11 @@ public final class FileManager {
         return data;
     }
 
+    public CFG getVoteInventory() {
+        return voteInventory;
+    }
+
+    public CFG getVoteTopInventory() {
+        return voteTopInventory;
+    }
 }

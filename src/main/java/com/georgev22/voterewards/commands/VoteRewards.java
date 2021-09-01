@@ -69,6 +69,8 @@ public class VoteRewards extends BukkitCommand {
             final FileManager fm = FileManager.getInstance();
             fm.getConfig().reloadFile();
             fm.getMessages().reloadFile();
+            fm.getVoteInventory().reloadFile();
+            fm.getVoteTopInventory().reloadFile();
             MessagesUtil.repairPaths(fm.getMessages());
             Utils.msg(sender, "&a&l(!) &aPlugin reloaded!");
         } else if (args[0].equalsIgnoreCase("backup")) {

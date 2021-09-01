@@ -6,6 +6,7 @@ import java.util.UUID;
 import com.georgev22.externals.utilities.maps.ObjectMap;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.utilities.MinecraftVersion;
+import com.georgev22.voterewards.utilities.OptionsUtil;
 import com.georgev22.voterewards.utilities.Pair;
 import com.georgev22.voterewards.utilities.Utils;
 import org.bukkit.Bukkit;
@@ -89,7 +90,7 @@ public class DeveloperInformListener implements Listener {
 
             "&7Main path: &c%main%",
 
-            "",
+            "&7Experimental Features: &c" + OptionsUtil.EXPERIMENTAL_FEATURES.isEnabled(),
 
             ""
 

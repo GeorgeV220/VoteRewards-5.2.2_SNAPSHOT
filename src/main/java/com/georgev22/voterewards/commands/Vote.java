@@ -32,7 +32,7 @@ public class Vote extends BukkitCommand {
             return true;
         }
 
-        if (sender.isOp()) {
+        if (OptionsUtil.EXPERIMENTAL_FEATURES.isEnabled()) {
             new VoteInventory().openInventory(((Player) sender));
         }
 

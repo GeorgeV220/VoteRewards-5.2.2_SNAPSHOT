@@ -1,19 +1,18 @@
 package com.georgev22.voterewards.utilities.inventory;
 
-import com.georgev22.voterewards.VoteRewardPlugin;
-import com.georgev22.voterewards.utilities.OptionsUtil;
 import com.georgev22.voterewards.utilities.Utils;
 import com.georgev22.voterewards.utilities.colors.Animation;
 import com.georgev22.voterewards.utilities.colors.Color;
-import com.georgev22.voterewards.utilities.colors.Colors;
 import com.georgev22.voterewards.utilities.inventory.handlers.PagedInventoryClickHandler;
 import com.georgev22.voterewards.utilities.inventory.handlers.PagedInventoryCloseHandler;
 import com.georgev22.voterewards.utilities.inventory.handlers.PagedInventorySwitchPageHandler;
-import com.georgev22.voterewards.utilities.inventory.navigationitems.*;
+import com.georgev22.voterewards.utilities.inventory.navigationitems.CloseNavigationItem;
+import com.georgev22.voterewards.utilities.inventory.navigationitems.NavigationItem;
+import com.georgev22.voterewards.utilities.inventory.navigationitems.NextNavigationItem;
+import com.georgev22.voterewards.utilities.inventory.navigationitems.PreviousNavigationItem;
 import com.georgev22.voterewards.utilities.inventory.utils.InventoryUtil;
-import com.georgev22.voterewards.utilities.player.UserVoteData;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
+import de.tr7zw.changeme.nbtapi.NBTItem;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -209,17 +208,9 @@ public class PagedInventory implements IPagedInventory {
 
         player.openInventory(openInventory);
         registrar.register(player, this, openInventory);
-        //Inventory openInventory = player.getOpenInventory().getTopInventory();
-        Colors[] colors = Colors.values();
-        Random random = new Random();
-        List<Color> randomColorList = Lists.newArrayList();
-        for (int i = 0; i < 3; i++) {
-            randomColorList.add(colors[random.nextInt(colors.length)].getColor());
-        }
         if (animated) {
             Bukkit.getScheduler().scheduleSyncRepeatingTask(registrar.getPlugin(), () -> {
-                //TODO CHECK THAT AGAIN
-                if (player.getOpenInventory().getTopInventory() != null && player.getOpenInventory().getTopInventory().equals(openInventory) /*&& player.getOpenInventory().getTitle().equalsIgnoreCase("")*/) {
+                if (player.getOpenInventory().getTopInventory() != null && player.getOpenInventory().getTopInventory().equals(openInventory)) {
                     for (int i = 0; i < openInventory.getSize(); i++) {
 
                         ItemStack itemStack = openInventory.getItem(i);
@@ -230,84 +221,20 @@ public class PagedInventory implements IPagedInventory {
 
                         ItemMeta itemMeta = itemStack.getItemMeta();
 
-                        if (UserVoteData.getAllUsersMapWithName().get(Utils.unColorize(itemMeta.getDisplayName())) == null) {
-                            List<Color> colorList = Lists.newArrayList();
-                            if (i <= 44) {
-                                if (VoteRewardPlugin.getInstance().getConfig().getStringList("Options.gui.custom item.gui." + i + ".colors") != null) {
-                                    for (String s : VoteRewardPlugin.getInstance().getConfig().getStringList("Options.gui.custom item.gui." + i + ".colors")) {
-                                        colorList.add(Color.from(s));
-                                    }
-                                }
-                            } else {
-                                NavigationItem navigationItem;
+                        NBTItem nbtItem = new NBTItem(itemStack);
+                        if (!nbtItem.hasKey("colors"))
+                            continue;
 
-                                if (i < openInventory.getSize() - 9)
-                                    navigationItem = null;
-                                else
-                                    navigationItem = getNavigationItem(i - (openInventory.getSize() - 9));
-
-                                if (navigationItem != null) {
-
-                                    if (navigationItem.getNavigationType() == NavigationType.NEXT) {
-                                        if (VoteRewardPlugin.getInstance().getConfig().getStringList("Options.gui.navigation items.next.colors") != null) {
-
-                                            for (String s : VoteRewardPlugin.getInstance().getConfig().getStringList("Options.gui.navigation items.next.colors")) {
-                                                colorList.add(Color.from(s));
-                                            }
-                                        }
-
-                                    } else if (navigationItem.getNavigationType() == NavigationType.PREVIOUS) {
-                                        if (VoteRewardPlugin.getInstance().getConfig().getStringList("Options.gui.navigation items.back.colors") != null) {
-
-                                            for (String s : VoteRewardPlugin.getInstance().getConfig().getStringList("Options.gui.navigation items.back.colors")) {
-                                                colorList.add(Color.from(s));
-                                            }
-                                        }
-
-                                    } else if (navigationItem.getNavigationType() == NavigationType.CLOSE) {
-                                        if (VoteRewardPlugin.getInstance().getConfig().getStringList("Options.gui.navigation items.cancel.colors") != null) {
-
-                                            for (String s : VoteRewardPlugin.getInstance().getConfig().getStringList("Options.gui.navigation items.cancel.colors")) {
-                                                colorList.add(Color.from(s));
-                                            }
-                                        }
-
-                                    } else {
-                                        CustomNavigationItem customNavigationItem = (CustomNavigationItem) navigationItem;
-                                        if (VoteRewardPlugin.getInstance().getConfig().getStringList("Options.gui.custom item.navigation." + customNavigationItem.getSlot() + ".colors") != null) {
-                                            for (String s : VoteRewardPlugin.getInstance().getConfig().getStringList("Options.gui.custom item.navigation." + customNavigationItem.getSlot() + ".colors")) {
-                                                colorList.add(Color.from(s));
-                                            }
-                                        }
-
-                                    }
-                                }
-                            }
-                            //
-
-                            if (wave) {
-                                itemMeta.setDisplayName(Animation.wave(Utils.unColorize(itemMeta.getDisplayName()), colorList.toArray(new Color[0])));
-                            } else {
-                                itemMeta.setDisplayName(Animation.fading(Utils.unColorize(itemMeta.getDisplayName()), colorList.toArray(new Color[0])));
-                            }
-                        } else {
-                            UserVoteData.getAllUsersMapWithName().forEach((name, user) -> {
-                                if (Utils.unColorize(name).equalsIgnoreCase(Utils.unColorize(itemMeta.getDisplayName()))) {
-                                    if (OptionsUtil.GUI_ANIMATION_COLORS_RANDOM.isEnabled()) {
-                                        if (wave) {
-                                            itemMeta.setDisplayName(Animation.wave(Utils.unColorize(itemMeta.getDisplayName()), randomColorList.toArray(new Color[0])));
-                                        } else {
-                                            itemMeta.setDisplayName(Animation.fading(Utils.unColorize(itemMeta.getDisplayName()), randomColorList.toArray(new Color[0])));
-                                        }
-                                    } else {
-                                        if (wave)
-                                            itemMeta.setDisplayName(Animation.wave(Utils.unColorize(itemMeta.getDisplayName()), OptionsUtil.GUI_ANIMATION_COLORS.getColors().toArray(new Color[0])));
-                                        else
-                                            itemMeta.setDisplayName(Animation.fading(Utils.unColorize(itemMeta.getDisplayName()), OptionsUtil.GUI_ANIMATION_COLORS.getColors().toArray(new Color[0])));
-                                    }
-                                }
-                            });
+                        List<String> color = Utils.stringToStringList(nbtItem.getString("colors"));
+                        List<Color> colorsList = new ArrayList<>();
+                        for (String s : color) {
+                            colorsList.add(Color.from(s));
                         }
+
+                        if (wave)
+                            itemMeta.setDisplayName(Animation.wave(Utils.unColorize(itemMeta.getDisplayName()), colorsList.toArray(new Color[0])));
+                        else
+                            itemMeta.setDisplayName(Animation.fading(Utils.unColorize(itemMeta.getDisplayName()), colorsList.toArray(new Color[0])));
                         itemStack.setItemMeta(itemMeta);
                         openInventory.setItem(i, itemStack);
 

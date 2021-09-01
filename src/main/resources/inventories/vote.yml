@@ -1,0 +1,85 @@
+name: "&a&lVote Inventory"
+animation:
+  enabled: false
+  random colors: false
+  type: "wave"
+navigation:
+  cancel:
+    item: ANVIL
+    title: "&8&l» &e&lExit &8&l«"
+    amount: 1
+    lores: [ ]
+    show all attributes: false
+    glow: false
+    slot: 4
+    animated: true
+    colors:
+      - "#48D1CC"
+      - "#778899"
+      - "#55FF55"
+      - "#FF1493"
+  back:
+    item: PAPER
+    title: "&8&l» &e&lBack &8&l«"
+    amount: 1
+    lores: [ ]
+    show all attributes: false
+    glow: false
+    slot: 2
+    animated: true
+    colors:
+      - "#48D1CC"
+      - "#778899"
+      - "#55FF55"
+      - "#FF1493"
+  next:
+    item: BOOK
+    title: "&8&l» &e&lNext &8&l«"
+    amount: 1
+    lores: [ ]
+    show all attributes: false
+    glow: false
+    slot: 6
+    animated: true
+    colors:
+      - "#48D1CC"
+      - "#778899"
+      - "#55FF55"
+      - "#FF1493"
+custom item:
+  navigation:
+    '0':
+      item: CHAIN
+      title: " "
+      lores:
+        - ""
+        - ""
+      glow: false
+      show attributes: false
+      amount: 1
+      animated: true
+      colors:
+        - "#F3F8FA"
+        - "#A2CCE3"
+        - "#68A4C4"
+        - "#32627B"
+        - "#1E4356"
+  gui:
+    '1':
+      item: PAPER
+      title: "&c&lMinecraft-MP"
+      service name: "Minecraft-MP"
+      lores:
+        - "%check%"
+        - "%lastVoteInTimeMillis%"
+        - "%lastVote%"
+      glow: true
+      show attributes: false
+      amount: 1
+      animated: true
+      colors:
+        - "#F3F8FA"
+        - "#A2CCE3"
+        - "#68A4C4"
+        - "#32627B"
+        - "#1E4356"

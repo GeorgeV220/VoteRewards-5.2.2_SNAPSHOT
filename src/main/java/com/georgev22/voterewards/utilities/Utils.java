@@ -21,12 +21,16 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.text.NumberFormat;
 import java.util.*;
@@ -693,8 +697,8 @@ public final class Utils {
         return stringList;
     }
 
-    public static ObjectMap<?, ?> stringListToObjectMap(List<String> stringList) {
-        ObjectMap<String, String> objectMap = ObjectMap.newHashObjectMap();
+    public static <T> @NotNull ObjectMap<T, T> stringListToObjectMap(List<String> stringList, final Class<T> clazz) {
+        ObjectMap<T, T> objectMap = ObjectMap.newHashObjectMap();
 
         if (stringList == null || stringList.isEmpty()) {
             return objectMap;
@@ -702,7 +706,22 @@ public final class Utils {
 
         for (String string : stringList) {
             String[] entry = string.split("=");
-            objectMap.append(entry[0], entry[1]);
+            Method method;
+            try {
+                method = clazz.getDeclaredMethod("valueOf", String.class);
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+                continue;
+            }
+
+            if (method != null) {
+                try {
+                    objectMap.append((T) entry[0], (T) method.invoke(null, entry[1]));
+                } catch (InvocationTargetException | IllegalAccessException ex) {
+                    Utils.debug(m, "Failure: " + entry[1] + " is not of type " + clazz.getName());
+                }
+            }
+
         }
 
         return objectMap;
