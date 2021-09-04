@@ -81,7 +81,11 @@ public record UserVoteData(User user) {
      * @return a copy of this UserVoteData class for a specific user.
      */
     public static UserVoteData getUser(UUID uuid) {
-        if (allUsersMap.get(uuid) == null) {
+        if (!allUsersMap.containsKey(uuid)) {
+            if (OptionsUtil.DEBUG_VOTE_PRE.isEnabled()) {
+                Utils.debug(voteRewardPlugin, "Player " + Bukkit.getOfflinePlayer(uuid).getName() + " is not loaded!");
+            }
+
             allUsersMap.append(uuid, new User(uuid));
         }
         return new UserVoteData(allUsersMap.get(uuid));
@@ -276,8 +280,9 @@ public record UserVoteData(User user) {
      * @param callback Callback
      * @throws Exception When something goes wrong
      */
-    public void load(Callback callback) throws Exception {
+    public UserVoteData load(Callback callback) throws Exception {
         voteRewardPlugin.getIDatabaseType().load(user, callback);
+        return this;
     }
 
     /**
@@ -285,7 +290,7 @@ public record UserVoteData(User user) {
      *
      * @param async True if you want to save async
      */
-    public void save(boolean async, Callback callback) {
+    public UserVoteData save(boolean async, Callback callback) {
         if (async) {
             Bukkit.getScheduler().runTaskAsynchronously(voteRewardPlugin, () -> {
                 try {
@@ -305,6 +310,7 @@ public record UserVoteData(User user) {
                 callback.onFailure(e.getCause());
             }
         }
+        return this;
     }
 
     /**
@@ -312,7 +318,7 @@ public record UserVoteData(User user) {
      *
      * @param allTime Set it true to reset all time votes.
      */
-    public void reset(boolean allTime) {
+    public UserVoteData reset(boolean allTime) {
         Bukkit.getScheduler().runTaskAsynchronously(voteRewardPlugin, () -> {
             try {
                 voteRewardPlugin.getIDatabaseType().reset(user, allTime);
@@ -320,12 +326,13 @@ public record UserVoteData(User user) {
                 e.printStackTrace();
             }
         });
+        return this;
     }
 
     /**
      * Delete user from database
      */
-    public void delete() {
+    public UserVoteData delete() {
         Bukkit.getScheduler().runTaskAsynchronously(voteRewardPlugin, () -> {
             try {
                 voteRewardPlugin.getIDatabaseType().delete(user);
@@ -333,6 +340,7 @@ public record UserVoteData(User user) {
                 e.printStackTrace();
             }
         });
+        return this;
     }
 
     /**
@@ -369,7 +377,9 @@ public record UserVoteData(User user) {
                         "Daily Votes: " + user.getDailyVotes(),
                         "Last Voted: " + Instant.ofEpochMilli(user.getLastVoted()).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())) + user.getLastVoted(),
                         "Vote Parties: " + user.getVoteParties(),
-                        "All time votes: " + user.getAllTimeVotes());
+                        "All time votes: " + user.getAllTimeVotes(),
+                        "Services: " + user.getServices(),
+                        "Services last vote: " + user.getServicesLastVote());
             }
         }
 
@@ -410,10 +420,11 @@ public record UserVoteData(User user) {
                                         "User " + user.getName() + " successfully loaded!",
                                         "Votes: " + user.getVotes(),
                                         "Daily Votes: " + user.getDailyVotes(),
-                                        "Last Voted: " + Instant.ofEpochMilli(user.getLastVoted()).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())) + user.getLastVoted() + " " + user.getLastVoted(),
+                                        "Last Voted: " + Instant.ofEpochMilli(user.getLastVoted()).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())) + user.getLastVoted(),
                                         "Vote Parties: " + user.getVoteParties(),
                                         "All time votes: " + user.getAllTimeVotes(),
-                                        "Services: " + user.getServices().toString());
+                                        "Services: " + user.getServices(),
+                                        "Services last vote: " + user.getServicesLastVote());
                             }
                         }
                         callback.onSuccess();
@@ -520,7 +531,8 @@ public record UserVoteData(User user) {
                         "Last Voted: " + Instant.ofEpochMilli(user.getLastVoted()).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())) + user.getLastVoted(),
                         "Vote Parties: " + user.getVoteParties(),
                         "All time votes: " + user.getAllTimeVotes(),
-                        "Services: " + user.getServices().toString());
+                        "Services: " + user.getServices(),
+                        "Services last vote: " + user.getServicesLastVote());
             }
         }
 
@@ -552,10 +564,11 @@ public record UserVoteData(User user) {
                                 "User " + user.getName() + " successfully loaded!",
                                 "Votes: " + user.getVotes(),
                                 "Daily Votes: " + user.getDailyVotes(),
-                                "Last Voted: " + Instant.ofEpochMilli(user.getLastVoted()).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())) + user.getLastVoted() + " " + user.getLastVoted(),
+                                "Last Voted: " + Instant.ofEpochMilli(user.getLastVoted()).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())) + user.getLastVoted(),
                                 "Vote Parties: " + user.getVoteParties(),
                                 "All time votes: " + user.getAllTimeVotes(),
-                                "Services: " + user.getServices().toString());
+                                "Services: " + user.getServices(),
+                                "Services last vote: " + user.getServicesLastVote());
                     }
                 }
 
@@ -652,8 +665,6 @@ public record UserVoteData(User user) {
 
     public static class FileUserUtils implements IDatabaseType {
 
-        private File file = null;
-        private YamlConfiguration yamlConfiguration = null;
         private final VoteRewardPlugin voteRewardPlugin = VoteRewardPlugin.getInstance();
 
         /**
@@ -662,7 +673,23 @@ public record UserVoteData(User user) {
          * @param user User object
          */
         @Override
-        public void save(User user) throws IOException {
+        public void save(User user) {
+            File file = new File(VoteRewardPlugin.getInstance().getDataFolder(),
+                    "userdata" + File.separator + user.getUniqueId().toString() + ".yml");
+            if (!file.exists()) {
+                setupUser(user, new Callback() {
+                    @Override
+                    public void onSuccess() {
+
+                    }
+
+                    @Override
+                    public void onFailure(Throwable throwable) {
+                        throwable.printStackTrace();
+                    }
+                });
+            }
+            YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(file);
             yamlConfiguration.set("votes", user.getVotes());
             yamlConfiguration.set("name", user.getName());
             yamlConfiguration.set("time", user.getLastVoted());
@@ -671,7 +698,11 @@ public record UserVoteData(User user) {
             yamlConfiguration.set("voteparty", user.getVoteParties());
             yamlConfiguration.set("daily", user.getDailyVotes());
             yamlConfiguration.set("totalvotes", user.getAllTimeVotes());
-            yamlConfiguration.save(file);
+            try {
+                yamlConfiguration.save(file);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             if (OptionsUtil.DEBUG_SAVE.isEnabled()) {
                 Utils.debug(voteRewardPlugin,
                         "User " + user.getName() + " successfully saved!",
@@ -679,7 +710,9 @@ public record UserVoteData(User user) {
                         "Daily Votes: " + user.getDailyVotes(),
                         "Last Voted: " + Instant.ofEpochMilli(user.getLastVoted()).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())) + user.getLastVoted(),
                         "Vote Parties: " + user.getVoteParties(),
-                        "All time votes: " + user.getAllTimeVotes());
+                        "All time votes: " + user.getAllTimeVotes(),
+                        "Services: " + user.getServices(),
+                        "Services last vote: " + user.getServicesLastVote());
             }
         }
 
@@ -693,6 +726,8 @@ public record UserVoteData(User user) {
             setupUser(user, new Callback() {
                 @Override
                 public void onSuccess() {
+                    YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(new File(VoteRewardPlugin.getInstance().getDataFolder(),
+                            "userdata" + File.separator + user.getUniqueId().toString() + ".yml"));
                     user.append("votes", yamlConfiguration.getInt("votes"))
                             .append("name", yamlConfiguration.getString("name"))
                             .append("last", yamlConfiguration.getLong("time"))
@@ -707,10 +742,11 @@ public record UserVoteData(User user) {
                                 "User " + user.getName() + " successfully loaded!",
                                 "Votes: " + user.getVotes(),
                                 "Daily Votes: " + user.getDailyVotes(),
-                                "Last Voted: " + Instant.ofEpochMilli(user.getLastVoted()).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())) + user.getLastVoted() + " " + user.getLastVoted(),
+                                "Last Voted: " + Instant.ofEpochMilli(user.getLastVoted()).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())) + user.getLastVoted(),
                                 "Vote Parties: " + user.getVoteParties(),
                                 "All time votes: " + user.getAllTimeVotes(),
-                                "Services: " + user.getServices().toString());
+                                "Services: " + user.getServices(),
+                                "Services last vote: " + user.getServicesLastVote());
                     }
                 }
 
@@ -734,11 +770,11 @@ public record UserVoteData(User user) {
                     Utils.debug(voteRewardPlugin, "Folder userdata has been created!");
                 }
             }
-            this.file = new File(VoteRewardPlugin.getInstance().getDataFolder(),
+            File file = new File(VoteRewardPlugin.getInstance().getDataFolder(),
                     "userdata" + File.separator + user.getUniqueId().toString() + ".yml");
             if (!playerExists(user)) {
                 try {
-                    if (this.file.createNewFile()) {
+                    if (file.createNewFile()) {
                         if (OptionsUtil.DEBUG_CREATE.isEnabled()) {
                             Utils.debug(voteRewardPlugin, "File " + file.getName() + " for the user " + Bukkit.getOfflinePlayer(user.getUniqueId()).getName() + " has been created!");
                         }
@@ -755,14 +791,8 @@ public record UserVoteData(User user) {
                         .append("voteparty", 0)
                         .append("daily", 0)
                         .append("totalvotes", 0);
-                this.yamlConfiguration = YamlConfiguration.loadConfiguration(file);
-                try {
-                    save(user);
-                } catch (IOException exception) {
-                    callback.onFailure(exception.getCause());
-                }
+                save(user);
             }
-            this.yamlConfiguration = YamlConfiguration.loadConfiguration(file);
             callback.onSuccess();
         }
 
@@ -770,7 +800,9 @@ public record UserVoteData(User user) {
          * Remove user's data from file.
          */
         public void delete(User user) {
-            if (file.delete()) {
+            File file = new File(VoteRewardPlugin.getInstance().getDataFolder(),
+                    "userdata" + File.separator + user.getUniqueId().toString() + ".yml");
+            if (file.exists() & file.delete()) {
                 if (OptionsUtil.DEBUG_DELETE.isEnabled()) {
                     Utils.debug(voteRewardPlugin, "File " + file.getName() + " deleted!");
                 }
@@ -784,7 +816,8 @@ public record UserVoteData(User user) {
          * @return true if user exists or false when is not
          */
         public boolean playerExists(User user) {
-            return file.exists();
+            return new File(VoteRewardPlugin.getInstance().getDataFolder(),
+                    "userdata" + File.separator + user.getUniqueId().toString() + ".yml").exists();
         }
 
         public ObjectMap<UUID, User> getAllUsers() throws Exception {

@@ -40,30 +40,24 @@ public class MVdWPlaceholder {
                         - fm.getData().getFileConfiguration().getInt("VoteParty-Votes", 0)));
 
 
-        PlaceholderAPI.registerPlaceholder(plugin, "voterewards_voteparty_votes_full", event -> {
-            if (OptionsUtil.VOTEPARTY_PLAYERS.isEnabled() & VotePartyUtils.isWaitingForPlayers()) {
-                return Utils.colorize(
-                        Utils.placeHolder(
-                                MessagesUtil.VOTEPARTY_WAITING_FOR_MORE_PLAYERS_PLACEHOLDER.getMessages()[0],
-                                ObjectMap.newHashObjectMap()
-                                        .append("%online%", Bukkit.getOnlinePlayers().size())
-                                        .append("%need%", OptionsUtil.VOTEPARTY_PLAYERS_NEED.getIntValue()),
-                                true)
-                );
-            } else {
-                return Utils.colorize(
-                        Utils.placeHolder(
-                                MessagesUtil.VOTEPARTY_PLAYERS_FULL_PLACEHOLDER.getMessages()[0],
-                                ObjectMap.newHashObjectMap()
-                                        .append("%until%", String.valueOf(OptionsUtil.VOTEPARTY_VOTES.getIntValue()
-                                                - fm.getData().getFileConfiguration().getInt("VoteParty-Votes", 0)))
-                                        .append("%total%", String.valueOf(fm.getData().getFileConfiguration().getInt("VoteParty-Votes")))
-                                        .append("%need%", String.valueOf(OptionsUtil.VOTEPARTY_VOTES.getIntValue()))
-                                , true
-                        )
-                );
-            }
-        });
+        PlaceholderAPI.registerPlaceholder(plugin, "voterewards_voteparty_votes_full", event -> OptionsUtil.VOTEPARTY_PLAYERS.isEnabled() & VotePartyUtils.isWaitingForPlayers() ? Utils.colorize(
+                Utils.placeHolder(
+                        MessagesUtil.VOTEPARTY_WAITING_FOR_MORE_PLAYERS_PLACEHOLDER.getMessages()[0],
+                        ObjectMap.newHashObjectMap()
+                                .append("%online%", Bukkit.getOnlinePlayers().size())
+                                .append("%need%", OptionsUtil.VOTEPARTY_PLAYERS_NEED.getIntValue()),
+                        true)
+        ) : Utils.colorize(
+                Utils.placeHolder(
+                        MessagesUtil.VOTEPARTY_PLAYERS_FULL_PLACEHOLDER.getMessages()[0],
+                        ObjectMap.newHashObjectMap()
+                                .append("%until%", String.valueOf(OptionsUtil.VOTEPARTY_VOTES.getIntValue()
+                                        - fm.getData().getFileConfiguration().getInt("VoteParty-Votes", 0)))
+                                .append("%total%", String.valueOf(fm.getData().getFileConfiguration().getInt("VoteParty-Votes")))
+                                .append("%need%", String.valueOf(OptionsUtil.VOTEPARTY_VOTES.getIntValue()))
+                        , true
+                )
+        ));
 
         PlaceholderAPI.registerPlaceholder(plugin, "voterewards_voteparty_bar", event -> Utils.getProgressBar(
                 fm.getData().getFileConfiguration().getInt("VoteParty-Votes"),

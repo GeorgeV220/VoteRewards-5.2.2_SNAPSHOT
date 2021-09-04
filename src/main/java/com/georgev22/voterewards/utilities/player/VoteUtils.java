@@ -51,8 +51,6 @@ public record VoteUtils(User user) {
         UserVoteData userVoteData = UserVoteData.getUser(user.getUniqueId());
         userVoteData.setVotes(userVoteData.getVotes() + 1);
         userVoteData.setLastVoted(System.currentTimeMillis());
-
-        //TODO REMOVE THAT LATER IF DOESN'T WORK
         userVoteData.appendServiceLastVote(serviceName);
         Utils.debug(VoteRewardPlugin.getInstance(), userVoteData.getServicesLastVote().toString());
 
@@ -163,7 +161,7 @@ public record VoteUtils(User user) {
 
         if (OptionsUtil.DEBUG_VOTE_AFTER.isEnabled()) {
             Utils.debug(voteRewardPlugin,
-                    "Vote for player " + user.getOfflinePlayer(),
+                    "Vote for player " + user.getName(),
                     "Votes: " + userVoteData.getVotes(),
                     "Last Voted: " + Instant.ofEpochMilli(userVoteData.getLastVote()).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())));
         }

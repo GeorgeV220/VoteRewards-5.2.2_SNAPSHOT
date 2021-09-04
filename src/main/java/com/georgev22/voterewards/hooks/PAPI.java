@@ -12,14 +12,15 @@ import com.georgev22.voterewards.utilities.player.VoteUtils;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
+import org.bukkit.OfflinePlayer;
+import org.jetbrains.annotations.NotNull;
 
 public class PAPI extends PlaceholderExpansion {
 
     VoteRewardPlugin plugin = VoteRewardPlugin.getInstance();
 
     @Override
-    public String getIdentifier() {
+    public @NotNull String getIdentifier() {
         return "voterewards";
     }
 
@@ -29,12 +30,12 @@ public class PAPI extends PlaceholderExpansion {
     }
 
     @Override
-    public String getAuthor() {
+    public @NotNull String getAuthor() {
         return "GeorgeV22, Shin1gamiX";
     }
 
     @Override
-    public String getVersion() {
+    public @NotNull String getVersion() {
         return plugin.getDescription().getVersion();
     }
 
@@ -49,11 +50,7 @@ public class PAPI extends PlaceholderExpansion {
     }
 
     @Override
-    public String onPlaceholderRequest(Player player, String identifier) {
-        if (player == null) {
-            return "null";
-        }
-
+    public String onRequest(OfflinePlayer offlinePlayer, @NotNull String identifier) {
         if (StringUtils.startsWithIgnoreCase(identifier, "top_playerName_")) {
             return VoteUtils.getTopPlayer(Integer.parseInt(identifier.split("_")[2]) - 1);
         }
@@ -63,10 +60,10 @@ public class PAPI extends PlaceholderExpansion {
         }
 
         if (identifier.equalsIgnoreCase("player_votes")) {
-            return String.valueOf(UserVoteData.getUser(player.getUniqueId()).getVotes());
+            return String.valueOf(UserVoteData.getUser(offlinePlayer.getUniqueId()).getVotes());
         }
         if (identifier.equalsIgnoreCase("player_all_time_votes")) {
-            return String.valueOf(UserVoteData.getUser(player.getUniqueId()).getAllTimeVotes());
+            return String.valueOf(UserVoteData.getUser(offlinePlayer.getUniqueId()).getAllTimeVotes());
         }
         final FileManager fm = FileManager.getInstance();
         if (identifier.equalsIgnoreCase("voteparty_total_votes")) {
@@ -83,28 +80,17 @@ public class PAPI extends PlaceholderExpansion {
 
 
         if (identifier.equalsIgnoreCase("voteparty_votes_full")) {
-            if (OptionsUtil.VOTEPARTY_PLAYERS.isEnabled() & VotePartyUtils.isWaitingForPlayers()) {
-                return Utils.colorize(
-                        Utils.placeHolder(
-                                MessagesUtil.VOTEPARTY_WAITING_FOR_MORE_PLAYERS_PLACEHOLDER.getMessages()[0],
-                                ObjectMap.newHashObjectMap()
-                                        .append("%online%", Bukkit.getOnlinePlayers().size())
-                                        .append("%need%", OptionsUtil.VOTEPARTY_PLAYERS_NEED.getIntValue()),
-                                true)
-                );
-            } else {
-                return Utils.colorize(
-                        Utils.placeHolder(
-                                MessagesUtil.VOTEPARTY_PLAYERS_FULL_PLACEHOLDER.getMessages()[0],
-                                ObjectMap.newHashObjectMap()
-                                        .append("%until%", String.valueOf(OptionsUtil.VOTEPARTY_VOTES.getIntValue()
-                                                - fm.getData().getFileConfiguration().getInt("VoteParty-Votes", 0)))
-                                        .append("%total%", String.valueOf(fm.getData().getFileConfiguration().getInt("VoteParty-Votes")))
-                                        .append("%need%", String.valueOf(OptionsUtil.VOTEPARTY_VOTES.getIntValue()))
-                                , true
-                        )
-                );
-            }
+            return OptionsUtil.VOTEPARTY_PLAYERS.isEnabled() & VotePartyUtils.isWaitingForPlayers() ? Utils.colorize(Utils.placeHolder(
+                    MessagesUtil.VOTEPARTY_WAITING_FOR_MORE_PLAYERS_PLACEHOLDER.getMessages()[0],
+                    ObjectMap.newHashObjectMap()
+                            .append("%online%", Bukkit.getOnlinePlayers().size())
+                            .append("%need%", OptionsUtil.VOTEPARTY_PLAYERS_NEED.getIntValue()), true)) : Utils.colorize(Utils.placeHolder(
+                    MessagesUtil.VOTEPARTY_PLAYERS_FULL_PLACEHOLDER.getMessages()[0],
+                    ObjectMap.newHashObjectMap()
+                            .append("%until%", String.valueOf(OptionsUtil.VOTEPARTY_VOTES.getIntValue()
+                                    - fm.getData().getFileConfiguration().getInt("VoteParty-Votes", 0)))
+                            .append("%total%", String.valueOf(fm.getData().getFileConfiguration().getInt("VoteParty-Votes")))
+                            .append("%need%", String.valueOf(OptionsUtil.VOTEPARTY_VOTES.getIntValue())), true));
         }
 
         if (identifier.equalsIgnoreCase("voteparty_bar")) {
@@ -117,11 +103,7 @@ public class PAPI extends PlaceholderExpansion {
                     OptionsUtil.VOTEPARTY_NOT_COMPLETE_COLOR.getStringValue());
         }
 
-        /*if (identifier.equalsIgnoreCase("top_voter")) {
-            return VoteUtils.getTopPlayer(0);
-        }*/
-
-        return "null";
+        return null;
     }
 
 }

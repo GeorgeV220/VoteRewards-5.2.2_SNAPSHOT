@@ -2,14 +2,17 @@ package com.georgev22.voterewards.hooks;
 
 import com.georgev22.externals.utilities.maps.ObjectMap;
 import com.georgev22.voterewards.VoteRewardPlugin;
+import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.configmanager.CFG;
 import com.georgev22.voterewards.utilities.configmanager.FileManager;
 import com.georgev22.voterewards.utilities.OptionsUtil;
 import com.georgev22.voterewards.utilities.Utils;
+import com.georgev22.voterewards.utilities.player.VotePartyUtils;
 import com.georgev22.voterewards.utilities.player.VoteUtils;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import com.gmail.filoghost.holographicdisplays.api.line.TextLine;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -205,20 +208,45 @@ public class HolographicDisplays {
      */
     public static ObjectMap<String, String> getPlaceholderMap() {
         final ObjectMap<String, String> map = ObjectMap.newHashObjectMap();
-        int i = 1;
+        int top = 1;
         for (Map.Entry<String, Integer> b : VoteUtils.getTopPlayers(OptionsUtil.VOTETOP_VOTERS.getIntValue()).entrySet()) {
             String[] args = String.valueOf(b).split("=");
-            map.append("%top-" + i + "%", args[0]).append("%vote-" + i + "%", args[1]);
-            i++;
+            map.append("%top-" + top + "%", args[0]).append("%vote-" + top + "%", args[1]);
+            top++;
         }
-        map.append("%bar%", Utils.getProgressBar(
-                data.getInt("VoteParty-Votes"),
-                OptionsUtil.VOTEPARTY_VOTES.getIntValue(),
-                OptionsUtil.VOTEPARTY_BARS.getIntValue(),
-                OptionsUtil.VOTEPARTY_BAR_SYMBOL.getStringValue(),
-                OptionsUtil.VOTEPARTY_COMPLETE_COLOR.getStringValue(),
-                OptionsUtil.VOTEPARTY_NOT_COMPLETE_COLOR.getStringValue()));
-        return map;
+        int allTimeTop = 1;
+        for (Map.Entry<String, Integer> b : VoteUtils.getAllTimeTopPlayers(OptionsUtil.VOTETOP_ALL_TIME_VOTERS.getIntValue()).entrySet()) {
+            String[] args = String.valueOf(b).split("=");
+            map.append("%alltimetop-" + allTimeTop + "%", args[0]).append("%alltimevote-" + allTimeTop + "%", args[1]);
+            allTimeTop++;
+        }
+        return map.append("%bar%", Utils.getProgressBar(
+                        data.getInt("VoteParty-Votes"),
+                        OptionsUtil.VOTEPARTY_VOTES.getIntValue(),
+                        OptionsUtil.VOTEPARTY_BARS.getIntValue(),
+                        OptionsUtil.VOTEPARTY_BAR_SYMBOL.getStringValue(),
+                        OptionsUtil.VOTEPARTY_COMPLETE_COLOR.getStringValue(),
+                        OptionsUtil.VOTEPARTY_NOT_COMPLETE_COLOR.getStringValue()))
+                .append("%voteparty_votes_until%", String.valueOf(OptionsUtil.VOTEPARTY_VOTES.getIntValue()
+                        - fileManager.getData().getFileConfiguration().getInt("VoteParty-Votes", 0)))
+                .append("%voteparty_votes_need%", OptionsUtil.VOTEPARTY_VOTES.getStringValue())
+                .append("%voteparty_total_votes%", String.valueOf(fileManager.getData().getFileConfiguration().getInt("VoteParty-Votes")))
+                .appendIfTrue("%voteparty_votes_full%",
+                        Utils.colorize(Utils.placeHolder(
+                                MessagesUtil.VOTEPARTY_WAITING_FOR_MORE_PLAYERS_PLACEHOLDER.getMessages()[0],
+                                ObjectMap.newHashObjectMap()
+                                        .append("%online%", Bukkit.getOnlinePlayers().size())
+                                        .append("%need%", OptionsUtil.VOTEPARTY_PLAYERS_NEED.getIntValue()),
+                                true)),
+                        Utils.colorize(Utils.placeHolder(
+                                MessagesUtil.VOTEPARTY_PLAYERS_FULL_PLACEHOLDER.getMessages()[0],
+                                ObjectMap.newHashObjectMap()
+                                        .append("%until%", String.valueOf(OptionsUtil.VOTEPARTY_VOTES.getIntValue()
+                                                - fileManager.getData().getFileConfiguration().getInt("VoteParty-Votes", 0)))
+                                        .append("%total%", String.valueOf(fileManager.getData().getFileConfiguration().getInt("VoteParty-Votes")))
+                                        .append("%need%", String.valueOf(OptionsUtil.VOTEPARTY_VOTES.getIntValue())),
+                                true)),
+                        OptionsUtil.VOTEPARTY_PLAYERS.isEnabled() & VotePartyUtils.isWaitingForPlayers());
     }
 
     //IGNORE

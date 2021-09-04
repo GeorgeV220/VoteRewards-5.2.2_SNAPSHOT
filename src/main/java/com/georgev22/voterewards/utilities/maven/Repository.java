@@ -25,9 +25,13 @@
 
 package com.georgev22.voterewards.utilities.maven;
 
-import org.jetbrains.annotations.NotNull;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import java.lang.annotation.*;
+import javax.annotation.Nonnull;
 
 /**
  * Represents a maven repository.
@@ -42,7 +46,7 @@ public @interface Repository {
      *
      * @return the base url of the repository
      */
-    @NotNull
+    @Nonnull
     String url();
 
 }

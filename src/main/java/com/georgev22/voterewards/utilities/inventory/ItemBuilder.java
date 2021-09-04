@@ -21,6 +21,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import static com.georgev22.externals.utilities.Assertions.notNull;
+
 public class ItemBuilder {
     private final ItemStack itemStack;
     private Material material;
@@ -88,7 +90,7 @@ public class ItemBuilder {
     }
 
     public static ItemBuilder buildItemFromConfig(@NotNull FileConfiguration fileConfiguration, @NotNull String path, @NotNull ObjectMap<String, String> loresReplacements, @NotNull ObjectMap<String, String> titleReplacements, boolean randomColors) {
-        if (fileConfiguration == null || fileConfiguration.get(path) == null) {
+        if (notNull("fileConfiguration", fileConfiguration) == null || fileConfiguration.get(notNull("path", path)) == null) {
             return new ItemBuilder(Material.PAPER).title(Utils.colorize("&c&l&nInvalid item!!"));
         }
         List<String> randomColorList = Lists.newArrayList();
@@ -97,8 +99,8 @@ public class ItemBuilder {
         }
         return new ItemBuilder(XMaterial.valueOf(fileConfiguration.getString(path + ".item")).parseMaterial())
                 .amount(fileConfiguration.getInt(path + ".amount"))
-                .title(Utils.colorize(Utils.placeHolder(fileConfiguration.getString(path + ".title"), titleReplacements, true)))
-                .lores(Utils.colorize(Utils.placeHolder(fileConfiguration.getStringList(path + ".lores"), loresReplacements, true)))
+                .title(Utils.colorize(Utils.placeHolder(fileConfiguration.getString(path + ".title"), notNull("titleReplacements", titleReplacements), true)))
+                .lores(Utils.colorize(Utils.placeHolder(fileConfiguration.getStringList(path + ".lores"), notNull("loresReplacements", loresReplacements), true)))
                 .showAllAttributes(fileConfiguration.getBoolean(path + ".show all attributes"))
                 .glow(fileConfiguration.getBoolean(path + ".glow"))
                 .colors(fileConfiguration.getBoolean(path + ".animated") ? (randomColors ? Arrays.toString(randomColorList.toArray(new String[0])) : Arrays.toString(fileConfiguration.getStringList(path + ".colors").toArray(new String[0]))) : "");

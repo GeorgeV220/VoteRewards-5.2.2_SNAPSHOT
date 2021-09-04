@@ -10,7 +10,6 @@ import com.georgev22.voterewards.utilities.OptionsUtil;
 import com.georgev22.voterewards.utilities.Utils;
 import com.georgev22.voterewards.utilities.interfaces.Callback;
 import com.georgev22.voterewards.utilities.player.UserVoteData;
-import com.georgev22.voterewards.utilities.player.VoteUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -74,30 +73,26 @@ public class VoteRewards extends BukkitCommand {
             MessagesUtil.repairPaths(fm.getMessages());
             Utils.msg(sender, "&a&l(!) &aPlugin reloaded!");
         } else if (args[0].equalsIgnoreCase("backup")) {
-
+            if (Bukkit.getOnlinePlayers().size() > 0) {
+                Utils.msg(sender, "&c&l(!)&c The server must be empty before backup starts!");
+                return true;
+            }
             Bukkit.getScheduler().runTaskAsynchronously(VoteRewardPlugin.getInstance(), () -> {
-                Utils.kickAll("Backup started!");
                 Utils.disallowLogin(true, "Backup ongoing!");
-                boolean saving = !VoteUtils.reminderMap.isEmpty();
-                while (saving) {
-                    if (VoteUtils.reminderMap.isEmpty())
-                        saving = false;
-                    if (!saving)
-                        return;
-                    ZonedDateTime zonedDateTime = Instant.ofEpochMilli(System.currentTimeMillis()).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now()));
-                    new Backup("backup" + zonedDateTime.format(DateTimeFormatter.ofPattern("MM-dd-yyyy--h-mm-a"))).backup(new Callback() {
-                        @Override
-                        public void onSuccess() {
-                            Utils.disallowLogin(false, "");
-                        }
+                ZonedDateTime zonedDateTime = Instant.ofEpochMilli(System.currentTimeMillis()).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now()));
+                new Backup("backup" + zonedDateTime.format(DateTimeFormatter.ofPattern("MM-dd-yyyy--h-mm-a"))).backup(new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        Utils.disallowLogin(false, "");
+                    }
 
-                        @Override
-                        public void onFailure(Throwable throwable) {
-                            throwable.printStackTrace();
-                            Utils.disallowLogin(false, "");
-                        }
-                    });
-                }
+                    @Override
+                    public void onFailure(Throwable throwable) {
+                        throwable.printStackTrace();
+                        Utils.disallowLogin(false, "");
+                    }
+                });
+
 
             });
         } else if (args[0].equalsIgnoreCase("restore")) {

@@ -25,40 +25,33 @@
 
 package com.georgev22.voterewards.utilities.maven;
 
+import com.georgev22.voterewards.VoteRewardPlugin;
+import com.google.common.base.Suppliers;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.InputStream;
-import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  * Resolves {@link MavenLibrary} annotations for a class, and loads the dependency
  * into the classloader.
  *
- * @deprecated 1.16.x provides a new way to load dependencies without shading to the plugin jar.
+ * @deprecated 1.16 and up provides a new way to load dependencies without shading to the plugin jar.
  * for versions bellow 1.16 LibraryLoader will be used.
  */
 @NotNull
 @Deprecated
 public final record LibraryLoader(Plugin plugin) {
 
-    private static final Method ADD_URL_METHOD;
-
-    static {
-        try {
-            ADD_URL_METHOD = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
-            ADD_URL_METHOD.setAccessible(true);
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    private static final Supplier<URLClassLoaderAccess> URL_INJECTOR = Suppliers.memoize(() -> URLClassLoaderAccess.create((URLClassLoader) VoteRewardPlugin.getInstance().getClass().getClassLoader()));
 
     /**
      * Resolves all {@link MavenLibrary} annotations on the given object.
@@ -142,9 +135,8 @@ public final record LibraryLoader(Plugin plugin) {
             throw new RuntimeException("[" + plugin.getName() + "] Unable to download dependency: " + d);
         }
 
-        URLClassLoader classLoader = (URLClassLoader) plugin.getClass().getClassLoader();
         try {
-            ADD_URL_METHOD.invoke(classLoader, saveLocation.toURI().toURL());
+            URL_INJECTOR.get().addURL(saveLocation.toURI().toURL());
         } catch (Exception e) {
             throw new RuntimeException("[" + plugin.getName() + "] Unable to load dependency: " + saveLocation, e);
         }

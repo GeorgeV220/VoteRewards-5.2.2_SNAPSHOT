@@ -55,22 +55,8 @@ public class PlayerListeners implements Listener {
                         }
                         userVoteData.setOfflineServices(Lists.newArrayList());
                     }
-                    userVoteData.save(true, new Callback() {
-                        @Override
-                        public void onSuccess() {
-                            if (OptionsUtil.DEBUG_SAVE.isEnabled()) {
-                                Utils.debug(voteRewardPlugin, "User " + event.getPlayer().getName() + " saved!",
-                                        userVoteData.user().toString());
-                            }
-                        }
 
-                        @Override
-                        public void onFailure(Throwable throwable) {
-                            throwable.printStackTrace();
-                        }
-                    });
-
-                    UserVoteData.getAllUsersMap().append(event.getPlayer().getUniqueId(), userVoteData.user());
+                    UserVoteData.getAllUsersMap().append(userVoteData.user().getUniqueId(), userVoteData.user());
                     //HOLOGRAMS
                     if (Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays")) {
                         if (!HolographicDisplays.getHolograms().isEmpty()) {
@@ -103,7 +89,8 @@ public class PlayerListeners implements Listener {
             }
         }
 
-        VoteUtils.reminderMap.append(event.getPlayer(), System.currentTimeMillis());
+        if (OptionsUtil.REMINDER.isEnabled())
+            VoteUtils.reminderMap.append(event.getPlayer(), System.currentTimeMillis());
     }
 
     @EventHandler
@@ -112,7 +99,9 @@ public class PlayerListeners implements Listener {
         userVoteData.save(true, new Callback() {
             @Override
             public void onSuccess() {
-                VoteUtils.reminderMap.remove(event.getPlayer());
+                UserVoteData.getAllUsersMap().append(userVoteData.user().getUniqueId(), userVoteData.user());
+                if (OptionsUtil.REMINDER.isEnabled())
+                    VoteUtils.reminderMap.remove(event.getPlayer());
                 if (OptionsUtil.DEBUG_SAVE.isEnabled()) {
                     Utils.debug(voteRewardPlugin, "User " + event.getPlayer().getName() + " saved!",
                             userVoteData.user().toString());

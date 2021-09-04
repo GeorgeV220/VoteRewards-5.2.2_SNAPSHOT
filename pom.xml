@@ -14,7 +14,7 @@
     <properties>
         <java.version>16</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <baseRevision>5.1.0</baseRevision>
+        <baseRevision>5.2.0</baseRevision>
         <revision>v${baseRevision}</revision>
         <maven.compiler.source>16</maven.compiler.source>
         <maven.compiler.target>16</maven.compiler.target>
@@ -180,7 +180,7 @@
         <dependency>
             <groupId>com.georgev22</groupId>
             <artifactId>Externals</artifactId>
-            <version>1.4</version>
+            <version>1.5</version>
         </dependency>
 
         <dependency>
@@ -204,7 +204,7 @@
         <dependency>
             <groupId>me.clip</groupId>
             <artifactId>placeholderapi</artifactId>
-            <version>2.10.5</version>
+            <version>2.10.10</version>
             <scope>provided</scope>
         </dependency>
 

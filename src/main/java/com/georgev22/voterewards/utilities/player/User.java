@@ -16,26 +16,24 @@ public class User extends ConcurrentObjectMap {
     private final UUID uuid;
 
     /**
-     * Creates an User instance.
+     * Creates a User instance.
      *
      * @param uuid Player Unique identifier
      */
     public User(UUID uuid) {
         this.uuid = uuid;
-        put("uuid", uuid.toString());
+        append("uuid", uuid);
     }
 
     /**
      * Creates a User instance initialized with the given map.
-     * <p>
-     * You must add UUID to your map
      *
      * @param uuid User Unique ID
      * @param map  initial map
      * @see User#User(UUID)
      */
     public User(UUID uuid, final ObjectMap<String, Object> map) {
-        super(map);
+        super(map.append("uuid", uuid));
         this.uuid = uuid;
     }
 

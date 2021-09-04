@@ -25,9 +25,14 @@
 
 package com.georgev22.voterewards.utilities.maven;
 
-import org.jetbrains.annotations.NotNull;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Repeatable;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import java.lang.annotation.*;
+import javax.annotation.Nonnull;
 
 /**
  * Annotation to indicate a required library for a class.
@@ -43,7 +48,7 @@ public @interface MavenLibrary {
      *
      * @return the group id of the library
      */
-    @NotNull
+    @Nonnull
     String groupId();
 
     /**
@@ -51,7 +56,7 @@ public @interface MavenLibrary {
      *
      * @return the artifact id of the library
      */
-    @NotNull
+    @Nonnull
     String artifactId();
 
     /**
@@ -59,7 +64,7 @@ public @interface MavenLibrary {
      *
      * @return the version of the library
      */
-    @NotNull
+    @Nonnull
     String version();
 
     /**
@@ -67,7 +72,7 @@ public @interface MavenLibrary {
      *
      * @return the repo where the library can be obtained from
      */
-    @NotNull
+    @Nonnull
     Repository repo() default @Repository(url = "https://repo1.maven.org/maven2");
 
 }
