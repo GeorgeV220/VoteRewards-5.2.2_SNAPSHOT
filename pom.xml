@@ -8,12 +8,6 @@
     <artifactId>voterewards</artifactId>
     <version>${revision}</version>
     <packaging>jar</packaging>
-    <scm>
-        <connection>scm:git:${project.scm.url}</connection>
-        <developerConnection>scm:git:${project.scm.url}</developerConnection>
-        <url>https://github.com/GeorgeV220/VoteRewards.git</url>
-        <tag>HEAD</tag>
-    </scm>
 
     <name>VoteRewards</name>
 
@@ -109,14 +103,6 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-release-plugin</artifactId>
-                <version>3.0.0-M4</version>
-                <configuration>
-                    <scmCommentPrefix>[c skip]</scmCommentPrefix>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
