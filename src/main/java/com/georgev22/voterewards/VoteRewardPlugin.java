@@ -281,6 +281,7 @@ public class VoteRewardPlugin extends JavaPlugin {
                 userVoteData.load(new Callback() {
                     @Override
                     public void onSuccess() {
+                        UserVoteData.getAllUsersMap().append(userVoteData.user().getUniqueId(), userVoteData.user());
                         if (OptionsUtil.DEBUG_LOAD.isEnabled())
                             Utils.debug(VoteRewardPlugin.getInstance(), "Successfully loaded user " + userVoteData.user().getOfflinePlayer().getName());
                     }
