@@ -1,10 +1,10 @@
 package com.georgev22.voterewards.utilities.inventory;
 
-import com.georgev22.externals.utilities.maps.ObjectMap;
-import com.georgev22.externals.xseries.XEnchantment;
-import com.georgev22.externals.xseries.XMaterial;
-import com.georgev22.voterewards.utilities.Utils;
-import com.georgev22.voterewards.utilities.colors.Colors;
+import com.georgev22.api.externals.xseries.XEnchantment;
+import com.georgev22.api.externals.xseries.XMaterial;
+import com.georgev22.api.maps.ObjectMap;
+import com.georgev22.api.utilities.MinecraftUtils;
+import com.georgev22.api.utilities.Utils;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import de.tr7zw.changeme.nbtapi.NBTItem;
@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-import static com.georgev22.externals.utilities.Assertions.notNull;
+import static com.georgev22.api.utilities.Utils.Assertions.notNull;
 
 public class ItemBuilder {
     private final ItemStack itemStack;
@@ -91,16 +91,16 @@ public class ItemBuilder {
 
     public static ItemBuilder buildItemFromConfig(@NotNull FileConfiguration fileConfiguration, @NotNull String path, @NotNull ObjectMap<String, String> loresReplacements, @NotNull ObjectMap<String, String> titleReplacements, boolean randomColors) {
         if (notNull("fileConfiguration", fileConfiguration) == null || fileConfiguration.get(notNull("path", path)) == null) {
-            return new ItemBuilder(Material.PAPER).title(Utils.colorize("&c&l&nInvalid item!!"));
+            return new ItemBuilder(Material.PAPER).title(MinecraftUtils.colorize("&c&l&nInvalid item!!"));
         }
         List<String> randomColorList = Lists.newArrayList();
         for (int i = 0; i < 3; i++) {
-            randomColorList.add(Colors.values()[new Random().nextInt(Colors.values().length)].getColor().getTag());
+            randomColorList.add(String.format("#%06x", new Random().nextInt(0xffffff + 1)));
         }
         return new ItemBuilder(XMaterial.valueOf(fileConfiguration.getString(path + ".item")).parseMaterial())
                 .amount(fileConfiguration.getInt(path + ".amount"))
-                .title(Utils.colorize(Utils.placeHolder(fileConfiguration.getString(path + ".title"), notNull("titleReplacements", titleReplacements), true)))
-                .lores(Utils.colorize(Utils.placeHolder(fileConfiguration.getStringList(path + ".lores"), notNull("loresReplacements", loresReplacements), true)))
+                .title(MinecraftUtils.colorize(Utils.placeHolder(fileConfiguration.getString(path + ".title"), notNull("titleReplacements", titleReplacements), true)))
+                .lores(MinecraftUtils.colorize(Utils.placeHolder(fileConfiguration.getStringList(path + ".lores"), notNull("loresReplacements", loresReplacements), true)))
                 .showAllAttributes(fileConfiguration.getBoolean(path + ".show all attributes"))
                 .glow(fileConfiguration.getBoolean(path + ".glow"))
                 .colors(fileConfiguration.getBoolean(path + ".animated") ? (randomColors ? Arrays.toString(randomColorList.toArray(new String[0])) : Arrays.toString(fileConfiguration.getStringList(path + ".colors").toArray(new String[0]))) : "");
@@ -250,11 +250,11 @@ public class ItemBuilder {
         }
 
         if (this.title != null) {
-            meta.setDisplayName(Utils.colorize(this.title));
+            meta.setDisplayName(MinecraftUtils.colorize(this.title));
         }
 
         if (this.lores != null && this.lores.size() > 0) {
-            meta.setLore(Utils.colorize(this.lores));
+            meta.setLore(MinecraftUtils.colorize(this.lores));
         }
 
         if (this.flags != null && this.flags.size() > 0) {
@@ -270,7 +270,6 @@ public class ItemBuilder {
     }
 
     public ItemBuilder clone() throws CloneNotSupportedException {
-        ItemBuilder clone = (ItemBuilder) super.clone();
-        return new ItemBuilder(this.itemStack.clone(), false);
+        return (ItemBuilder) super.clone();
     }
 }

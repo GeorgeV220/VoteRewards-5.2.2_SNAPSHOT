@@ -1,23 +1,24 @@
 package com.georgev22.voterewards.utilities.player;
 
-import com.georgev22.externals.utilities.maps.ConcurrentObjectMap;
-import com.georgev22.externals.utilities.maps.LinkedObjectMap;
-import com.georgev22.externals.utilities.maps.ObjectMap;
-import com.georgev22.externals.xseries.XSound;
-import com.georgev22.externals.xseries.messages.Titles;
+import com.georgev22.api.externals.xseries.XSound;
+import com.georgev22.api.externals.xseries.messages.Titles;
+import com.georgev22.api.maps.ConcurrentObjectMap;
+import com.georgev22.api.maps.LinkedObjectMap;
+import com.georgev22.api.maps.ObjectMap;
+import com.georgev22.api.utilities.MinecraftUtils;
 import com.georgev22.voterewards.VoteRewardPlugin;
-import com.georgev22.voterewards.utilities.MinecraftVersion;
-import com.georgev22.voterewards.utilities.configmanager.CFG;
-import com.georgev22.voterewards.utilities.configmanager.FileManager;
 import com.georgev22.voterewards.hooks.HolographicDisplays;
+import com.georgev22.voterewards.utilities.DiscordWebHook;
 import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.OptionsUtil;
-import com.georgev22.voterewards.utilities.Utils;
+import com.georgev22.voterewards.utilities.configmanager.CFG;
+import com.georgev22.voterewards.utilities.configmanager.FileManager;
 import com.georgev22.voterewards.utilities.interfaces.Callback;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -28,13 +29,14 @@ import java.util.stream.Collectors;
 public record VoteUtils(User user) {
 
     private static final VoteRewardPlugin voteRewardPlugin = VoteRewardPlugin.getInstance();
+    private static final FileManager fileManager = FileManager.getInstance();
 
     /**
      * Process player vote
      *
      * @param serviceName the service name (dah)
      */
-    public void processVote(String serviceName) {
+    public void processVote(String serviceName) throws IOException {
         processVote(serviceName, OptionsUtil.VOTEPARTY.isEnabled());
     }
 
@@ -45,14 +47,14 @@ public record VoteUtils(User user) {
      * @param addVoteParty count the vote on voteparty
      * @since v4.7.0
      */
-    public void processVote(String serviceName, boolean addVoteParty) {
+    public void processVote(String serviceName, boolean addVoteParty) throws IOException {
         if (OptionsUtil.DEBUG_VOTES_REGULAR.isEnabled())
-            Utils.debug(voteRewardPlugin, "VOTE OF: " + user.getName());
+            MinecraftUtils.debug(voteRewardPlugin, "VOTE OF: " + user.getName());
         UserVoteData userVoteData = UserVoteData.getUser(user.getUniqueId());
         userVoteData.setVotes(userVoteData.getVotes() + 1);
         userVoteData.setLastVoted(System.currentTimeMillis());
         userVoteData.appendServiceLastVote(serviceName);
-        Utils.debug(VoteRewardPlugin.getInstance(), userVoteData.getServicesLastVote().toString());
+        MinecraftUtils.debug(VoteRewardPlugin.getInstance(), userVoteData.getServicesLastVote().toString());
 
         userVoteData.setAllTimeVotes(userVoteData.getAllTimeVotes() + 1);
         userVoteData.setDailyVotes(userVoteData.getDailyVotes() + 1);
@@ -60,8 +62,8 @@ public record VoteUtils(User user) {
 
         if (OptionsUtil.VOTE_TITLE.isEnabled()) {
             Titles.sendTitle(user.getPlayer(),
-                    Utils.colorize(MessagesUtil.VOTE_TITLE.getMessages()[0]).replace("%player%", user.getName()),
-                    Utils.colorize(MessagesUtil.VOTE_SUBTITLE.getMessages()[0]).replace("%player%", user.getName()));
+                    MinecraftUtils.colorize(MessagesUtil.VOTE_TITLE.getMessages()[0]).replace("%player%", user.getName()),
+                    MinecraftUtils.colorize(MessagesUtil.VOTE_SUBTITLE.getMessages()[0]).replace("%player%", user.getName()));
         }
 
         // WORLD REWARDS (WITH SERVICES)
@@ -122,15 +124,15 @@ public record VoteUtils(User user) {
 
         // PLAY SOUND
         if (OptionsUtil.SOUND.isEnabled()) {
-            if (MinecraftVersion.getCurrentVersion().isBelow(MinecraftVersion.V1_12_R1)) {
+            if (MinecraftUtils.MinecraftVersion.getCurrentVersion().isBelow(MinecraftUtils.MinecraftVersion.V1_12_R1)) {
                 user.getPlayer().playSound(user.getPlayer().getLocation(), XSound
                                 .matchXSound(OptionsUtil.SOUND_VOTE.getStringValue()).get().parseSound(),
                         1000, 1);
                 if (OptionsUtil.DEBUG_USELESS.isEnabled()) {
-                    Utils.debug(voteRewardPlugin, "========================================================");
-                    Utils.debug(voteRewardPlugin, "SoundCategory doesn't exists in versions below 1.12");
-                    Utils.debug(voteRewardPlugin, "SoundCategory doesn't exists in versions below 1.12");
-                    Utils.debug(voteRewardPlugin, "========================================================");
+                    MinecraftUtils.debug(voteRewardPlugin, "========================================================");
+                    MinecraftUtils.debug(voteRewardPlugin, "SoundCategory doesn't exists in versions below 1.12");
+                    MinecraftUtils.debug(voteRewardPlugin, "SoundCategory doesn't exists in versions below 1.12");
+                    MinecraftUtils.debug(voteRewardPlugin, "========================================================");
                 }
             } else {
                 user.getPlayer().playSound(user.getPlayer().getLocation(), XSound
@@ -155,12 +157,28 @@ public record VoteUtils(User user) {
         if (addVoteParty)
             new VotePartyUtils(user.getOfflinePlayer()).run(false);
 
-        //HOLOGRAM UPDATE
+        // HOLOGRAM UPDATE
         if (Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays"))
             HolographicDisplays.updateAll();
 
+        // DISCORD WEBHOOK
+        if (OptionsUtil.DISCORD.isEnabled() & OptionsUtil.EXPERIMENTAL_FEATURES.isEnabled()) {
+            FileConfiguration discordFileConfiguration = fileManager.getDiscord().getFileConfiguration();
+            DiscordWebHook webhook = new DiscordWebHook(discordFileConfiguration.getString("vote.webhook"));
+            webhook.setContent(discordFileConfiguration.getString("vote.message"))
+                    .setAvatarUrl(discordFileConfiguration.getString("vote.avatar url"))
+                    .setUsername(discordFileConfiguration.getString("vote.username"))
+                    .setTTS(discordFileConfiguration.getBoolean("vote.tts"));
+            for (String s : discordFileConfiguration.getConfigurationSection("vote.embeds").getKeys(false)) {
+                webhook.addEmbed(DiscordWebHook.buildFromConfig(discordFileConfiguration, "vote.embeds." + s));
+            }
+
+            webhook.execute();
+        }
+
+        // DEBUG
         if (OptionsUtil.DEBUG_VOTE_AFTER.isEnabled()) {
-            Utils.debug(voteRewardPlugin,
+            MinecraftUtils.debug(voteRewardPlugin,
                     "Vote for player " + user.getName(),
                     "Votes: " + userVoteData.getVotes(),
                     "Last Voted: " + Instant.ofEpochMilli(userVoteData.getLastVote()).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())));
@@ -187,7 +205,7 @@ public record VoteUtils(User user) {
                     @Override
                     public void onSuccess() {
                         if (OptionsUtil.DEBUG_SAVE.isEnabled()) {
-                            Utils.debug(voteRewardPlugin,
+                            MinecraftUtils.debug(voteRewardPlugin,
                                     "User " + user.getName() + " successfully saved!",
                                     "Votes: " + user.getVotes(),
                                     "Daily Votes: " + user.getDailyVotes(),
@@ -220,8 +238,7 @@ public record VoteUtils(User user) {
     public static void monthlyReset() {
         Bukkit.getScheduler().runTaskTimer(voteRewardPlugin, () -> {
             if (OptionsUtil.DEBUG_USELESS.isEnabled())
-                Utils.debug(voteRewardPlugin, "Monthly reset Thread ID: " + Thread.currentThread().getId());
-            FileManager fileManager = FileManager.getInstance();
+                MinecraftUtils.debug(voteRewardPlugin, "Monthly reset Thread ID: " + Thread.currentThread().getId());
             CFG cfg = fileManager.getData();
             FileConfiguration dataConfiguration = cfg.getFileConfiguration();
             if (dataConfiguration.getInt("month") != Calendar.getInstance().getTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getMonthValue()) {
@@ -244,14 +261,14 @@ public record VoteUtils(User user) {
     public static void purgeData() {
         Bukkit.getScheduler().runTaskTimer(voteRewardPlugin, () -> {
             if (OptionsUtil.DEBUG_USELESS.isEnabled())
-                Utils.debug(voteRewardPlugin, "Purge data Thread ID: " + Thread.currentThread().getId());
+                MinecraftUtils.debug(voteRewardPlugin, "Purge data Thread ID: " + Thread.currentThread().getId());
             ObjectMap<UUID, User> objectMap = UserVoteData.getAllUsersMap();
             objectMap.forEach((uuid, user) -> {
                 UserVoteData userVoteData = UserVoteData.getUser(uuid);
                 long time = userVoteData.getLastVote() + (OptionsUtil.PURGE_DAYS.getLongValue() * 86400000);
                 if (OptionsUtil.DEBUG_USELESS.isEnabled()) {
-                    Utils.debug(voteRewardPlugin, Instant.ofEpochMilli(userVoteData.getLastVote()).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())).toString());
-                    Utils.debug(voteRewardPlugin, Instant.ofEpochMilli(time).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())).toString());
+                    MinecraftUtils.debug(voteRewardPlugin, Instant.ofEpochMilli(userVoteData.getLastVote()).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())).toString());
+                    MinecraftUtils.debug(voteRewardPlugin, Instant.ofEpochMilli(time).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())).toString());
                 }
                 if (time <= System.currentTimeMillis()) {
                     userVoteData.delete();
@@ -273,8 +290,8 @@ public record VoteUtils(User user) {
                 UserVoteData userVoteData = UserVoteData.getUser(uuid);
                 long time = userVoteData.getLastVote() + (OptionsUtil.DAILY_HOURS.getIntValue() * 60 * 60 * 1000);
                 if (OptionsUtil.DEBUG_USELESS.isEnabled()) {
-                    Utils.debug(voteRewardPlugin, Instant.ofEpochMilli(userVoteData.getLastVote()).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())).toString());
-                    Utils.debug(voteRewardPlugin, Instant.ofEpochMilli(time).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())).toString());
+                    MinecraftUtils.debug(voteRewardPlugin, Instant.ofEpochMilli(userVoteData.getLastVote()).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())).toString());
+                    MinecraftUtils.debug(voteRewardPlugin, Instant.ofEpochMilli(time).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())).toString());
                 }
 
                 if (time <= System.currentTimeMillis()) {
@@ -287,7 +304,7 @@ public record VoteUtils(User user) {
                                 @Override
                                 public void onSuccess() {
                                     if (OptionsUtil.DEBUG_VOTES_DAILY.isEnabled()) {
-                                        Utils.debug(voteRewardPlugin, "Daily vote reset!");
+                                        MinecraftUtils.debug(voteRewardPlugin, "Daily vote reset!");
                                     }
                                 }
 

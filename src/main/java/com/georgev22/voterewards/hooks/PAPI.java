@@ -1,11 +1,12 @@
 package com.georgev22.voterewards.hooks;
 
-import com.georgev22.externals.utilities.maps.ObjectMap;
+import com.georgev22.api.maps.ObjectMap;
+import com.georgev22.api.utilities.MinecraftUtils;
+import com.georgev22.api.utilities.Utils;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.configmanager.FileManager;
 import com.georgev22.voterewards.utilities.OptionsUtil;
-import com.georgev22.voterewards.utilities.Utils;
 import com.georgev22.voterewards.utilities.player.UserVoteData;
 import com.georgev22.voterewards.utilities.player.VotePartyUtils;
 import com.georgev22.voterewards.utilities.player.VoteUtils;
@@ -80,11 +81,11 @@ public class PAPI extends PlaceholderExpansion {
 
 
         if (identifier.equalsIgnoreCase("voteparty_votes_full")) {
-            return OptionsUtil.VOTEPARTY_PLAYERS.isEnabled() & VotePartyUtils.isWaitingForPlayers() ? Utils.colorize(Utils.placeHolder(
+            return OptionsUtil.VOTEPARTY_PLAYERS.isEnabled() & VotePartyUtils.isWaitingForPlayers() ? MinecraftUtils.colorize(Utils.placeHolder(
                     MessagesUtil.VOTEPARTY_WAITING_FOR_MORE_PLAYERS_PLACEHOLDER.getMessages()[0],
                     ObjectMap.newHashObjectMap()
                             .append("%online%", Bukkit.getOnlinePlayers().size())
-                            .append("%need%", OptionsUtil.VOTEPARTY_PLAYERS_NEED.getIntValue()), true)) : Utils.colorize(Utils.placeHolder(
+                            .append("%need%", OptionsUtil.VOTEPARTY_PLAYERS_NEED.getIntValue()), true)) : MinecraftUtils.colorize(Utils.placeHolder(
                     MessagesUtil.VOTEPARTY_PLAYERS_FULL_PLACEHOLDER.getMessages()[0],
                     ObjectMap.newHashObjectMap()
                             .append("%until%", String.valueOf(OptionsUtil.VOTEPARTY_VOTES.getIntValue()
@@ -94,7 +95,7 @@ public class PAPI extends PlaceholderExpansion {
         }
 
         if (identifier.equalsIgnoreCase("voteparty_bar")) {
-            return Utils.getProgressBar(
+            return MinecraftUtils.getProgressBar(
                     fm.getData().getFileConfiguration().getInt("VoteParty-Votes"),
                     OptionsUtil.VOTEPARTY_VOTES.getIntValue(),
                     OptionsUtil.VOTEPARTY_BARS.getIntValue(),

@@ -1,8 +1,8 @@
 package com.georgev22.voterewards.utilities.interfaces;
 
-import com.georgev22.externals.utilities.maps.ObjectMap;
+import com.georgev22.api.maps.ObjectMap;
+import com.georgev22.api.utilities.MinecraftUtils;
 import com.georgev22.voterewards.VoteRewardPlugin;
-import com.georgev22.voterewards.utilities.Utils;
 import com.georgev22.voterewards.utilities.player.User;
 import com.google.common.collect.Lists;
 
@@ -24,7 +24,7 @@ public interface IDatabaseType {
                 .append("servicesLastVote", ObjectMap.newConcurrentObjectMap())
                 .appendIfTrue("totalvotes", 0, allTime);
         save(user);
-        Utils.debug(VoteRewardPlugin.getInstance(), "User " + user.getName() + " has been reset!");
+        MinecraftUtils.debug(VoteRewardPlugin.getInstance(), "User " + user.getName() + " has been reset!");
     }
 
     void delete(User user) throws Exception;

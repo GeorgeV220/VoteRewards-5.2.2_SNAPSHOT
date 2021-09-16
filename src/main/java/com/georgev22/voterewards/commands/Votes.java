@@ -1,8 +1,8 @@
 package com.georgev22.voterewards.commands;
 
-import com.georgev22.externals.utilities.maps.ObjectMap;
+import com.georgev22.api.maps.ObjectMap;
+import com.georgev22.api.utilities.MinecraftUtils;
 import com.georgev22.voterewards.utilities.MessagesUtil;
-import com.georgev22.voterewards.utilities.Utils;
 import com.georgev22.voterewards.utilities.player.UserVoteData;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -21,7 +21,7 @@ public class Votes extends BukkitCommand {
         this.description = "Votes command";
         this.usageMessage = "/votes";
         this.setPermission("voterewards.votes");
-        this.setPermissionMessage(Utils.colorize(MessagesUtil.NO_PERMISSION.getMessages()[0]));
+        this.setPermissionMessage(MinecraftUtils.colorize(MessagesUtil.NO_PERMISSION.getMessages()[0]));
         this.setAliases(Arrays.asList("vrvs", "vrvotes", "vvotes"));
     }
 
@@ -31,7 +31,7 @@ public class Votes extends BukkitCommand {
         ObjectMap<String, String> placeholders = ObjectMap.newHashObjectMap();
         if (args.length == 0) {
             if (!(sender instanceof Player)) {
-                Utils.msg(sender, "/votes <player>");
+                MinecraftUtils.msg(sender, "/votes <player>");
                 return true;
             }
             placeholders.append("%player%", sender.getName()).append("%votes%",

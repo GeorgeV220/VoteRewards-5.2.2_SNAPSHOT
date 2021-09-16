@@ -1,8 +1,10 @@
 package com.georgev22.voterewards.utilities.player;
 
-import com.georgev22.externals.utilities.maps.ObjectMap;
-import com.georgev22.externals.xseries.XMaterial;
-import com.georgev22.externals.xseries.XSound;
+import com.georgev22.api.maps.ObjectMap;
+import com.georgev22.api.externals.xseries.XMaterial;
+import com.georgev22.api.externals.xseries.XSound;
+import com.georgev22.api.utilities.MinecraftUtils;
+import com.georgev22.api.utilities.Utils;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.utilities.*;
 import com.georgev22.voterewards.utilities.configmanager.CFG;
@@ -22,8 +24,6 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 public record VotePartyUtils(@Nullable OfflinePlayer offlinePlayer) {
-
-    private static VotePartyUtils instance;
 
     private static final VoteRewardPlugin voteRewardPlugin = VoteRewardPlugin.getInstance();
 
@@ -53,7 +53,6 @@ public record VotePartyUtils(@Nullable OfflinePlayer offlinePlayer) {
     public void run(boolean start) {
         Bukkit.getScheduler().runTaskAsynchronously(voteRewardPlugin, () -> {
             if ((!start & OptionsUtil.VOTEPARTY_PLAYERS.isEnabled()) & Bukkit.getOnlinePlayers().size() > OptionsUtil.VOTEPARTY_PLAYERS_NEED.getIntValue()) {
-                //TODO NOT ENOUGH PLAYERS MESSAGE
                 MessagesUtil.VOTEPARTY_NOT_ENOUGH_PLAYERS.msgAll();
                 isWaitingForPlayers = true;
                 return;
@@ -124,12 +123,12 @@ public record VotePartyUtils(@Nullable OfflinePlayer offlinePlayer) {
                 if (OptionsUtil.VOTEPARTY_CRATE.isEnabled()) {
                     if (player.isOnline()) {
                         if (OptionsUtil.VOTEPARTY_SOUND_START.isEnabled()) {
-                            if (MinecraftVersion.getCurrentVersion().isBelow(MinecraftVersion.V1_12_R1)) {
+                            if (MinecraftUtils.MinecraftVersion.getCurrentVersion().isBelow(MinecraftUtils.MinecraftVersion.V1_12_R1)) {
                                 if (OptionsUtil.DEBUG_USELESS.isEnabled()) {
-                                    Utils.debug(voteRewardPlugin, "========================================================");
-                                    Utils.debug(voteRewardPlugin, "SoundCategory doesn't exists in versions below 1.12");
-                                    Utils.debug(voteRewardPlugin, "SoundCategory doesn't exists in versions below 1.12");
-                                    Utils.debug(voteRewardPlugin, "========================================================");
+                                    MinecraftUtils.debug(voteRewardPlugin, "========================================================");
+                                    MinecraftUtils.debug(voteRewardPlugin, "SoundCategory doesn't exists in versions below 1.12");
+                                    MinecraftUtils.debug(voteRewardPlugin, "SoundCategory doesn't exists in versions below 1.12");
+                                    MinecraftUtils.debug(voteRewardPlugin, "========================================================");
                                 }
                                 player.getPlayer().playSound(player.getPlayer().getLocation(), XSound
                                                 .matchXSound(OptionsUtil.SOUND_VOTEPARTY_START.getStringValue()).get().parseSound(),
@@ -170,10 +169,10 @@ public record VotePartyUtils(@Nullable OfflinePlayer offlinePlayer) {
         if (enable) {
             Random random = new Random();
             int selector = random.nextInt(list.size());
-            Utils.runCommand(list.get(selector).replace("%player%", offlinePlayer.getName()));
+            MinecraftUtils.runCommand(voteRewardPlugin, list.get(selector).replace("%player%", offlinePlayer.getName()));
         } else {
             for (String s : list) {
-                Utils.runCommand(s.replace("%player%", offlinePlayer.getName()));
+                MinecraftUtils.runCommand(voteRewardPlugin, s.replace("%player%", offlinePlayer.getName()));
             }
         }
     }
@@ -214,8 +213,8 @@ public record VotePartyUtils(@Nullable OfflinePlayer offlinePlayer) {
                         XMaterial.matchXMaterial(
                                 Objects.requireNonNull(OptionsUtil.VOTEPARTY_CRATE_ITEM.getStringValue())).get().parseMaterial()));
         ItemMeta itemMeta = itemStack.getItemMeta();
-        itemMeta.setDisplayName(Utils.colorize(OptionsUtil.VOTEPARTY_CRATE_NAME.getStringValue()));
-        itemMeta.setLore(Utils.colorize(OptionsUtil.VOTEPARTY_CRATE_LORES.getStringList()));
+        itemMeta.setDisplayName(MinecraftUtils.colorize(OptionsUtil.VOTEPARTY_CRATE_NAME.getStringValue()));
+        itemMeta.setLore(MinecraftUtils.colorize(OptionsUtil.VOTEPARTY_CRATE_LORES.getStringList()));
         itemStack.setItemMeta(itemMeta);
         itemStack.setAmount(amount);
         return itemStack;

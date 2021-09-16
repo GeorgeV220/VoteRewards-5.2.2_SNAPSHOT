@@ -1,9 +1,9 @@
 package com.georgev22.voterewards.commands;
 
-import com.georgev22.externals.utilities.maps.ObjectMap;
+import com.georgev22.api.maps.ObjectMap;
+import com.georgev22.api.utilities.MinecraftUtils;
 import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.OptionsUtil;
-import com.georgev22.voterewards.utilities.Utils;
 import com.georgev22.voterewards.utilities.inventory.inventories.VoteInventory;
 import com.georgev22.voterewards.utilities.player.UserVoteData;
 import org.bukkit.command.CommandSender;
@@ -21,14 +21,14 @@ public class Vote extends BukkitCommand {
         this.description = "Vote command";
         this.usageMessage = "/vote";
         this.setPermission("voterewards.vote");
-        this.setPermissionMessage(Utils.colorize(MessagesUtil.NO_PERMISSION.getMessages()[0]));
+        this.setPermissionMessage(MinecraftUtils.colorize(MessagesUtil.NO_PERMISSION.getMessages()[0]));
         this.setAliases(Arrays.asList("vrv", "vrvote", "vvote"));
     }
 
     public boolean execute(@NotNull final CommandSender sender, @NotNull final String label, final String[] args) {
         if (!testPermission(sender)) return true;
         if (!(sender instanceof Player player)) {
-            Utils.msg(sender, MessagesUtil.ONLY_PLAYER_COMMAND.getMessages()[0]);
+            MinecraftUtils.msg(sender, MessagesUtil.ONLY_PLAYER_COMMAND.getMessages()[0]);
             return true;
         }
 

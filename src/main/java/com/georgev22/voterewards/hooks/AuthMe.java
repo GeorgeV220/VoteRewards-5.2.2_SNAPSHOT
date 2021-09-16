@@ -8,13 +8,15 @@ import fr.xephi.authme.events.LoginEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+import java.io.IOException;
+
 /**
  * @author GeorgeV22
  */
 public class AuthMe implements Listener {
 
     @EventHandler
-    public void onAuthLogin(LoginEvent event) {
+    public void onAuthLogin(LoginEvent event) throws IOException {
         if (OptionsUtil.OFFLINE.isEnabled()) {
             UserVoteData userVoteData = UserVoteData.getUser(event.getPlayer().getUniqueId());
             for (String serviceName : userVoteData.getOfflineServices()) {

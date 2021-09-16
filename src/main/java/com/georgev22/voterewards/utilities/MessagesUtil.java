@@ -1,5 +1,6 @@
 package com.georgev22.voterewards.utilities;
 
+import com.georgev22.api.utilities.MinecraftUtils;
 import com.georgev22.voterewards.utilities.configmanager.CFG;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -141,7 +142,7 @@ public enum MessagesUtil {
      */
     private static void setPathToMessage(final CFG cfg, final MessagesUtil enumMessage) {
         /* Is our path a list? */
-        if (Utils.isList(cfg.getFileConfiguration(), enumMessage.getPath())) {
+        if (MinecraftUtils.isList(cfg.getFileConfiguration(), enumMessage.getPath())) {
             /* Set our default message to be the path's message. */
             enumMessage.setMessages(
                     cfg.getFileConfiguration().getStringList(enumMessage.getPath()).toArray(new String[0]));
@@ -203,9 +204,9 @@ public enum MessagesUtil {
      */
     public void msg(final CommandSender target, final Map<String, String> map, final boolean ignoreCase) {
         if (this.isMultiLined()) {
-            Utils.msg(target, this.getMessages(), map, ignoreCase);
+            MinecraftUtils.msg(target, this.getMessages(), map, ignoreCase);
         } else {
-            Utils.msg(target, this.getMessages()[0], map, ignoreCase);
+            MinecraftUtils.msg(target, this.getMessages()[0], map, ignoreCase);
         }
     }
 
@@ -216,9 +217,9 @@ public enum MessagesUtil {
      */
     public void msgAll() {
         if (this.isMultiLined()) {
-            Bukkit.getOnlinePlayers().forEach(target -> Utils.msg(target, this.getMessages()));
+            Bukkit.getOnlinePlayers().forEach(target -> MinecraftUtils.msg(target, this.getMessages()));
         } else {
-            Bukkit.getOnlinePlayers().forEach(target -> Utils.msg(target, this.getMessages()[0]));
+            Bukkit.getOnlinePlayers().forEach(target -> MinecraftUtils.msg(target, this.getMessages()[0]));
         }
     }
 
@@ -232,9 +233,9 @@ public enum MessagesUtil {
      */
     public void msgAll(final Map<String, String> map, final boolean ignoreCase) {
         if (this.isMultiLined()) {
-            Bukkit.getOnlinePlayers().forEach(target -> Utils.msg(target, this.getMessages(), map, ignoreCase));
+            Bukkit.getOnlinePlayers().forEach(target -> MinecraftUtils.msg(target, this.getMessages(), map, ignoreCase));
         } else {
-            Bukkit.getOnlinePlayers().forEach(target -> Utils.msg(target, this.getMessages()[0], map, ignoreCase));
+            Bukkit.getOnlinePlayers().forEach(target -> MinecraftUtils.msg(target, this.getMessages()[0], map, ignoreCase));
         }
     }
 

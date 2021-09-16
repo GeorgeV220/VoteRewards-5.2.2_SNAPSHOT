@@ -1,11 +1,9 @@
-package com.georgev22.voterewards.utilities.database;
+package com.georgev22.voterewards.utilities.player;
 
+import com.georgev22.api.utilities.MinecraftUtils;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.utilities.OptionsUtil;
-import com.georgev22.voterewards.utilities.Utils;
 import com.georgev22.voterewards.utilities.interfaces.Callback;
-import com.georgev22.voterewards.utilities.player.User;
-import com.georgev22.voterewards.utilities.player.UserVoteData;
 import com.google.common.annotations.Beta;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -24,7 +22,7 @@ public record Backup(String fileName) {
         File backupFolder = new File(voteRewardPlugin.getDataFolder(), "backups");
         if (backupFolder.mkdirs()) {
             if (OptionsUtil.DEBUG_CREATE.isEnabled()) {
-                Utils.debug(voteRewardPlugin, "Backup folder has been created!");
+                MinecraftUtils.debug(voteRewardPlugin, "Backup folder has been created!");
             }
         }
         return backupFolder;
@@ -90,7 +88,7 @@ public record Backup(String fileName) {
                             @Override
                             public void onSuccess() {
                                 if (OptionsUtil.DEBUG_SAVE.isEnabled()) {
-                                    Utils.debug(VoteRewardPlugin.getInstance(),
+                                    MinecraftUtils.debug(VoteRewardPlugin.getInstance(),
                                             "User " + userVoteData.user().getName() + " successfully saved!",
                                             "Votes: " + userVoteData.user().getVotes(),
                                             "Daily Votes: " + userVoteData.user().getDailyVotes(),

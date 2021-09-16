@@ -1,13 +1,12 @@
 package com.georgev22.voterewards.listeners;
 
-import com.georgev22.externals.xseries.XMaterial;
-import com.georgev22.externals.xseries.XSound;
+import com.georgev22.api.externals.xseries.XMaterial;
+import com.georgev22.api.externals.xseries.XSound;
+import com.georgev22.api.utilities.MinecraftUtils;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.hooks.HolographicDisplays;
-import com.georgev22.voterewards.utilities.MinecraftVersion;
 import com.georgev22.voterewards.utilities.OptionsUtil;
 import com.georgev22.voterewards.utilities.Updater;
-import com.georgev22.voterewards.utilities.Utils;
 import com.georgev22.voterewards.utilities.interfaces.Callback;
 import com.georgev22.voterewards.utilities.player.UserVoteData;
 import com.georgev22.voterewards.utilities.player.VotePartyUtils;
@@ -25,6 +24,7 @@ import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.io.IOException;
 import java.util.EnumSet;
 import java.util.Objects;
 import java.util.Set;
@@ -36,8 +36,8 @@ public class PlayerListeners implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPreLogin(PlayerPreLoginEvent event) {
-        if (Utils.isLoginDisallowed())
-            event.disallow(PlayerPreLoginEvent.Result.KICK_OTHER, Utils.colorize(Utils.getDisallowLoginMessage()));
+        if (MinecraftUtils.isLoginDisallowed())
+            event.disallow(PlayerPreLoginEvent.Result.KICK_OTHER, MinecraftUtils.colorize(MinecraftUtils.getDisallowLoginMessage()));
     }
 
     @EventHandler
@@ -51,7 +51,11 @@ public class PlayerListeners implements Listener {
                     //OFFLINE VOTING
                     if (OptionsUtil.OFFLINE.isEnabled() && !Bukkit.getPluginManager().isPluginEnabled("AuthMeReloaded")) {
                         for (String serviceName : userVoteData.getOfflineServices()) {
-                            new VoteUtils(userVoteData.user()).processVote(serviceName, false);
+                            try {
+                                new VoteUtils(userVoteData.user()).processVote(serviceName, false);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         }
                         userVoteData.setOfflineServices(Lists.newArrayList());
                     }
@@ -79,7 +83,7 @@ public class PlayerListeners implements Listener {
         }
         final long elapsedMillis = sw.elapsed(TimeUnit.MILLISECONDS);
         if (OptionsUtil.DEBUG_LOAD.isEnabled()) {
-            Utils.debug(VoteRewardPlugin.getInstance(), "Elapsed time to load user data: " + elapsedMillis);
+            MinecraftUtils.debug(VoteRewardPlugin.getInstance(), "Elapsed time to load user data: " + elapsedMillis);
         }
 
         //UPDATER
@@ -103,7 +107,7 @@ public class PlayerListeners implements Listener {
                 if (OptionsUtil.REMINDER.isEnabled())
                     VoteUtils.reminderMap.remove(event.getPlayer());
                 if (OptionsUtil.DEBUG_SAVE.isEnabled()) {
-                    Utils.debug(voteRewardPlugin, "User " + event.getPlayer().getName() + " saved!",
+                    MinecraftUtils.debug(voteRewardPlugin, "User " + event.getPlayer().getName() + " saved!",
                             userVoteData.user().toString());
                 }
             }
@@ -120,7 +124,6 @@ public class PlayerListeners implements Listener {
     private final Set<Action> clicks = EnumSet.of(Action.RIGHT_CLICK_AIR, Action.RIGHT_CLICK_BLOCK,
             Action.LEFT_CLICK_AIR, Action.LEFT_CLICK_BLOCK);
 
-    @SuppressWarnings("deprecation")
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
         if (!clicks.contains(event.getAction())) {
@@ -147,7 +150,7 @@ public class PlayerListeners implements Listener {
             return;
         }
 
-        if (!meta.getDisplayName().equals(Utils.colorize(itemName))) {
+        if (!meta.getDisplayName().equals(MinecraftUtils.colorize(itemName))) {
             return;
         }
 
@@ -162,15 +165,15 @@ public class PlayerListeners implements Listener {
         new VotePartyUtils(player).chooseRandom(OptionsUtil.VOTEPARTY_RANDOM.isEnabled());
 
         if (OptionsUtil.VOTEPARTY_SOUND_CRATE.isEnabled()) {
-            if (MinecraftVersion.getCurrentVersion().isBelow(MinecraftVersion.V1_12_R1)) {
+            if (MinecraftUtils.MinecraftVersion.getCurrentVersion().isBelow(MinecraftUtils.MinecraftVersion.V1_12_R1)) {
                 player.getPlayer().playSound(player.getPlayer().getLocation(), XSound
                                 .matchXSound(OptionsUtil.SOUND_CRATE_OPEN.getStringValue()).get().parseSound(),
                         1000, 1);
                 if (OptionsUtil.DEBUG_USELESS.isEnabled()) {
-                    Utils.debug(voteRewardPlugin, "========================================================");
-                    Utils.debug(voteRewardPlugin, "SoundCategory doesn't exists in versions below 1.12");
-                    Utils.debug(voteRewardPlugin, "SoundCategory doesn't exists in versions below 1.12");
-                    Utils.debug(voteRewardPlugin, "========================================================");
+                    MinecraftUtils.debug(voteRewardPlugin, "========================================================");
+                    MinecraftUtils.debug(voteRewardPlugin, "SoundCategory doesn't exists in versions below 1.12");
+                    MinecraftUtils.debug(voteRewardPlugin, "SoundCategory doesn't exists in versions below 1.12");
+                    MinecraftUtils.debug(voteRewardPlugin, "========================================================");
                 }
             } else {
                 player.getPlayer().playSound(player.getPlayer().getLocation(), XSound

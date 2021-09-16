@@ -141,6 +141,7 @@ Options:
       vote received:
         sound: NOTE_PIANO
         channel: AMBIENT
+  discord: false
 Rewards:
   Worlds: #By world name and service name (you can disable 'Services' if you want "disable_services: true". Only for the 'Services' section)
     world:

@@ -1,12 +1,13 @@
 package com.georgev22.voterewards.hooks;
 
-import com.georgev22.externals.utilities.maps.ObjectMap;
+import com.georgev22.api.maps.ObjectMap;
+import com.georgev22.api.utilities.MinecraftUtils;
+import com.georgev22.api.utilities.Utils;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.configmanager.CFG;
 import com.georgev22.voterewards.utilities.configmanager.FileManager;
 import com.georgev22.voterewards.utilities.OptionsUtil;
-import com.georgev22.voterewards.utilities.Utils;
 import com.georgev22.voterewards.utilities.player.VotePartyUtils;
 import com.georgev22.voterewards.utilities.player.VoteUtils;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
@@ -48,7 +49,7 @@ public class HolographicDisplays {
         }
 
         for (String line : fileManager.getConfig().getFileConfiguration().getStringList("Holograms." + type)) {
-            hologram.appendTextLine(Utils.colorize(line));
+            hologram.appendTextLine(MinecraftUtils.colorize(line));
         }
 
         if (save) {
@@ -86,7 +87,7 @@ public class HolographicDisplays {
         Hologram hologram = getHologramMap().get(name);
 
         if (hologram == null) {
-            Utils.msg(player, "Hologram " + name + " doesn't exist");
+            MinecraftUtils.msg(player, "Hologram " + name + " doesn't exist");
             return;
         }
         hologram.getVisibilityManager().showTo(player);
@@ -102,7 +103,7 @@ public class HolographicDisplays {
         Hologram hologram = getHologramMap().get(name);
 
         if (hologram == null) {
-            Utils.msg(player, "Hologram " + name + " doesn't exist");
+            MinecraftUtils.msg(player, "Hologram " + name + " doesn't exist");
             return;
         }
 
@@ -172,7 +173,7 @@ public class HolographicDisplays {
             for (String placeholder : placeholders.keySet()) {
                 if (key.contains(placeholder)) {
                     TextLine line = (TextLine) hologram.getLine(i);
-                    line.setText(Utils.placeHolder(Utils.colorize(key), placeholders, true));
+                    line.setText(Utils.placeHolder(MinecraftUtils.colorize(key), placeholders, true));
                     break;
                 }
             }
@@ -220,7 +221,7 @@ public class HolographicDisplays {
             map.append("%alltimetop-" + allTimeTop + "%", args[0]).append("%alltimevote-" + allTimeTop + "%", args[1]);
             allTimeTop++;
         }
-        return map.append("%bar%", Utils.getProgressBar(
+        return map.append("%bar%", MinecraftUtils.getProgressBar(
                         data.getInt("VoteParty-Votes"),
                         OptionsUtil.VOTEPARTY_VOTES.getIntValue(),
                         OptionsUtil.VOTEPARTY_BARS.getIntValue(),
@@ -232,13 +233,13 @@ public class HolographicDisplays {
                 .append("%voteparty_votes_need%", OptionsUtil.VOTEPARTY_VOTES.getStringValue())
                 .append("%voteparty_total_votes%", String.valueOf(fileManager.getData().getFileConfiguration().getInt("VoteParty-Votes")))
                 .appendIfTrue("%voteparty_votes_full%",
-                        Utils.colorize(Utils.placeHolder(
+                        MinecraftUtils.colorize(Utils.placeHolder(
                                 MessagesUtil.VOTEPARTY_WAITING_FOR_MORE_PLAYERS_PLACEHOLDER.getMessages()[0],
                                 ObjectMap.newHashObjectMap()
                                         .append("%online%", Bukkit.getOnlinePlayers().size())
                                         .append("%need%", OptionsUtil.VOTEPARTY_PLAYERS_NEED.getIntValue()),
                                 true)),
-                        Utils.colorize(Utils.placeHolder(
+                        MinecraftUtils.colorize(Utils.placeHolder(
                                 MessagesUtil.VOTEPARTY_PLAYERS_FULL_PLACEHOLDER.getMessages()[0],
                                 ObjectMap.newHashObjectMap()
                                         .append("%until%", String.valueOf(OptionsUtil.VOTEPARTY_VOTES.getIntValue()

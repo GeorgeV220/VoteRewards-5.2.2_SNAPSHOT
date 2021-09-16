@@ -1,7 +1,7 @@
 package com.georgev22.voterewards.commands;
 
+import com.georgev22.api.utilities.MinecraftUtils;
 import com.georgev22.voterewards.utilities.MessagesUtil;
-import com.georgev22.voterewards.utilities.Utils;
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.model.VotifierEvent;
 import org.bukkit.Bukkit;
@@ -20,7 +20,7 @@ public class FakeVote extends BukkitCommand {
         this.description = "FakeVote command";
         this.usageMessage = "/fakevote";
         this.setPermission("voterewards.fakevote");
-        this.setPermissionMessage(Utils.colorize(MessagesUtil.NO_PERMISSION.getMessages()[0]));
+        this.setPermissionMessage(MinecraftUtils.colorize(MessagesUtil.NO_PERMISSION.getMessages()[0]));
         this.setAliases(Arrays.asList("vrfake", "vrfakevote", "vfake", "vfakevote"));
     }
 
@@ -29,7 +29,7 @@ public class FakeVote extends BukkitCommand {
 
         if (args.length == 0) {
             if (!(sender instanceof Player)) {
-                Utils.msg(sender, "&c&l(!) &cNot enough arguments");
+                MinecraftUtils.msg(sender, "&c&l(!) &cNot enough arguments");
                 return true;
             }
             process(sender.getName(), "fakeVote");

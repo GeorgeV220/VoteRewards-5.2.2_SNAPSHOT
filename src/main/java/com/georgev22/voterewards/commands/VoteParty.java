@@ -1,11 +1,11 @@
 package com.georgev22.voterewards.commands;
 
-import com.georgev22.externals.utilities.maps.ObjectMap;
-import com.georgev22.voterewards.VoteRewardPlugin;
+import com.georgev22.api.maps.ObjectMap;
+import com.georgev22.api.utilities.MinecraftUtils;
+import com.georgev22.api.utilities.Utils;
 import com.georgev22.voterewards.utilities.configmanager.FileManager;
 import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.OptionsUtil;
-import com.georgev22.voterewards.utilities.Utils;
 import com.georgev22.voterewards.utilities.player.UserVoteData;
 import com.georgev22.voterewards.utilities.player.VotePartyUtils;
 import org.bukkit.Bukkit;
@@ -18,14 +18,12 @@ import java.util.Arrays;
 
 public class VoteParty extends BukkitCommand {
 
-    private final VoteRewardPlugin m = VoteRewardPlugin.getInstance();
-
     public VoteParty() {
         super("voteparty");
         this.description = "VoteParty command";
         this.usageMessage = "/voteparty";
         this.setPermission("voterewards.voteparty");
-        this.setPermissionMessage(Utils.colorize(MessagesUtil.NO_PERMISSION.getMessages()[0]));
+        this.setPermissionMessage(MinecraftUtils.colorize(MessagesUtil.NO_PERMISSION.getMessages()[0]));
         this.setAliases(Arrays.asList("vvp", "vp", "vrvp"));
     }
 
@@ -68,7 +66,7 @@ public class VoteParty extends BukkitCommand {
                 }
                 if (!(sender instanceof Player)) {
                     if (args.length < 2) {
-                        Utils.msg(sender, "&c&l(!) &c/vp give <player>");
+                        MinecraftUtils.msg(sender, "&c&l(!) &c/vp give <player>");
                         return true;
                     }
                     final Player target = Bukkit.getPlayerExact(args[1]);
@@ -84,7 +82,7 @@ public class VoteParty extends BukkitCommand {
                         return true;
                     }
                     if (!Utils.isInt(args[2])) {
-                        Utils.msg(sender, "&c&l(!) &cEnter a valid number");
+                        MinecraftUtils.msg(sender, "&c&l(!) &cEnter a valid number");
                         return true;
                     }
                     return true;
@@ -109,7 +107,7 @@ public class VoteParty extends BukkitCommand {
                     return true;
                 }
                 if (!Utils.isInt(args[2])) {
-                    Utils.msg(sender, "&c&l(!) &cEnter a valid number");
+                    MinecraftUtils.msg(sender, "&c&l(!) &cEnter a valid number");
                     return true;
                 }
                 ((Player) sender).getInventory().addItem(VotePartyUtils.crate(Integer.parseInt(args[2])));

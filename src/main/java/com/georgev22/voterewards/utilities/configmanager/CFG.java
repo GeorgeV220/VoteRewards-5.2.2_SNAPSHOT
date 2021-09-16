@@ -1,6 +1,6 @@
 package com.georgev22.voterewards.utilities.configmanager;
 
-import com.georgev22.voterewards.utilities.Utils;
+import com.georgev22.api.utilities.MinecraftUtils;
 import com.google.common.collect.Sets;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -48,7 +48,7 @@ public final class CFG {
     public void setup() {
         if (!this.plugin.getDataFolder().exists()) {
             if (this.plugin.getDataFolder().mkdir()) {
-                Utils.debug(plugin, "Folder " + this.plugin.getDataFolder().getName() + " has been created!");
+                MinecraftUtils.debug(plugin, "Folder " + this.plugin.getDataFolder().getName() + " has been created!");
             }
         }
 
@@ -57,7 +57,7 @@ public final class CFG {
         if (!this.file.exists()) {
             try {
                 if (this.file.createNewFile()) {
-                    Utils.debug(plugin, "File " + this.file.getName() + " has been created!");
+                    MinecraftUtils.debug(plugin, "File " + this.file.getName() + " has been created!");
                 }
             } catch (final IOException e) {
                 e.printStackTrace();

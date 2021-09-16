@@ -1,16 +1,15 @@
 package com.georgev22.voterewards.utilities.inventory.inventories;
 
-import com.georgev22.externals.utilities.maps.ObjectMap;
+import com.georgev22.api.inventory.CustomItemInventory;
+import com.georgev22.api.inventory.IPagedInventory;
+import com.georgev22.api.inventory.NavigationRow;
+import com.georgev22.api.inventory.handlers.PagedInventoryCustomNavigationHandler;
+import com.georgev22.api.inventory.navigationitems.*;
+import com.georgev22.api.maps.ObjectMap;
+import com.georgev22.api.utilities.MinecraftUtils;
 import com.georgev22.voterewards.VoteRewardPlugin;
-import com.georgev22.voterewards.utilities.Utils;
 import com.georgev22.voterewards.utilities.configmanager.FileManager;
-import com.georgev22.voterewards.utilities.inventory.CustomItemInventory;
-import com.georgev22.voterewards.utilities.inventory.IPagedInventory;
 import com.georgev22.voterewards.utilities.inventory.ItemBuilder;
-import com.georgev22.voterewards.utilities.inventory.NavigationRow;
-import com.georgev22.voterewards.utilities.inventory.handlers.PagedInventoryCustomNavigationHandler;
-import com.georgev22.voterewards.utilities.inventory.navigationitems.*;
-import com.georgev22.voterewards.utilities.player.UserVoteData;
 import com.georgev22.voterewards.utilities.player.VoteUtils;
 import com.google.common.collect.Lists;
 import org.bukkit.Bukkit;
@@ -54,9 +53,6 @@ public class VoteTopInventory {
 
         List<Inventory> inventoryList = Lists.newArrayList();
 
-        UserVoteData userManager = UserVoteData.getUser(player.getUniqueId());
-
-
         ObjectMap<Integer, ItemStack> objectMap = ObjectMap.newHashObjectMap();
 
         if (fileManager.getVoteTopInventory().getFileConfiguration().getConfigurationSection("custom item.gui") != null)
@@ -67,7 +63,7 @@ public class VoteTopInventory {
                 objectMap.append(Integer.parseInt(s), itemStack);
             }
 
-        CustomItemInventory customItemInventory = new CustomItemInventory(Utils.colorize(fileManager.getVoteTopInventory().getFileConfiguration().getString("name")), objectMap, 54);
+        CustomItemInventory customItemInventory = new CustomItemInventory(MinecraftUtils.colorize(fileManager.getVoteTopInventory().getFileConfiguration().getString("name")), objectMap, 54);
 
         Inventory inventory = customItemInventory.getInventory();
 

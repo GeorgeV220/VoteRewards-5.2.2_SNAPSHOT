@@ -1,8 +1,8 @@
 package com.georgev22.voterewards.utilities;
 
-import com.georgev22.externals.xseries.XMaterial;
+import com.georgev22.api.colors.Color;
+import com.georgev22.api.externals.xseries.XMaterial;
 import com.georgev22.voterewards.VoteRewardPlugin;
-import com.georgev22.voterewards.utilities.colors.Color;
 import com.georgev22.voterewards.utilities.inventory.ItemBuilder;
 import com.google.common.collect.Lists;
 import org.bukkit.inventory.ItemStack;
@@ -187,7 +187,8 @@ public enum OptionsUtil {
 
     VOTEPARTY_CRATE_LORES("voteparty.crate.lores", Collections.singletonList("&cPlace me")),
 
-    VOTEPARTY_REWARDS("voteparty.rewards", Arrays.asList("eco give %player% 6547", "give %player% minecraft:nether_star 31")),
+    VOTEPARTY_REWARDS("voteparty.rewards",
+            Arrays.asList("eco give %player% 6547", "give %player% minecraft:nether_star 31")),
 
     SOUND_VOTE("sound.sounds.vote received.sound", "NOTE_PIANO"),
 
@@ -203,6 +204,7 @@ public enum OptionsUtil {
 
     EXPERIMENTAL_FEATURES("experimental features", false),
 
+    DISCORD("discord", false),
     ;
     private final String pathName;
     private final Object value;
@@ -244,11 +246,13 @@ public enum OptionsUtil {
             if (voteRewardPlugin.getConfig().get(getPath()) == null) {
                 return (ItemStack) getDefaultValue();
             }
-            ItemBuilder itemBuilder = new ItemBuilder(XMaterial.valueOf(voteRewardPlugin.getConfig().getString(getPath() + ".item")).parseMaterial())
+            ItemBuilder itemBuilder = new ItemBuilder(
+                    XMaterial.valueOf(voteRewardPlugin.getConfig().getString(getPath() + ".item")).parseMaterial())
                     .amount(voteRewardPlugin.getConfig().getInt(getPath() + ".amount"))
                     .title(voteRewardPlugin.getConfig().getString(getPath() + ".title"))
                     .lores(voteRewardPlugin.getConfig().getStringList(getPath() + ".lores"))
-                    .showAllAttributes(voteRewardPlugin.getConfig().getBoolean(getPath() + ".show all attributes"))
+                    .showAllAttributes(
+                            voteRewardPlugin.getConfig().getBoolean(getPath() + ".show all attributes"))
                     .glow(voteRewardPlugin.getConfig().getBoolean(getPath() + ".glow"));
             return itemBuilder.build();
         }

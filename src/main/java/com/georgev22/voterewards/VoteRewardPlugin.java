@@ -1,5 +1,16 @@
 package com.georgev22.voterewards;
 
+import com.georgev22.api.database.Database;
+import com.georgev22.api.database.mongo.MongoDB;
+import com.georgev22.api.database.sql.mysql.MySQL;
+import com.georgev22.api.database.sql.postgresql.PostgreSQL;
+import com.georgev22.api.database.sql.sqlite.SQLite;
+import com.georgev22.api.maps.ObjectMap;
+import com.georgev22.api.maven.LibraryLoader;
+import com.georgev22.api.maven.MavenLibrary;
+import com.georgev22.api.utilities.MinecraftUtils;
+import com.georgev22.api.utilities.MinecraftUtils.MinecraftVersion;
+import com.georgev22.api.inventory.PagedInventoryAPI;
 import com.georgev22.voterewards.commands.*;
 import com.georgev22.voterewards.hooks.*;
 import com.georgev22.voterewards.listeners.DeveloperInformListener;
@@ -8,16 +19,8 @@ import com.georgev22.voterewards.listeners.VotifierListener;
 import com.georgev22.voterewards.utilities.*;
 import com.georgev22.voterewards.utilities.configmanager.CFG;
 import com.georgev22.voterewards.utilities.configmanager.FileManager;
-import com.georgev22.voterewards.utilities.database.Database;
-import com.georgev22.voterewards.utilities.database.mongo.MongoDB;
-import com.georgev22.voterewards.utilities.database.sql.mysql.MySQL;
-import com.georgev22.voterewards.utilities.database.sql.postgresql.PostgreSQL;
-import com.georgev22.voterewards.utilities.database.sql.sqlite.SQLite;
 import com.georgev22.voterewards.utilities.interfaces.Callback;
 import com.georgev22.voterewards.utilities.interfaces.IDatabaseType;
-import com.georgev22.voterewards.utilities.inventory.PagedInventoryAPI;
-import com.georgev22.voterewards.utilities.maven.LibraryLoader;
-import com.georgev22.voterewards.utilities.maven.MavenLibrary;
 import com.georgev22.voterewards.utilities.player.UserVoteData;
 import com.georgev22.voterewards.utilities.player.VoteUtils;
 import org.bstats.bukkit.Metrics;
@@ -49,6 +52,7 @@ public class VoteRewardPlugin extends JavaPlugin {
     private Connection connection = null;
     private MongoDB mongoDB = null;
     private PagedInventoryAPI api = null;
+    private PAPI placeholdersAPI = null;
 
     /**
      * Return the VoteRewardPlugin instance
@@ -62,7 +66,7 @@ public class VoteRewardPlugin extends JavaPlugin {
     @Override
     public void onLoad() {
         if (MinecraftVersion.getCurrentVersion().isBelow(MinecraftVersion.V1_16_R1))
-            new LibraryLoader(this).loadAll();
+            new LibraryLoader(this.getClass(), this.getDataFolder()).loadAll();
     }
 
     @Override
@@ -74,8 +78,8 @@ public class VoteRewardPlugin extends JavaPlugin {
         FileConfiguration data = dataCFG.getFileConfiguration();
         api = new PagedInventoryAPI(this);
         if (OptionsUtil.DEBUG_USELESS.isEnabled())
-            Utils.debug(this, "onEnable Thread ID: " + Thread.currentThread().getId());
-        Utils.registerListeners(new VotifierListener(), new PlayerListeners(), new DeveloperInformListener());
+            MinecraftUtils.debug(this, "onEnable Thread ID: " + Thread.currentThread().getId());
+        MinecraftUtils.registerListeners(this, new VotifierListener(), new PlayerListeners(), new DeveloperInformListener());
 
         if (data.get("month") == null) {
             data.set("month", Calendar.getInstance().getTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getMonthValue());
@@ -83,21 +87,21 @@ public class VoteRewardPlugin extends JavaPlugin {
         }
 
         if (OptionsUtil.COMMAND_VOTEREWARDS.isEnabled())
-            Utils.registerCommand("voterewards", new VoteRewards());
+            MinecraftUtils.registerCommand("voterewards", new VoteRewards());
         if (OptionsUtil.COMMAND_FAKEVOTE.isEnabled())
-            Utils.registerCommand("fakevote", new FakeVote());
+            MinecraftUtils.registerCommand("fakevote", new FakeVote());
         if (OptionsUtil.COMMAND_VOTE.isEnabled())
-            Utils.registerCommand("vote", new Vote());
+            MinecraftUtils.registerCommand("vote", new Vote());
         if (OptionsUtil.COMMAND_VOTES.isEnabled())
-            Utils.registerCommand("votes", new Votes());
+            MinecraftUtils.registerCommand("votes", new Votes());
         if (OptionsUtil.COMMAND_VOTEPARTY.isEnabled())
-            Utils.registerCommand("voteparty", new VoteParty());
+            MinecraftUtils.registerCommand("voteparty", new VoteParty());
         if (OptionsUtil.COMMAND_REWARDS.isEnabled())
-            Utils.registerCommand("rewards", new Rewards());
+            MinecraftUtils.registerCommand("rewards", new Rewards());
         if (OptionsUtil.COMMAND_VOTETOP.isEnabled())
-            Utils.registerCommand("votetop", new VoteTop());
+            MinecraftUtils.registerCommand("votetop", new VoteTop());
         if (OptionsUtil.COMMAND_HOLOGRAM.isEnabled())
-            Utils.registerCommand("hologram", new Holograms());
+            MinecraftUtils.registerCommand("hologram", new Holograms());
 
         Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
             try {
@@ -108,8 +112,9 @@ public class VoteRewardPlugin extends JavaPlugin {
         });
 
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-            new PAPI().register();
-            Bukkit.getLogger().info("[VoteRewards] Hooked into PlaceholderAPI!");
+            placeholdersAPI = new PAPI();
+            if (placeholdersAPI.register())
+                Bukkit.getLogger().info("[VoteRewards] Hooked into PlaceholderAPI!");
         }
 
         if (Bukkit.getPluginManager().isPluginEnabled("MVdWPlaceholderAPI")) {
@@ -119,7 +124,9 @@ public class VoteRewardPlugin extends JavaPlugin {
 
         if (Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays")) {
             if (data.get("Holograms") != null) {
-                data.getConfigurationSection("Holograms").getKeys(false).forEach(s -> HolographicDisplays.create(s, (Location) data.get("Holograms." + s + ".location"), data.getString("Holograms." + s + ".type"), false));
+                data.getConfigurationSection("Holograms").getKeys(false)
+                        .forEach(s -> HolographicDisplays.create(s, (Location) data.get("Holograms." + s + ".location"),
+                                data.getString("Holograms." + s + ".type"), false));
             }
             HolographicDisplays.setHook(true);
             Bukkit.getLogger().info("[VoteRewards] Hooked into HolographicDisplays!");
@@ -140,19 +147,26 @@ public class VoteRewardPlugin extends JavaPlugin {
         }
 
         if (MinecraftVersion.getCurrentVersion().isBelow(MinecraftVersion.V1_12_R1)) {
-            Utils.debug(this, "This version of Minecraft is extremely outdated and support for it has reached its end of life. You will still be able to run VoteRewards on this Minecraft version(" + MinecraftVersion.getCurrentVersion().name().toLowerCase() + "). Please consider updating to give your players a better experience and to avoid issues that have long been fixed.");
+            MinecraftUtils.debug(this, "This version of Minecraft is extremely outdated and support for it has reached its end of life. You will still be able to run VoteRewards on this Minecraft version(" + MinecraftVersion.getCurrentVersion().name().toLowerCase() + "). Please consider updating to give your players a better experience and to avoid issues that have long been fixed.");
         }
     }
 
     @Override
     public void onDisable() {
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            if (placeholdersAPI.isRegistered()) {
+                if (placeholdersAPI.unregister()) {
+                    Bukkit.getLogger().info("[VoteRewards] Unhooked from PlaceholderAPI!");
+                }
+            }
+        }
         Bukkit.getOnlinePlayers().forEach(player -> {
             UserVoteData userVoteData = UserVoteData.getUser(player.getUniqueId());
             userVoteData.save(false, new Callback() {
                 @Override
                 public void onSuccess() {
                     if (OptionsUtil.DEBUG_SAVE.isEnabled()) {
-                        Utils.debug(VoteRewardPlugin.getInstance(),
+                        MinecraftUtils.debug(VoteRewardPlugin.getInstance(),
                                 "User " + userVoteData.user().getName() + " successfully saved!",
                                 "Votes: " + userVoteData.user().getVotes(),
                                 "Daily Votes: " + userVoteData.user().getDailyVotes(),
@@ -172,21 +186,21 @@ public class VoteRewardPlugin extends JavaPlugin {
         if (HolographicDisplays.isHooked())
             HolographicDisplays.getHologramMap().forEach((name, hologram) -> HolographicDisplays.remove(name, false));
         if (OptionsUtil.COMMAND_VOTEREWARDS.isEnabled())
-            Utils.unRegisterCommand("voterewards");
+            MinecraftUtils.unRegisterCommand("voterewards");
         if (OptionsUtil.COMMAND_FAKEVOTE.isEnabled())
-            Utils.unRegisterCommand("fakevote");
+            MinecraftUtils.unRegisterCommand("fakevote");
         if (OptionsUtil.COMMAND_VOTE.isEnabled())
-            Utils.unRegisterCommand("vote");
+            MinecraftUtils.unRegisterCommand("vote");
         if (OptionsUtil.COMMAND_VOTES.isEnabled())
-            Utils.unRegisterCommand("votes");
+            MinecraftUtils.unRegisterCommand("votes");
         if (OptionsUtil.COMMAND_VOTEPARTY.isEnabled())
-            Utils.unRegisterCommand("voteparty");
+            MinecraftUtils.unRegisterCommand("voteparty");
         if (OptionsUtil.COMMAND_REWARDS.isEnabled())
-            Utils.unRegisterCommand("rewards");
+            MinecraftUtils.unRegisterCommand("rewards");
         if (OptionsUtil.COMMAND_VOTETOP.isEnabled())
-            Utils.unRegisterCommand("votetop");
+            MinecraftUtils.unRegisterCommand("votetop");
         if (OptionsUtil.COMMAND_HOLOGRAM.isEnabled())
-            Utils.unRegisterCommand("hologram");
+            MinecraftUtils.unRegisterCommand("hologram");
         if (connection != null) {
             try {
                 connection.close();
@@ -207,7 +221,17 @@ public class VoteRewardPlugin extends JavaPlugin {
      */
     private void setupDatabase() throws Exception {
         if (OptionsUtil.DEBUG_USELESS.isEnabled())
-            Utils.debug(this, "Setup database Thread ID: " + Thread.currentThread().getId());
+            MinecraftUtils.debug(this, "Setup database Thread ID: " + Thread.currentThread().getId());
+        ObjectMap<String, ObjectMap.Pair<String, String>> map = ObjectMap.newHashObjectMap()
+                .append("uuid", ObjectMap.Pair.create("VARCHAR(38)", "NULL"))
+                .append("name", ObjectMap.Pair.create("VARCHAR(18)", "NULL"))
+                .append("votes", ObjectMap.Pair.create("INT(10)", "0"))
+                .append("time", ObjectMap.Pair.create("VARCHAR(20)", "0"))
+                .append("voteparty", ObjectMap.Pair.create("INT(10)", "0"))
+                .append("daily", ObjectMap.Pair.create("BIGINT(10)", "0"))
+                .append("services", ObjectMap.Pair.create("VARCHAR(10000)", "NULL"))
+                .append("servicesLastVote", ObjectMap.Pair.create("VARCHAR(10000)", "NULL"))
+                .append("totalvotes", ObjectMap.Pair.create("INT(10)", "0"));
         switch (OptionsUtil.DATABASE_TYPE.getStringValue()) {
             case "MySQL" -> {
                 if (connection == null || connection.isClosed()) {
@@ -219,8 +243,8 @@ public class VoteRewardPlugin extends JavaPlugin {
                             OptionsUtil.DATABASE_PASSWORD.getStringValue());
                     iDatabaseType = new UserVoteData.SQLUserUtils();
                     connection = database.openConnection();
-                    database.createTable();
-                    Utils.debug(this, "Database: MySQL");
+                    database.createTable(OptionsUtil.DATABASE_TABLE_NAME.getStringValue(), map);
+                    MinecraftUtils.debug(this, "Database: MySQL");
                 }
             }
             case "PostgreSQL" -> {
@@ -233,8 +257,8 @@ public class VoteRewardPlugin extends JavaPlugin {
                             OptionsUtil.DATABASE_PASSWORD.getStringValue());
                     iDatabaseType = new UserVoteData.SQLUserUtils();
                     connection = database.openConnection();
-                    database.createTable();
-                    Utils.debug(this, "Database: PostgreSQL");
+                    database.createTable(OptionsUtil.DATABASE_TABLE_NAME.getStringValue(), map);
+                    MinecraftUtils.debug(this, "Database: PostgreSQL");
                 }
             }
             case "SQLite" -> {
@@ -244,8 +268,8 @@ public class VoteRewardPlugin extends JavaPlugin {
                             OptionsUtil.DATABASE_SQLITE.getStringValue());
                     iDatabaseType = new UserVoteData.SQLUserUtils();
                     connection = database.openConnection();
-                    database.createTable();
-                    Utils.debug(this, "Database: SQLite");
+                    database.createTable(OptionsUtil.DATABASE_TABLE_NAME.getStringValue(), map);
+                    MinecraftUtils.debug(this, "Database: SQLite");
                 }
             }
             case "MongoDB" -> {
@@ -258,12 +282,12 @@ public class VoteRewardPlugin extends JavaPlugin {
                         OptionsUtil.DATABASE_MONGO_COLLECTION.getStringValue());
                 database = null;
                 iDatabaseType = new UserVoteData.MongoDBUtils();
-                Utils.debug(this, "Database: MongoDB");
+                MinecraftUtils.debug(this, "Database: MongoDB");
             }
             case "File" -> {
                 database = null;
                 iDatabaseType = new UserVoteData.FileUserUtils();
-                Utils.debug(this, "Database: File");
+                MinecraftUtils.debug(this, "Database: File");
             }
             default -> {
                 database = null;
@@ -283,7 +307,7 @@ public class VoteRewardPlugin extends JavaPlugin {
                     public void onSuccess() {
                         UserVoteData.getAllUsersMap().append(userVoteData.user().getUniqueId(), userVoteData.user());
                         if (OptionsUtil.DEBUG_LOAD.isEnabled())
-                            Utils.debug(VoteRewardPlugin.getInstance(), "Successfully loaded user " + userVoteData.user().getOfflinePlayer().getName());
+                            MinecraftUtils.debug(VoteRewardPlugin.getInstance(), "Successfully loaded user " + userVoteData.user().getOfflinePlayer().getName());
                     }
 
                     @Override
@@ -341,8 +365,7 @@ public class VoteRewardPlugin extends JavaPlugin {
     }
 
     /**
-     * Return MongoDB instance when
-     * MongoDB is in use.
+     * Return MongoDB instance when MongoDB is in use.
      * <p>
      * Returns null if MongoDB is not in use
      *

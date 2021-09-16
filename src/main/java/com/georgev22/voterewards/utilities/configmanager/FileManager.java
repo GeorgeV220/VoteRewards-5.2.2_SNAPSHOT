@@ -17,6 +17,7 @@ public final class FileManager {
     private CFG messages;
     private CFG voteInventory;
     private CFG voteTopInventory;
+    private CFG discord;
 
     private FileManager() {
     }
@@ -27,6 +28,7 @@ public final class FileManager {
         this.data = new CFG(plugin, "data", true);
         this.voteInventory = new CFG(plugin, "inventories" + File.separator + "vote", true);
         this.voteTopInventory = new CFG(plugin, "inventories" + File.separator + "votetop", true);
+        this.discord = new CFG(plugin, "discord", true);
     }
 
     public CFG getMessages() {
@@ -47,5 +49,9 @@ public final class FileManager {
 
     public CFG getVoteTopInventory() {
         return voteTopInventory;
+    }
+
+    public CFG getDiscord() {
+        return discord;
     }
 }

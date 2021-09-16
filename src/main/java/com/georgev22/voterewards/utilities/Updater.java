@@ -1,5 +1,6 @@
 package com.georgev22.voterewards.utilities;
 
+import com.georgev22.api.utilities.MinecraftUtils;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -31,7 +32,7 @@ public class Updater {
 
             } catch (Exception ex) {
 
-                Utils.debug(voteRewardPlugin, "Failed to check for an update on Git.", "Either Git or you are offline or are slow to respond.");
+                MinecraftUtils.debug(voteRewardPlugin, "Failed to check for an update on Git.", "Either Git or you are offline or are slow to respond.");
 
                 ex.printStackTrace();
 
@@ -39,14 +40,14 @@ public class Updater {
 
             }
             if (compareVersions(onlineVersion.replace("v", ""), localVersion.replace("v", "")) == 0) {
-                Utils.debug(voteRewardPlugin, "You are running the newest build.");
+                MinecraftUtils.debug(voteRewardPlugin, "You are running the newest build.");
             } else if (compareVersions(onlineVersion.replace("v", ""), localVersion.replace("v", "")) == 1) {
-                Utils.debug(voteRewardPlugin,
+                MinecraftUtils.debug(voteRewardPlugin,
                         "New stable version available!",
                         "Version: " + onlineVersion + ". You are running version: " + localVersion,
                         "Update at: https://github.com/GeorgeV220/VoteRewards/releases/");
             } else {
-                Utils.debug(voteRewardPlugin, "You are currently using the " + localVersion + " version which is under development.",
+                MinecraftUtils.debug(voteRewardPlugin, "You are currently using the " + localVersion + " version which is under development.",
                         "Your version is " + localVersion,
                         "Latest released version is " + onlineVersion,
                         "If you have problems contact me on discord or github. Thank you for testing this version");
@@ -57,7 +58,7 @@ public class Updater {
 
     public Updater(Player player) {
         Bukkit.getScheduler().runTaskAsynchronously(voteRewardPlugin, () -> {
-            Utils.msg(player, "&e&lUpdater &8» &6Checking for Updates ...");
+            MinecraftUtils.msg(player, "&e&lUpdater &8» &6Checking for Updates ...");
             try {
                 System.setProperty("http.agent", "Chrome");
                 HttpsURLConnection con = (HttpsURLConnection) new URL(BASE_URL).openConnection();
@@ -69,8 +70,8 @@ public class Updater {
                 onlineVersion = new BufferedReader(new InputStreamReader(con.getInputStream())).readLine();
 
             } catch (Exception ex) {
-                Utils.msg(player, "&e&lUpdater &8» &cFailed to check for an update on Git.");
-                Utils.msg(player, "&e&lUpdater &8» &cEither Git or you are offline or are slow to respond.");
+                MinecraftUtils.msg(player, "&e&lUpdater &8» &cFailed to check for an update on Git.");
+                MinecraftUtils.msg(player, "&e&lUpdater &8» &cEither Git or you are offline or are slow to respond.");
 
                 ex.printStackTrace();
 
@@ -78,18 +79,18 @@ public class Updater {
 
             }
             if (compareVersions(onlineVersion.replace("v", ""), localVersion.replace("v", "")) == 0) {
-                Utils.msg(player, "&e&lUpdater &8» &6You are running the newest build.");
+                MinecraftUtils.msg(player, "&e&lUpdater &8» &6You are running the newest build.");
             } else if (compareVersions(onlineVersion.replace("v", ""), localVersion.replace("v", "")) == 1) {
-                Utils.msg(player,
+                MinecraftUtils.msg(player,
                         "&e&lUpdater &8» &6New version available!");
-                Utils.msg(player, "&e&lUpdater &8» &6Version: &c"
+                MinecraftUtils.msg(player, "&e&lUpdater &8» &6Version: &c"
                         + onlineVersion + ". &6You are running version: &c" + localVersion);
-                Utils.msg(player, "&e&lUpdater &8» &6Update at: https://github.com/GeorgeV220/VoteRewards/releases/");
+                MinecraftUtils.msg(player, "&e&lUpdater &8» &6Update at: https://github.com/GeorgeV220/VoteRewards/releases/");
 
             } else {
-                Utils.msg(player, "&e&lUpdater &8» &6You are currently using the &c" + localVersion + " &6version which is under development. If you have problems contact me on discord or github");
-                Utils.msg(player, "&e&lUpdater &8» &6Your version is &c" + localVersion);
-                Utils.msg(player, "&e&lUpdater &8» &6Latest released version is &c" + onlineVersion);
+                MinecraftUtils.msg(player, "&e&lUpdater &8» &6You are currently using the &c" + localVersion + " &6version which is under development. If you have problems contact me on discord or github");
+                MinecraftUtils.msg(player, "&e&lUpdater &8» &6Your version is &c" + localVersion);
+                MinecraftUtils.msg(player, "&e&lUpdater &8» &6Latest released version is &c" + onlineVersion);
             }
         });
     }

@@ -1,10 +1,11 @@
 package com.georgev22.voterewards.utilities.player;
 
-import com.georgev22.externals.utilities.maps.HashObjectMap;
-import com.georgev22.externals.utilities.maps.ObjectMap;
+import com.georgev22.api.maps.HashObjectMap;
+import com.georgev22.api.maps.ObjectMap;
+import com.georgev22.api.utilities.MinecraftUtils;
+import com.georgev22.api.utilities.Utils;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.utilities.OptionsUtil;
-import com.georgev22.voterewards.utilities.Utils;
 import com.georgev22.voterewards.utilities.interfaces.Callback;
 import com.georgev22.voterewards.utilities.interfaces.IDatabaseType;
 import com.google.common.collect.Lists;
@@ -18,6 +19,7 @@ import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.IOException;
@@ -60,7 +62,7 @@ public record UserVoteData(User user) {
     public static void loadAllUsers() throws Exception {
         allUsersMap.putAll(voteRewardPlugin.getIDatabaseType().getAllUsers());
         if (OptionsUtil.DEBUG_LOAD.isEnabled())
-            Utils.debug(voteRewardPlugin, getAllUsersMap().toString());
+            MinecraftUtils.debug(voteRewardPlugin, getAllUsersMap().toString());
     }
 
     /**
@@ -83,7 +85,7 @@ public record UserVoteData(User user) {
     public static UserVoteData getUser(UUID uuid) {
         if (!allUsersMap.containsKey(uuid)) {
             if (OptionsUtil.DEBUG_VOTE_PRE.isEnabled()) {
-                Utils.debug(voteRewardPlugin, "Player " + Bukkit.getOfflinePlayer(uuid).getName() + " is not loaded!");
+                MinecraftUtils.debug(voteRewardPlugin, "Player " + Bukkit.getOfflinePlayer(uuid).getName() + " is not loaded!");
             }
 
             allUsersMap.append(uuid, new User(uuid));
@@ -93,7 +95,7 @@ public record UserVoteData(User user) {
 
     public UserVoteData {
         if (OptionsUtil.DEBUG_USELESS.isEnabled())
-            Utils.debug(voteRewardPlugin, user.toString());
+            MinecraftUtils.debug(voteRewardPlugin, user.toString());
     }
 
     public UserVoteData appendServiceLastVote(String serviceName) {
@@ -156,7 +158,7 @@ public record UserVoteData(User user) {
      */
     public UserVoteData setOfflineServices(List<String> services) {
         if (OptionsUtil.DEBUG_VOTES_OFFLINE.isEnabled())
-            Utils.debug(voteRewardPlugin, "Offline Voting Debug", services.toString());
+            MinecraftUtils.debug(voteRewardPlugin, "Offline Voting Debug", services.toString());
         user.append("services", services);
         return this;
     }
@@ -263,14 +265,14 @@ public record UserVoteData(User user) {
 
     /**
      * Run the commands from config
-     * Check {@link Utils#runCommand(String)}
+     * Check {@link MinecraftUtils#runCommand(Plugin, String)}
      *
      * @param s the list with all the commands
      */
     public void runCommands(List<String> s) {
-        Utils.debug(voteRewardPlugin, "RUNNING COMMANDS FOR PLAYER: " + user.getName());
+        MinecraftUtils.debug(voteRewardPlugin, "RUNNING COMMANDS FOR PLAYER: " + user.getName());
         for (String b : s) {
-            Utils.runCommand(b.replace("%player%", user.getName()));
+            MinecraftUtils.runCommand(voteRewardPlugin, b.replace("%player%", user.getName()));
         }
     }
 
@@ -371,7 +373,7 @@ public record UserVoteData(User user) {
                             "`totalvotes` = '" + user.getAllTimeVotes() + "' " +
                             "WHERE `uuid` = '" + user.getUniqueId() + "'");
             if (OptionsUtil.DEBUG_SAVE.isEnabled()) {
-                Utils.debug(voteRewardPlugin,
+                MinecraftUtils.debug(voteRewardPlugin,
                         "User " + user.getName() + " successfully saved!",
                         "Votes: " + user.getVotes(),
                         "Daily Votes: " + user.getDailyVotes(),
@@ -391,7 +393,7 @@ public record UserVoteData(User user) {
          */
         public void delete(User user) throws SQLException, ClassNotFoundException {
             voteRewardPlugin.getDatabase().updateSQL("DELETE FROM `" + OptionsUtil.DATABASE_TABLE_NAME.getStringValue() + "` WHERE `uuid` = '" + user.getUniqueId().toString() + "';");
-            Utils.debug(voteRewardPlugin, "User " + user.getName() + " deleted from the database!");
+            MinecraftUtils.debug(voteRewardPlugin, "User " + user.getName() + " deleted from the database!");
             allUsersMap.remove(user.getUniqueId());
         }
 
@@ -416,7 +418,7 @@ public record UserVoteData(User user) {
                                     .append("daily", resultSet.getInt("daily"))
                                     .append("totalvotes", resultSet.getInt("totalvotes"));
                             if (OptionsUtil.DEBUG_LOAD.isEnabled()) {
-                                Utils.debug(voteRewardPlugin,
+                                MinecraftUtils.debug(voteRewardPlugin,
                                         "User " + user.getName() + " successfully loaded!",
                                         "Votes: " + user.getVotes(),
                                         "Daily Votes: " + user.getDailyVotes(),
@@ -524,7 +526,7 @@ public record UserVoteData(User user) {
 
             voteRewardPlugin.getMongoDB().getCollection().updateOne(query, updateObject);
             if (OptionsUtil.DEBUG_SAVE.isEnabled()) {
-                Utils.debug(voteRewardPlugin,
+                MinecraftUtils.debug(voteRewardPlugin,
                         "User " + user.getName() + " successfully saved!",
                         "Votes: " + user.getVotes(),
                         "Daily Votes: " + user.getDailyVotes(),
@@ -560,7 +562,7 @@ public record UserVoteData(User user) {
                             .append("totalvotes", document.getInteger("totalvotes"));
                     callback.onSuccess();
                     if (OptionsUtil.DEBUG_LOAD.isEnabled()) {
-                        Utils.debug(voteRewardPlugin,
+                        MinecraftUtils.debug(voteRewardPlugin,
                                 "User " + user.getName() + " successfully loaded!",
                                 "Votes: " + user.getVotes(),
                                 "Daily Votes: " + user.getDailyVotes(),
@@ -620,7 +622,7 @@ public record UserVoteData(User user) {
             DeleteResult result = voteRewardPlugin.getMongoDB().getCollection().deleteMany(theQuery);
             if (result.getDeletedCount() > 0) {
                 if (OptionsUtil.DEBUG_DELETE.isEnabled()) {
-                    Utils.debug(voteRewardPlugin, "User " + user.getName() + " deleted from the database!");
+                    MinecraftUtils.debug(voteRewardPlugin, "User " + user.getName() + " deleted from the database!");
                 }
                 allUsersMap.remove(user.getUniqueId());
             }
@@ -704,7 +706,7 @@ public record UserVoteData(User user) {
                 e.printStackTrace();
             }
             if (OptionsUtil.DEBUG_SAVE.isEnabled()) {
-                Utils.debug(voteRewardPlugin,
+                MinecraftUtils.debug(voteRewardPlugin,
                         "User " + user.getName() + " successfully saved!",
                         "Votes: " + user.getVotes(),
                         "Daily Votes: " + user.getDailyVotes(),
@@ -738,7 +740,7 @@ public record UserVoteData(User user) {
                             .append("totalvotes", yamlConfiguration.getInt("totalvotes"));
                     callback.onSuccess();
                     if (OptionsUtil.DEBUG_LOAD.isEnabled()) {
-                        Utils.debug(voteRewardPlugin,
+                        MinecraftUtils.debug(voteRewardPlugin,
                                 "User " + user.getName() + " successfully loaded!",
                                 "Votes: " + user.getVotes(),
                                 "Daily Votes: " + user.getDailyVotes(),
@@ -767,7 +769,7 @@ public record UserVoteData(User user) {
             if (new File(VoteRewardPlugin.getInstance().getDataFolder(),
                     "userdata").mkdirs()) {
                 if (OptionsUtil.DEBUG_CREATE.isEnabled()) {
-                    Utils.debug(voteRewardPlugin, "Folder userdata has been created!");
+                    MinecraftUtils.debug(voteRewardPlugin, "Folder userdata has been created!");
                 }
             }
             File file = new File(VoteRewardPlugin.getInstance().getDataFolder(),
@@ -776,7 +778,7 @@ public record UserVoteData(User user) {
                 try {
                     if (file.createNewFile()) {
                         if (OptionsUtil.DEBUG_CREATE.isEnabled()) {
-                            Utils.debug(voteRewardPlugin, "File " + file.getName() + " for the user " + Bukkit.getOfflinePlayer(user.getUniqueId()).getName() + " has been created!");
+                            MinecraftUtils.debug(voteRewardPlugin, "File " + file.getName() + " for the user " + Bukkit.getOfflinePlayer(user.getUniqueId()).getName() + " has been created!");
                         }
                     }
                 } catch (IOException e) {
@@ -804,7 +806,7 @@ public record UserVoteData(User user) {
                     "userdata" + File.separator + user.getUniqueId().toString() + ".yml");
             if (file.exists() & file.delete()) {
                 if (OptionsUtil.DEBUG_DELETE.isEnabled()) {
-                    Utils.debug(voteRewardPlugin, "File " + file.getName() + " deleted!");
+                    MinecraftUtils.debug(voteRewardPlugin, "File " + file.getName() + " deleted!");
                 }
                 UserVoteData.getAllUsersMap().remove(user.getUniqueId());
             }

@@ -1,18 +1,21 @@
 package com.georgev22.voterewards.utilities.player;
 
-import com.georgev22.externals.utilities.maps.ConcurrentObjectMap;
-import com.georgev22.externals.utilities.maps.ObjectMap;
+import com.georgev22.api.maps.ConcurrentObjectMap;
+import com.georgev22.api.maps.ObjectMap;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.Serial;
 import java.util.List;
 import java.util.UUID;
 
 public class User extends ConcurrentObjectMap {
 
+    @Serial
+    private static final long serialVersionUID = 4825818321058044268L;
     private final UUID uuid;
 
     /**
