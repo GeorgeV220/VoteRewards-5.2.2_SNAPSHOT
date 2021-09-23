@@ -1,5 +1,6 @@
 package com.georgev22.voterewards.utilities.player;
 
+import com.georgev22.api.configmanager.CFG;
 import com.georgev22.api.externals.xseries.XSound;
 import com.georgev22.api.externals.xseries.messages.Titles;
 import com.georgev22.api.maps.ConcurrentObjectMap;
@@ -11,7 +12,6 @@ import com.georgev22.voterewards.hooks.HolographicDisplays;
 import com.georgev22.voterewards.utilities.DiscordWebHook;
 import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.OptionsUtil;
-import com.georgev22.voterewards.utilities.configmanager.CFG;
 import com.georgev22.voterewards.utilities.configmanager.FileManager;
 import com.georgev22.voterewards.utilities.interfaces.Callback;
 import org.bukkit.Bukkit;

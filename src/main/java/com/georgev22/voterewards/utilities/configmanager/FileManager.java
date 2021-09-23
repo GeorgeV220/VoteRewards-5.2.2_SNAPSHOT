@@ -1,5 +1,6 @@
 package com.georgev22.voterewards.utilities.configmanager;
 
+import com.georgev22.api.configmanager.CFG;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;

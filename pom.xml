@@ -24,7 +24,7 @@
         <repository>
             <id>central</id>
             <name>libs-release</name>
-            <url>https://artifactory.georgev22.com/artifactory/libs-release</url>
+            <url>https://artifactory.georgev22.com/artifactory/georgev22</url>
         </repository>
     </distributionManagement>
 
@@ -64,10 +64,6 @@
                         <relocation>
                             <pattern>com.georgev22.api</pattern>
                             <shadedPattern>com.georgev22.voterewards.api</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>com.georgev22.interfaces</pattern>
-                            <shadedPattern>com.georgev22.voterewards.interfaces</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>com.georgev22.worldedit</pattern>
@@ -180,12 +176,12 @@
         <dependency>
             <groupId>com.georgev22</groupId>
             <artifactId>api</artifactId>
-            <version>1.6</version>
+            <version>1.7</version>
         </dependency>
 
         <dependency>
             <groupId>com.georgev22</groupId>
-            <artifactId>Interfaces</artifactId>
+            <artifactId>WorldEditInterface</artifactId>
             <version>1.0</version>
         </dependency>
 

@@ -1,5 +1,6 @@
 package com.georgev22.voterewards;
 
+import com.georgev22.api.configmanager.CFG;
 import com.georgev22.api.database.Database;
 import com.georgev22.api.database.mongo.MongoDB;
 import com.georgev22.api.database.sql.mysql.MySQL;
@@ -17,7 +18,6 @@ import com.georgev22.voterewards.listeners.DeveloperInformListener;
 import com.georgev22.voterewards.listeners.PlayerListeners;
 import com.georgev22.voterewards.listeners.VotifierListener;
 import com.georgev22.voterewards.utilities.*;
-import com.georgev22.voterewards.utilities.configmanager.CFG;
 import com.georgev22.voterewards.utilities.configmanager.FileManager;
 import com.georgev22.voterewards.utilities.interfaces.Callback;
 import com.georgev22.voterewards.utilities.interfaces.IDatabaseType;

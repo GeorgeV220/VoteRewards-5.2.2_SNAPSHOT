@@ -1,8 +1,8 @@
 package com.georgev22.voterewards.commands;
 
+import com.georgev22.api.configmanager.CFG;
 import com.georgev22.api.utilities.MinecraftUtils;
 import com.georgev22.voterewards.VoteRewardPlugin;
-import com.georgev22.voterewards.utilities.configmanager.CFG;
 import com.georgev22.voterewards.utilities.configmanager.FileManager;
 import com.georgev22.voterewards.utilities.player.Backup;
 import com.georgev22.voterewards.hooks.WorldEditHook;
