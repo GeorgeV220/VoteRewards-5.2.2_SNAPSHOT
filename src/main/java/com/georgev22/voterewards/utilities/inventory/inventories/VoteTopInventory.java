@@ -18,7 +18,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
-import java.util.Map;
 
 public class VoteTopInventory {
 
@@ -69,7 +68,7 @@ public class VoteTopInventory {
 
         int i = 0;
         ObjectMap<String, Integer> stringIntegerObjectMap = allTimeVotes ? VoteUtils.getPlayersByAllTimeVotes() : VoteUtils.getPlayersByVotes();
-        for (Map.Entry<String, Integer> entry : stringIntegerObjectMap.entrySet()) {
+        for (var entry : stringIntegerObjectMap.entrySet()) {
             if (entry == null) {
                 continue;
             }
@@ -85,7 +84,7 @@ public class VoteTopInventory {
                 inventoryList.add(inventory);
             }
 
-            for (Map.Entry<Integer, ItemStack> test : objectMap.entrySet()) {
+            for (var test : objectMap.entrySet()) {
                 if (inventory.getItem(i) != null && i == test.getKey()) {
                     i++;
                 }

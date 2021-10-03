@@ -6,10 +6,11 @@ import com.georgev22.api.externals.xseries.messages.Titles;
 import com.georgev22.api.maps.ConcurrentObjectMap;
 import com.georgev22.api.maps.LinkedObjectMap;
 import com.georgev22.api.maps.ObjectMap;
+import com.georgev22.api.utilities.DiscordWebHook;
 import com.georgev22.api.utilities.MinecraftUtils;
+import com.georgev22.api.utilities.Utils;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.hooks.HolographicDisplays;
-import com.georgev22.voterewards.utilities.DiscordWebHook;
 import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.OptionsUtil;
 import com.georgev22.voterewards.utilities.configmanager.FileManager;
@@ -165,12 +166,11 @@ public record VoteUtils(User user) {
         if (OptionsUtil.DISCORD.isEnabled() & OptionsUtil.EXPERIMENTAL_FEATURES.isEnabled()) {
             FileConfiguration discordFileConfiguration = fileManager.getDiscord().getFileConfiguration();
             DiscordWebHook webhook = new DiscordWebHook(discordFileConfiguration.getString("vote.webhook"));
-            webhook.setContent(discordFileConfiguration.getString("vote.message"))
+            webhook.setContent(Utils.placeHolder(discordFileConfiguration.getString("vote.message"), user.placeholders(), true))
                     .setAvatarUrl(discordFileConfiguration.getString("vote.avatar url"))
-                    .setUsername(discordFileConfiguration.getString("vote.username"))
-                    .setTTS(discordFileConfiguration.getBoolean("vote.tts"));
+                    .setUsername(discordFileConfiguration.getString("vote.username"));
             for (String s : discordFileConfiguration.getConfigurationSection("vote.embeds").getKeys(false)) {
-                webhook.addEmbed(DiscordWebHook.buildFromConfig(discordFileConfiguration, "vote.embeds." + s));
+                webhook.addEmbed(MinecraftUtils.buildFromConfig(discordFileConfiguration, "vote.embeds." + s, user.placeholders()));
             }
 
             webhook.execute();
@@ -327,7 +327,7 @@ public record VoteUtils(User user) {
     public static LinkedObjectMap<String, Integer> getTopPlayers(int limit) {
         ObjectMap<String, Integer> objectMap = ObjectMap.newLinkedObjectMap();
 
-        for (Map.Entry<UUID, User> entry : UserVoteData.getAllUsersMap().entrySet()) {
+        for (var entry : UserVoteData.getAllUsersMap().entrySet()) {
             objectMap.append(entry.getValue().getString("name"), entry.getValue().getInteger("votes"));
         }
 
@@ -343,7 +343,7 @@ public record VoteUtils(User user) {
     public static LinkedObjectMap<String, Integer> getPlayersByVotes() {
         ObjectMap<String, Integer> objectMap = ObjectMap.newLinkedObjectMap();
 
-        for (Map.Entry<UUID, User> entry : UserVoteData.getAllUsersMap().entrySet()) {
+        for (var entry : UserVoteData.getAllUsersMap().entrySet()) {
             objectMap.append(entry.getValue().getString("name"), entry.getValue().getInteger("votes"));
         }
 
@@ -359,7 +359,7 @@ public record VoteUtils(User user) {
     public static LinkedObjectMap<String, Integer> getAllTimeTopPlayers(int limit) {
         ObjectMap<String, Integer> objectMap = ObjectMap.newLinkedObjectMap();
 
-        for (Map.Entry<UUID, User> entry : UserVoteData.getAllUsersMap().entrySet()) {
+        for (var entry : UserVoteData.getAllUsersMap().entrySet()) {
             objectMap.append(entry.getValue().getString("name"), entry.getValue().getInteger("totalvotes"));
         }
 
@@ -375,7 +375,7 @@ public record VoteUtils(User user) {
     public static LinkedObjectMap<String, Integer> getPlayersByAllTimeVotes() {
         ObjectMap<String, Integer> objectMap = ObjectMap.newLinkedObjectMap();
 
-        for (Map.Entry<UUID, User> entry : UserVoteData.getAllUsersMap().entrySet()) {
+        for (var entry : UserVoteData.getAllUsersMap().entrySet()) {
             objectMap.append(entry.getValue().getString("name"), entry.getValue().getInteger("totalvotes"));
         }
 

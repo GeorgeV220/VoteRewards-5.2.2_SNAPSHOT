@@ -11,7 +11,6 @@ import java.io.File;
 import java.io.IOException;
 import java.time.Instant;
 import java.time.ZoneOffset;
-import java.util.Map;
 import java.util.UUID;
 
 public record Backup(String fileName) {
@@ -37,7 +36,7 @@ public record Backup(String fileName) {
         YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(file);
         int total = UserVoteData.getAllUsersMap().size();
         int progress = 0;
-        for (Map.Entry<UUID, User> b : UserVoteData.getAllUsersMap().entrySet()) {
+        for (var b : UserVoteData.getAllUsersMap().entrySet()) {
             yamlConfiguration.set(b.getKey().toString() + ".last-name", b.getValue().getOfflinePlayer().getName());
             yamlConfiguration.set(b.getKey().toString() + ".uuid", b.getValue().getUniqueId().toString());
             yamlConfiguration.set(b.getKey().toString() + ".votes", b.getValue().getVotes());

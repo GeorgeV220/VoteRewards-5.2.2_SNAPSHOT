@@ -70,6 +70,7 @@ public class VoteRewards extends BukkitCommand {
             fm.getMessages().reloadFile();
             fm.getVoteInventory().reloadFile();
             fm.getVoteTopInventory().reloadFile();
+            fm.getDiscord().reloadFile();
             MessagesUtil.repairPaths(fm.getMessages());
             MinecraftUtils.msg(sender, "&a&l(!) &aPlugin reloaded!");
         } else if (args[0].equalsIgnoreCase("backup")) {

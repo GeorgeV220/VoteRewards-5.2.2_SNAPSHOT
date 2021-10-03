@@ -48,7 +48,7 @@ public record UserVoteData(User user) {
 
     public static ObjectMap<String, User> getAllUsersMapWithName() {
         ObjectMap<String, User> objectMap = new HashObjectMap<>();
-        for (Map.Entry<UUID, User> entry : allUsersMap.entrySet()) {
+        for (var entry : allUsersMap.entrySet()) {
             objectMap.append(entry.getValue().getName(), entry.getValue());
         }
         return objectMap;
@@ -369,7 +369,7 @@ public record UserVoteData(User user) {
                             "`voteparty` = '" + user.getVoteParties() + "', " +
                             "`daily` = '" + user.getDailyVotes() + "', " +
                             "`services` = '" + Utils.stringListToString(user.getServices()) + "', " +
-                            "`servicesLastVote` = '" + Utils.stringListToString(Utils.mapToStringList(user.getServicesLastVote())) + "'" +
+                            "`servicesLastVote` = '" + Utils.stringListToString(Utils.mapToStringList(user.getServicesLastVote())) + "', " +
                             "`totalvotes` = '" + user.getAllTimeVotes() + "' " +
                             "WHERE `uuid` = '" + user.getUniqueId() + "'");
             if (OptionsUtil.DEBUG_SAVE.isEnabled()) {

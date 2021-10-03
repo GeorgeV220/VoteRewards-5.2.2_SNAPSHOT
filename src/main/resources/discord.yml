@@ -2,20 +2,19 @@ vote:
   webhook: "https://discord.com/api/webhooks/..."
   avatar url: "https://avatars.githubusercontent.com/u/30936682?v=4"
   username: "VoteRewards"
-  tts: false
   message: "idk what to put here.."
   embeds:
     embed1:
       title: "New Vote"
       description: "New Vote for the player %player%"
-      color: "#C0C0C0"
+      color: "C0C0C0"
       thumbnail url: "https://i1.sndcdn.com/artworks-000577448120-g90q20-t500x500.jpg"
       footer:
         message: "VoteRewards"
         icon url: "https://avatars.githubusercontent.com/u/30936682?v=4"
       image url: "https://avatars.githubusercontent.com/u/30936682?v=4"
       author:
-        message: "GeorgeV22"
+        name: "GeorgeV22"
         icon url: "https://avatars.githubusercontent.com/u/30936682?v=4"
         url: "https://georgev22.com"
       url: "https://georgev22.com"

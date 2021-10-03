@@ -1,6 +1,5 @@
 package com.georgev22.voterewards.commands;
 
-import com.georgev22.api.maps.ObjectMap;
 import com.georgev22.api.utilities.MinecraftUtils;
 import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.player.UserVoteData;
@@ -28,22 +27,19 @@ public class Votes extends BukkitCommand {
     public boolean execute(@NotNull final CommandSender sender, final @NotNull String label, final String[] args) {
         if (!testPermission(sender)) return true;
 
-        ObjectMap<String, String> placeholders = ObjectMap.newHashObjectMap();
+
         if (args.length == 0) {
             if (!(sender instanceof Player)) {
                 MinecraftUtils.msg(sender, "/votes <player>");
                 return true;
             }
-            placeholders.append("%player%", sender.getName()).append("%votes%",
-                    String.valueOf(UserVoteData.getUser(((Player) sender).getUniqueId()).getVotes()));
-            MessagesUtil.VOTES.msg(sender, placeholders, true);
-            placeholders.clear();
+            UserVoteData userVoteData = UserVoteData.getUser((OfflinePlayer) sender);
+            MessagesUtil.VOTES.msg(sender, userVoteData.user().placeholders(), true);
             return true;
         }
         OfflinePlayer target = Bukkit.getOfflinePlayer(args[0]);
-        placeholders.append("%player%", target.getName()).append("%votes%", String.valueOf(UserVoteData.getAllUsersMap().get(target.getUniqueId())));
-        MessagesUtil.VOTES.msg(sender, placeholders, true);
-        placeholders.clear();
+        UserVoteData userVoteData = UserVoteData.getUser(target);
+        MessagesUtil.VOTES.msg(sender, userVoteData.user().placeholders(), true);
 
         return true;
     }

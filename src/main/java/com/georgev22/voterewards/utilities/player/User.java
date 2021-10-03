@@ -135,4 +135,13 @@ public class User extends ConcurrentObjectMap {
     public List<String> getServices() {
         return getList("services", String.class);
     }
+
+    public ObjectMap<String, String> placeholders() {
+        return ObjectMap.newHashObjectMap()
+                .append("%player%", getName())
+                .append("%votes%", String.valueOf(getVotes()))
+                .append("%totalVotes%", String.valueOf(getAllTimeVotes()))
+                .append("%daily%", String.valueOf(getDailyVotes()))
+                .append("%voteparties%", String.valueOf(getVoteParties()));
+    }
 }

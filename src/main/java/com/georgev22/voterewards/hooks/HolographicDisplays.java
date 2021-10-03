@@ -19,7 +19,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
-import java.util.Map;
 
 /**
  * @author GeorgeV22
@@ -210,13 +209,13 @@ public class HolographicDisplays {
     public static ObjectMap<String, String> getPlaceholderMap() {
         final ObjectMap<String, String> map = ObjectMap.newHashObjectMap();
         int top = 1;
-        for (Map.Entry<String, Integer> b : VoteUtils.getTopPlayers(OptionsUtil.VOTETOP_VOTERS.getIntValue()).entrySet()) {
+        for (var b : VoteUtils.getTopPlayers(OptionsUtil.VOTETOP_VOTERS.getIntValue()).entrySet()) {
             String[] args = String.valueOf(b).split("=");
             map.append("%top-" + top + "%", args[0]).append("%vote-" + top + "%", args[1]);
             top++;
         }
         int allTimeTop = 1;
-        for (Map.Entry<String, Integer> b : VoteUtils.getAllTimeTopPlayers(OptionsUtil.VOTETOP_ALL_TIME_VOTERS.getIntValue()).entrySet()) {
+        for (var b : VoteUtils.getAllTimeTopPlayers(OptionsUtil.VOTETOP_ALL_TIME_VOTERS.getIntValue()).entrySet()) {
             String[] args = String.valueOf(b).split("=");
             map.append("%alltimetop-" + allTimeTop + "%", args[0]).append("%alltimevote-" + allTimeTop + "%", args[1]);
             allTimeTop++;
