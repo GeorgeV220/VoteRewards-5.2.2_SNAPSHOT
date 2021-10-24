@@ -8,14 +8,11 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.Serial;
 import java.util.List;
 import java.util.UUID;
 
 public class User extends ConcurrentObjectMap {
 
-    @Serial
-    private static final long serialVersionUID = 4825818321058044268L;
     private final UUID uuid;
 
     /**

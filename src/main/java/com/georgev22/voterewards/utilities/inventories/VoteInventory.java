@@ -1,7 +1,8 @@
-package com.georgev22.voterewards.utilities.inventory.inventories;
+package com.georgev22.voterewards.utilities.inventories;
 
 import com.georgev22.api.inventory.CustomItemInventory;
 import com.georgev22.api.inventory.IPagedInventory;
+import com.georgev22.api.inventory.ItemBuilder;
 import com.georgev22.api.inventory.NavigationRow;
 import com.georgev22.api.inventory.handlers.PagedInventoryCustomNavigationHandler;
 import com.georgev22.api.inventory.navigationitems.*;
@@ -10,7 +11,6 @@ import com.georgev22.api.utilities.MinecraftUtils;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.utilities.OptionsUtil;
 import com.georgev22.voterewards.utilities.configmanager.FileManager;
-import com.georgev22.voterewards.utilities.inventory.ItemBuilder;
 import com.georgev22.voterewards.utilities.player.UserVoteData;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.Lists;

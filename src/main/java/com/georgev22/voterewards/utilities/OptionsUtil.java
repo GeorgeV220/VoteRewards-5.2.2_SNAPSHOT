@@ -2,8 +2,8 @@ package com.georgev22.voterewards.utilities;
 
 import com.georgev22.api.colors.Color;
 import com.georgev22.api.externals.xseries.XMaterial;
+import com.georgev22.api.inventory.ItemBuilder;
 import com.georgev22.voterewards.VoteRewardPlugin;
-import com.georgev22.voterewards.utilities.inventory.ItemBuilder;
 import com.google.common.collect.Lists;
 import org.bukkit.inventory.ItemStack;
 

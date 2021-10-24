@@ -32,10 +32,18 @@ import java.util.*;
 /**
  * Used to handle all user's data and anything related to them.
  */
-public record UserVoteData(User user) {
+public class UserVoteData {
     private static final VoteRewardPlugin voteRewardPlugin = VoteRewardPlugin.getInstance();
 
     private static final ObjectMap<UUID, User> allUsersMap = ObjectMap.newConcurrentObjectMap();
+
+    private final User user;
+
+    public UserVoteData(User user) {
+        this.user = user;
+        if (OptionsUtil.DEBUG_USELESS.isEnabled())
+            MinecraftUtils.debug(voteRewardPlugin, user.toString());
+    }
 
     /**
      * Returns all the players in a map
@@ -48,7 +56,7 @@ public record UserVoteData(User user) {
 
     public static ObjectMap<String, User> getAllUsersMapWithName() {
         ObjectMap<String, User> objectMap = new HashObjectMap<>();
-        for (var entry : allUsersMap.entrySet()) {
+        for (Map.Entry<UUID, User> entry : allUsersMap.entrySet()) {
             objectMap.append(entry.getValue().getName(), entry.getValue());
         }
         return objectMap;
@@ -91,11 +99,6 @@ public record UserVoteData(User user) {
             allUsersMap.append(uuid, new User(uuid));
         }
         return new UserVoteData(allUsersMap.get(uuid));
-    }
-
-    public UserVoteData {
-        if (OptionsUtil.DEBUG_USELESS.isEnabled())
-            MinecraftUtils.debug(voteRewardPlugin, user.toString());
     }
 
     public UserVoteData appendServiceLastVote(String serviceName) {
@@ -343,6 +346,10 @@ public record UserVoteData(User user) {
             }
         });
         return this;
+    }
+
+    public User user() {
+        return user;
     }
 
     /**

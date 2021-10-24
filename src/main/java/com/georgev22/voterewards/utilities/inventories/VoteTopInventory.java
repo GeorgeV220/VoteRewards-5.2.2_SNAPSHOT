@@ -1,7 +1,8 @@
-package com.georgev22.voterewards.utilities.inventory.inventories;
+package com.georgev22.voterewards.utilities.inventories;
 
 import com.georgev22.api.inventory.CustomItemInventory;
 import com.georgev22.api.inventory.IPagedInventory;
+import com.georgev22.api.inventory.ItemBuilder;
 import com.georgev22.api.inventory.NavigationRow;
 import com.georgev22.api.inventory.handlers.PagedInventoryCustomNavigationHandler;
 import com.georgev22.api.inventory.navigationitems.*;
@@ -9,7 +10,6 @@ import com.georgev22.api.maps.ObjectMap;
 import com.georgev22.api.utilities.MinecraftUtils;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.utilities.configmanager.FileManager;
-import com.georgev22.voterewards.utilities.inventory.ItemBuilder;
 import com.georgev22.voterewards.utilities.player.VoteUtils;
 import com.google.common.collect.Lists;
 import org.bukkit.Bukkit;
@@ -18,6 +18,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
+import java.util.Map;
 
 public class VoteTopInventory {
 
@@ -68,7 +69,7 @@ public class VoteTopInventory {
 
         int i = 0;
         ObjectMap<String, Integer> stringIntegerObjectMap = allTimeVotes ? VoteUtils.getPlayersByAllTimeVotes() : VoteUtils.getPlayersByVotes();
-        for (var entry : stringIntegerObjectMap.entrySet()) {
+        for (Map.Entry<String, Integer> entry : stringIntegerObjectMap.entrySet()) {
             if (entry == null) {
                 continue;
             }
@@ -84,7 +85,7 @@ public class VoteTopInventory {
                 inventoryList.add(inventory);
             }
 
-            for (var test : objectMap.entrySet()) {
+            for (Map.Entry<Integer, ItemStack> test : objectMap.entrySet()) {
                 if (inventory.getItem(i) != null && i == test.getKey()) {
                     i++;
                 }

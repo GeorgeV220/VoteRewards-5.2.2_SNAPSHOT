@@ -4,7 +4,7 @@ import com.georgev22.api.maps.ObjectMap;
 import com.georgev22.api.utilities.MinecraftUtils;
 import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.OptionsUtil;
-import com.georgev22.voterewards.utilities.inventory.inventories.VoteInventory;
+import com.georgev22.voterewards.utilities.inventories.VoteInventory;
 import com.georgev22.voterewards.utilities.player.UserVoteData;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
@@ -27,10 +27,12 @@ public class Vote extends BukkitCommand {
 
     public boolean execute(@NotNull final CommandSender sender, @NotNull final String label, final String[] args) {
         if (!testPermission(sender)) return true;
-        if (!(sender instanceof Player player)) {
+        if (!(sender instanceof Player)) {
             MinecraftUtils.msg(sender, MessagesUtil.ONLY_PLAYER_COMMAND.getMessages()[0]);
             return true;
         }
+
+        Player player = (Player) sender;
 
         if (OptionsUtil.EXPERIMENTAL_FEATURES.isEnabled()) {
             new VoteInventory().openInventory(((Player) sender));

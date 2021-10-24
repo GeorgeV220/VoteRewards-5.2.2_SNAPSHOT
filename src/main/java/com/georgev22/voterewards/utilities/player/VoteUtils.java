@@ -6,9 +6,7 @@ import com.georgev22.api.externals.xseries.messages.Titles;
 import com.georgev22.api.maps.ConcurrentObjectMap;
 import com.georgev22.api.maps.LinkedObjectMap;
 import com.georgev22.api.maps.ObjectMap;
-import com.georgev22.api.utilities.DiscordWebHook;
 import com.georgev22.api.utilities.MinecraftUtils;
-import com.georgev22.api.utilities.Utils;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.hooks.HolographicDisplays;
 import com.georgev22.voterewards.utilities.MessagesUtil;
@@ -27,7 +25,13 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
-public record VoteUtils(User user) {
+public class VoteUtils {
+
+    private final User user;
+
+    public VoteUtils(User user) {
+        this.user = user;
+    }
 
     private static final VoteRewardPlugin voteRewardPlugin = VoteRewardPlugin.getInstance();
     private static final FileManager fileManager = FileManager.getInstance();
@@ -165,15 +169,7 @@ public record VoteUtils(User user) {
         // DISCORD WEBHOOK
         if (OptionsUtil.DISCORD.isEnabled() & OptionsUtil.EXPERIMENTAL_FEATURES.isEnabled()) {
             FileConfiguration discordFileConfiguration = fileManager.getDiscord().getFileConfiguration();
-            DiscordWebHook webhook = new DiscordWebHook(discordFileConfiguration.getString("vote.webhook"));
-            webhook.setContent(Utils.placeHolder(discordFileConfiguration.getString("vote.message"), user.placeholders(), true))
-                    .setAvatarUrl(discordFileConfiguration.getString("vote.avatar url"))
-                    .setUsername(discordFileConfiguration.getString("vote.username"));
-            for (String s : discordFileConfiguration.getConfigurationSection("vote.embeds").getKeys(false)) {
-                webhook.addEmbed(MinecraftUtils.buildFromConfig(discordFileConfiguration, "vote.embeds." + s, user.placeholders()));
-            }
-
-            webhook.execute();
+            MinecraftUtils.buildDiscordWebHookFromConfig(discordFileConfiguration, "vote", user.placeholders(), user.placeholders()).execute();
         }
 
         // DEBUG
@@ -327,7 +323,7 @@ public record VoteUtils(User user) {
     public static LinkedObjectMap<String, Integer> getTopPlayers(int limit) {
         ObjectMap<String, Integer> objectMap = ObjectMap.newLinkedObjectMap();
 
-        for (var entry : UserVoteData.getAllUsersMap().entrySet()) {
+        for (Map.Entry<UUID, User> entry : UserVoteData.getAllUsersMap().entrySet()) {
             objectMap.append(entry.getValue().getString("name"), entry.getValue().getInteger("votes"));
         }
 
@@ -343,7 +339,7 @@ public record VoteUtils(User user) {
     public static LinkedObjectMap<String, Integer> getPlayersByVotes() {
         ObjectMap<String, Integer> objectMap = ObjectMap.newLinkedObjectMap();
 
-        for (var entry : UserVoteData.getAllUsersMap().entrySet()) {
+        for (Map.Entry<UUID, User> entry : UserVoteData.getAllUsersMap().entrySet()) {
             objectMap.append(entry.getValue().getString("name"), entry.getValue().getInteger("votes"));
         }
 
@@ -359,7 +355,7 @@ public record VoteUtils(User user) {
     public static LinkedObjectMap<String, Integer> getAllTimeTopPlayers(int limit) {
         ObjectMap<String, Integer> objectMap = ObjectMap.newLinkedObjectMap();
 
-        for (var entry : UserVoteData.getAllUsersMap().entrySet()) {
+        for (Map.Entry<UUID, User> entry : UserVoteData.getAllUsersMap().entrySet()) {
             objectMap.append(entry.getValue().getString("name"), entry.getValue().getInteger("totalvotes"));
         }
 
@@ -375,7 +371,7 @@ public record VoteUtils(User user) {
     public static LinkedObjectMap<String, Integer> getPlayersByAllTimeVotes() {
         ObjectMap<String, Integer> objectMap = ObjectMap.newLinkedObjectMap();
 
-        for (var entry : UserVoteData.getAllUsersMap().entrySet()) {
+        for (Map.Entry<UUID, User> entry : UserVoteData.getAllUsersMap().entrySet()) {
             objectMap.append(entry.getValue().getString("name"), entry.getValue().getInteger("totalvotes"));
         }
 

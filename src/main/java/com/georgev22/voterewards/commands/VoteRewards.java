@@ -200,12 +200,14 @@ public class VoteRewards extends BukkitCommand {
                     return true;
                 }
 
-                if (!(sender instanceof Player player)) {
+                if (!(sender instanceof Player)) {
                     MessagesUtil.ONLY_PLAYER_COMMAND.msg(sender);
                     return true;
                 }
 
                 String regionName = args[2];
+
+                Player player = (Player) sender;
 
                 WorldEditHook worldEditHook = new WorldEditHook(player);
 

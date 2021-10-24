@@ -23,7 +23,14 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-public record VotePartyUtils(@Nullable OfflinePlayer offlinePlayer) {
+public class VotePartyUtils {
+
+    private final OfflinePlayer offlinePlayer;
+
+    public VotePartyUtils(@Nullable OfflinePlayer offlinePlayer) {
+        this.offlinePlayer = offlinePlayer;
+
+    }
 
     private static final VoteRewardPlugin voteRewardPlugin = VoteRewardPlugin.getInstance();
 

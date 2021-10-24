@@ -4,7 +4,7 @@ import com.georgev22.api.maps.ObjectMap;
 import com.georgev22.api.utilities.MinecraftUtils;
 import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.OptionsUtil;
-import com.georgev22.voterewards.utilities.inventory.inventories.VoteTopInventory;
+import com.georgev22.voterewards.utilities.inventories.VoteTopInventory;
 import com.georgev22.voterewards.utilities.player.VoteUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;

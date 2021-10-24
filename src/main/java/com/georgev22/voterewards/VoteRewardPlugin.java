@@ -233,7 +233,7 @@ public class VoteRewardPlugin extends JavaPlugin {
                 .append("servicesLastVote", ObjectMap.Pair.create("VARCHAR(10000)", "NULL"))
                 .append("totalvotes", ObjectMap.Pair.create("INT(10)", "0"));
         switch (OptionsUtil.DATABASE_TYPE.getStringValue()) {
-            case "MySQL" -> {
+            case "MySQL": {
                 if (connection == null || connection.isClosed()) {
                     database = new MySQL(
                             OptionsUtil.DATABASE_HOST.getStringValue(),
@@ -246,8 +246,9 @@ public class VoteRewardPlugin extends JavaPlugin {
                     database.createTable(OptionsUtil.DATABASE_TABLE_NAME.getStringValue(), map);
                     MinecraftUtils.debug(this, "Database: MySQL");
                 }
+                break;
             }
-            case "PostgreSQL" -> {
+            case "PostgreSQL": {
                 if (connection == null || connection.isClosed()) {
                     database = new PostgreSQL(
                             OptionsUtil.DATABASE_HOST.getStringValue(),
@@ -260,8 +261,9 @@ public class VoteRewardPlugin extends JavaPlugin {
                     database.createTable(OptionsUtil.DATABASE_TABLE_NAME.getStringValue(), map);
                     MinecraftUtils.debug(this, "Database: PostgreSQL");
                 }
+                break;
             }
-            case "SQLite" -> {
+            case "SQLite": {
                 if (connection == null || connection.isClosed()) {
                     database = new SQLite(
                             getDataFolder(),
@@ -271,8 +273,9 @@ public class VoteRewardPlugin extends JavaPlugin {
                     database.createTable(OptionsUtil.DATABASE_TABLE_NAME.getStringValue(), map);
                     MinecraftUtils.debug(this, "Database: SQLite");
                 }
+                break;
             }
-            case "MongoDB" -> {
+            case "MongoDB": {
                 mongoDB = new MongoDB(
                         OptionsUtil.DATABASE_MONGO_HOST.getStringValue(),
                         OptionsUtil.DATABASE_MONGO_PORT.getIntValue(),
@@ -283,13 +286,15 @@ public class VoteRewardPlugin extends JavaPlugin {
                 database = null;
                 iDatabaseType = new UserVoteData.MongoDBUtils();
                 MinecraftUtils.debug(this, "Database: MongoDB");
+                break;
             }
-            case "File" -> {
+            case "File": {
                 database = null;
                 iDatabaseType = new UserVoteData.FileUserUtils();
                 MinecraftUtils.debug(this, "Database: File");
+                break;
             }
-            default -> {
+            default: {
                 database = null;
                 iDatabaseType = null;
                 setEnabled(false);
