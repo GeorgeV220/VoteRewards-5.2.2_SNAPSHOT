@@ -4,6 +4,7 @@
 .classpath
 .github
 .settings/
+.vscode/
 
 #*.iml
 *.ipr
