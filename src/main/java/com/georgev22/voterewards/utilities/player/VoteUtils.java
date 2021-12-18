@@ -42,7 +42,7 @@ public class VoteUtils {
      * @param serviceName the service name (dah)
      */
     public void processVote(String serviceName) throws IOException {
-        processVote(serviceName, OptionsUtil.VOTEPARTY.isEnabled());
+        processVote(serviceName, OptionsUtil.VOTEPARTY.getBooleanValue());
     }
 
     /**
@@ -53,7 +53,7 @@ public class VoteUtils {
      * @since v4.7.0
      */
     public void processVote(String serviceName, boolean addVoteParty) throws IOException {
-        if (OptionsUtil.DEBUG_VOTES_REGULAR.isEnabled())
+        if (OptionsUtil.DEBUG_VOTES_REGULAR.getBooleanValue())
             MinecraftUtils.debug(voteRewardPlugin, "VOTE OF: " + user.getName());
         UserVoteData userVoteData = UserVoteData.getUser(user.getUniqueId());
         userVoteData.setVotes(userVoteData.getVotes() + 1);
@@ -65,15 +65,15 @@ public class VoteUtils {
         userVoteData.setDailyVotes(userVoteData.getDailyVotes() + 1);
         UserVoteData.getAllUsersMap().append(user.getUniqueId(), UserVoteData.getUser(user.getUniqueId()).user());
 
-        if (OptionsUtil.VOTE_TITLE.isEnabled()) {
+        if (OptionsUtil.VOTE_TITLE.getBooleanValue()) {
             Titles.sendTitle(user.getPlayer(),
                     MinecraftUtils.colorize(MessagesUtil.VOTE_TITLE.getMessages()[0]).replace("%player%", user.getName()),
                     MinecraftUtils.colorize(MessagesUtil.VOTE_SUBTITLE.getMessages()[0]).replace("%player%", user.getName()));
         }
 
         // WORLD REWARDS (WITH SERVICES)
-        if (OptionsUtil.WORLD.isEnabled()) {
-            if (voteRewardPlugin.getConfig().getString("Rewards.Worlds." + user.getPlayer().getWorld() + "." + serviceName) != null && OptionsUtil.WORLD_SERVICES.isEnabled()) {
+        if (OptionsUtil.WORLD.getBooleanValue()) {
+            if (voteRewardPlugin.getConfig().getString("Rewards.Worlds." + user.getPlayer().getWorld() + "." + serviceName) != null && OptionsUtil.WORLD_SERVICES.getBooleanValue()) {
                 userVoteData.runCommands(voteRewardPlugin.getConfig()
                         .getStringList("Rewards.Worlds." + user.getPlayer().getWorld().getName() + "." + serviceName));
             } else {
@@ -83,7 +83,7 @@ public class VoteUtils {
         }
 
         // SERVICE REWARDS
-        if (OptionsUtil.SERVICES.isEnabled()) {
+        if (OptionsUtil.SERVICES.getBooleanValue()) {
             if (voteRewardPlugin.getConfig().getString("Rewards.Services." + serviceName) != null) {
                 userVoteData.runCommands(voteRewardPlugin.getConfig()
                         .getStringList("Rewards.Services." + serviceName + ".commands"));
@@ -94,7 +94,7 @@ public class VoteUtils {
         }
 
         // LUCKY REWARDS
-        if (OptionsUtil.LUCKY.isEnabled()) {
+        if (OptionsUtil.LUCKY.getBooleanValue()) {
             ThreadLocalRandom random = ThreadLocalRandom.current();
             int i = random.nextInt(OptionsUtil.LUCKY_NUMBERS.getIntValue() + 1);
             for (String s2 : voteRewardPlugin.getConfig().getConfigurationSection("Rewards.Lucky")
@@ -107,7 +107,7 @@ public class VoteUtils {
         }
 
         // PERMISSIONS REWARDS
-        if (OptionsUtil.PERMISSIONS.isEnabled()) {
+        if (OptionsUtil.PERMISSIONS.getBooleanValue()) {
             for (String s2 : voteRewardPlugin.getConfig().getConfigurationSection("Rewards.Permission").getKeys(false)) {
                 if (user.getPlayer().hasPermission("voterewards.permission." + s2)) {
                     userVoteData.runCommands(voteRewardPlugin.getConfig()
@@ -117,7 +117,7 @@ public class VoteUtils {
         }
 
         // CUMULATIVE REWARDS
-        if (OptionsUtil.CUMULATIVE.isEnabled()) {
+        if (OptionsUtil.CUMULATIVE.getBooleanValue()) {
             for (String s2 : voteRewardPlugin.getConfig().getConfigurationSection("Rewards.Cumulative")
                     .getKeys(false)) {
                 if (Integer.valueOf(s2).equals(userVoteData.getVotes())) {
@@ -128,12 +128,12 @@ public class VoteUtils {
         }
 
         // PLAY SOUND
-        if (OptionsUtil.SOUND.isEnabled()) {
+        if (OptionsUtil.SOUND.getBooleanValue()) {
             if (MinecraftUtils.MinecraftVersion.getCurrentVersion().isBelow(MinecraftUtils.MinecraftVersion.V1_12_R1)) {
                 user.getPlayer().playSound(user.getPlayer().getLocation(), XSound
                                 .matchXSound(OptionsUtil.SOUND_VOTE.getStringValue()).get().parseSound(),
                         1000, 1);
-                if (OptionsUtil.DEBUG_USELESS.isEnabled()) {
+                if (OptionsUtil.DEBUG_USELESS.getBooleanValue()) {
                     MinecraftUtils.debug(voteRewardPlugin, "========================================================");
                     MinecraftUtils.debug(voteRewardPlugin, "SoundCategory doesn't exists in versions below 1.12");
                     MinecraftUtils.debug(voteRewardPlugin, "SoundCategory doesn't exists in versions below 1.12");
@@ -147,7 +147,7 @@ public class VoteUtils {
             }
         }
 
-        if (OptionsUtil.DAILY.isEnabled()) {
+        if (OptionsUtil.DAILY.getBooleanValue()) {
             int votes = userVoteData.getDailyVotes();
             for (String s2 : voteRewardPlugin.getConfig().getConfigurationSection("Rewards.Daily")
                     .getKeys(false)) {
@@ -167,13 +167,13 @@ public class VoteUtils {
             HolographicDisplays.updateAll();
 
         // DISCORD WEBHOOK
-        if (OptionsUtil.DISCORD.isEnabled() & OptionsUtil.EXPERIMENTAL_FEATURES.isEnabled()) {
+        if (OptionsUtil.DISCORD.getBooleanValue() & OptionsUtil.EXPERIMENTAL_FEATURES.getBooleanValue()) {
             FileConfiguration discordFileConfiguration = fileManager.getDiscord().getFileConfiguration();
             MinecraftUtils.buildDiscordWebHookFromConfig(discordFileConfiguration, "vote", user.placeholders(), user.placeholders()).execute();
         }
 
         // DEBUG
-        if (OptionsUtil.DEBUG_VOTE_AFTER.isEnabled()) {
+        if (OptionsUtil.DEBUG_VOTE_AFTER.getBooleanValue()) {
             MinecraftUtils.debug(voteRewardPlugin,
                     "Vote for player " + user.getName(),
                     "Votes: " + userVoteData.getVotes(),
@@ -200,7 +200,7 @@ public class VoteUtils {
                 userVoteData.save(true, new Callback() {
                     @Override
                     public void onSuccess() {
-                        if (OptionsUtil.DEBUG_SAVE.isEnabled()) {
+                        if (OptionsUtil.DEBUG_SAVE.getBooleanValue()) {
                             MinecraftUtils.debug(voteRewardPlugin,
                                     "User " + user.getName() + " successfully saved!",
                                     "Votes: " + user.getVotes(),
@@ -233,7 +233,7 @@ public class VoteUtils {
      */
     public static void monthlyReset() {
         Bukkit.getScheduler().runTaskTimer(voteRewardPlugin, () -> {
-            if (OptionsUtil.DEBUG_USELESS.isEnabled())
+            if (OptionsUtil.DEBUG_USELESS.getBooleanValue())
                 MinecraftUtils.debug(voteRewardPlugin, "Monthly reset Thread ID: " + Thread.currentThread().getId());
             CFG cfg = fileManager.getData();
             FileConfiguration dataConfiguration = cfg.getFileConfiguration();
@@ -256,13 +256,13 @@ public class VoteUtils {
      */
     public static void purgeData() {
         Bukkit.getScheduler().runTaskTimer(voteRewardPlugin, () -> {
-            if (OptionsUtil.DEBUG_USELESS.isEnabled())
+            if (OptionsUtil.DEBUG_USELESS.getBooleanValue())
                 MinecraftUtils.debug(voteRewardPlugin, "Purge data Thread ID: " + Thread.currentThread().getId());
             ObjectMap<UUID, User> objectMap = UserVoteData.getAllUsersMap();
             objectMap.forEach((uuid, user) -> {
                 UserVoteData userVoteData = UserVoteData.getUser(uuid);
                 long time = userVoteData.getLastVote() + (OptionsUtil.PURGE_DAYS.getLongValue() * 86400000);
-                if (OptionsUtil.DEBUG_USELESS.isEnabled()) {
+                if (OptionsUtil.DEBUG_USELESS.getBooleanValue()) {
                     MinecraftUtils.debug(voteRewardPlugin, Instant.ofEpochMilli(userVoteData.getLastVote()).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())).toString());
                     MinecraftUtils.debug(voteRewardPlugin, Instant.ofEpochMilli(time).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())).toString());
                 }
@@ -285,7 +285,7 @@ public class VoteUtils {
             objectMap.forEach((uuid, user) -> {
                 UserVoteData userVoteData = UserVoteData.getUser(uuid);
                 long time = userVoteData.getLastVote() + (OptionsUtil.DAILY_HOURS.getIntValue() * 60 * 60 * 1000);
-                if (OptionsUtil.DEBUG_USELESS.isEnabled()) {
+                if (OptionsUtil.DEBUG_USELESS.getBooleanValue()) {
                     MinecraftUtils.debug(voteRewardPlugin, Instant.ofEpochMilli(userVoteData.getLastVote()).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())).toString());
                     MinecraftUtils.debug(voteRewardPlugin, Instant.ofEpochMilli(time).atZone(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())).toString());
                 }
@@ -299,7 +299,7 @@ public class VoteUtils {
                             userVoteData.save(true, new Callback() {
                                 @Override
                                 public void onSuccess() {
-                                    if (OptionsUtil.DEBUG_VOTES_DAILY.isEnabled()) {
+                                    if (OptionsUtil.DEBUG_VOTES_DAILY.getBooleanValue()) {
                                         MinecraftUtils.debug(voteRewardPlugin, "Daily vote reset!");
                                     }
                                 }

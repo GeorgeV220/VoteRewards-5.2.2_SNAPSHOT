@@ -41,7 +41,7 @@ public class UserVoteData {
 
     public UserVoteData(User user) {
         this.user = user;
-        if (OptionsUtil.DEBUG_USELESS.isEnabled())
+        if (OptionsUtil.DEBUG_USELESS.getBooleanValue())
             MinecraftUtils.debug(voteRewardPlugin, user.toString());
     }
 
@@ -69,7 +69,7 @@ public class UserVoteData {
      */
     public static void loadAllUsers() throws Exception {
         allUsersMap.putAll(voteRewardPlugin.getIDatabaseType().getAllUsers());
-        if (OptionsUtil.DEBUG_LOAD.isEnabled())
+        if (OptionsUtil.DEBUG_LOAD.getBooleanValue())
             MinecraftUtils.debug(voteRewardPlugin, getAllUsersMap().toString());
     }
 
@@ -92,7 +92,7 @@ public class UserVoteData {
      */
     public static UserVoteData getUser(UUID uuid) {
         if (!allUsersMap.containsKey(uuid)) {
-            if (OptionsUtil.DEBUG_VOTE_PRE.isEnabled()) {
+            if (OptionsUtil.DEBUG_VOTE_PRE.getBooleanValue()) {
                 MinecraftUtils.debug(voteRewardPlugin, "Player " + Bukkit.getOfflinePlayer(uuid).getName() + " is not loaded!");
             }
 
@@ -160,7 +160,7 @@ public class UserVoteData {
      * @param services The services that player voted when he was offline.
      */
     public UserVoteData setOfflineServices(List<String> services) {
-        if (OptionsUtil.DEBUG_VOTES_OFFLINE.isEnabled())
+        if (OptionsUtil.DEBUG_VOTES_OFFLINE.getBooleanValue())
             MinecraftUtils.debug(voteRewardPlugin, "Offline Voting Debug", services.toString());
         user.append("services", services);
         return this;
@@ -379,7 +379,7 @@ public class UserVoteData {
                             "`servicesLastVote` = '" + Utils.stringListToString(Utils.mapToStringList(user.getServicesLastVote())) + "', " +
                             "`totalvotes` = '" + user.getAllTimeVotes() + "' " +
                             "WHERE `uuid` = '" + user.getUniqueId() + "'");
-            if (OptionsUtil.DEBUG_SAVE.isEnabled()) {
+            if (OptionsUtil.DEBUG_SAVE.getBooleanValue()) {
                 MinecraftUtils.debug(voteRewardPlugin,
                         "User " + user.getName() + " successfully saved!",
                         "Votes: " + user.getVotes(),
@@ -424,7 +424,7 @@ public class UserVoteData {
                                     .append("voteparty", resultSet.getInt("voteparty"))
                                     .append("daily", resultSet.getInt("daily"))
                                     .append("totalvotes", resultSet.getInt("totalvotes"));
-                            if (OptionsUtil.DEBUG_LOAD.isEnabled()) {
+                            if (OptionsUtil.DEBUG_LOAD.getBooleanValue()) {
                                 MinecraftUtils.debug(voteRewardPlugin,
                                         "User " + user.getName() + " successfully loaded!",
                                         "Votes: " + user.getVotes(),
@@ -532,7 +532,7 @@ public class UserVoteData {
                     .append("totalvotes", user.getAllTimeVotes()));
 
             voteRewardPlugin.getMongoDB().getCollection().updateOne(query, updateObject);
-            if (OptionsUtil.DEBUG_SAVE.isEnabled()) {
+            if (OptionsUtil.DEBUG_SAVE.getBooleanValue()) {
                 MinecraftUtils.debug(voteRewardPlugin,
                         "User " + user.getName() + " successfully saved!",
                         "Votes: " + user.getVotes(),
@@ -568,7 +568,7 @@ public class UserVoteData {
                             .append("servicesLastVote", document.get("servicesLastVote"))
                             .append("totalvotes", document.getInteger("totalvotes"));
                     callback.onSuccess();
-                    if (OptionsUtil.DEBUG_LOAD.isEnabled()) {
+                    if (OptionsUtil.DEBUG_LOAD.getBooleanValue()) {
                         MinecraftUtils.debug(voteRewardPlugin,
                                 "User " + user.getName() + " successfully loaded!",
                                 "Votes: " + user.getVotes(),
@@ -628,7 +628,7 @@ public class UserVoteData {
             theQuery.put("uuid", user.getUniqueId().toString());
             DeleteResult result = voteRewardPlugin.getMongoDB().getCollection().deleteMany(theQuery);
             if (result.getDeletedCount() > 0) {
-                if (OptionsUtil.DEBUG_DELETE.isEnabled()) {
+                if (OptionsUtil.DEBUG_DELETE.getBooleanValue()) {
                     MinecraftUtils.debug(voteRewardPlugin, "User " + user.getName() + " deleted from the database!");
                 }
                 allUsersMap.remove(user.getUniqueId());
@@ -712,7 +712,7 @@ public class UserVoteData {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            if (OptionsUtil.DEBUG_SAVE.isEnabled()) {
+            if (OptionsUtil.DEBUG_SAVE.getBooleanValue()) {
                 MinecraftUtils.debug(voteRewardPlugin,
                         "User " + user.getName() + " successfully saved!",
                         "Votes: " + user.getVotes(),
@@ -746,7 +746,7 @@ public class UserVoteData {
                             .append("daily", yamlConfiguration.getInt("daily"))
                             .append("totalvotes", yamlConfiguration.getInt("totalvotes"));
                     callback.onSuccess();
-                    if (OptionsUtil.DEBUG_LOAD.isEnabled()) {
+                    if (OptionsUtil.DEBUG_LOAD.getBooleanValue()) {
                         MinecraftUtils.debug(voteRewardPlugin,
                                 "User " + user.getName() + " successfully loaded!",
                                 "Votes: " + user.getVotes(),
@@ -775,7 +775,7 @@ public class UserVoteData {
         public void setupUser(User user, Callback callback) {
             if (new File(VoteRewardPlugin.getInstance().getDataFolder(),
                     "userdata").mkdirs()) {
-                if (OptionsUtil.DEBUG_CREATE.isEnabled()) {
+                if (OptionsUtil.DEBUG_CREATE.getBooleanValue()) {
                     MinecraftUtils.debug(voteRewardPlugin, "Folder userdata has been created!");
                 }
             }
@@ -784,7 +784,7 @@ public class UserVoteData {
             if (!playerExists(user)) {
                 try {
                     if (file.createNewFile()) {
-                        if (OptionsUtil.DEBUG_CREATE.isEnabled()) {
+                        if (OptionsUtil.DEBUG_CREATE.getBooleanValue()) {
                             MinecraftUtils.debug(voteRewardPlugin, "File " + file.getName() + " for the user " + Bukkit.getOfflinePlayer(user.getUniqueId()).getName() + " has been created!");
                         }
                     }
@@ -812,7 +812,7 @@ public class UserVoteData {
             File file = new File(VoteRewardPlugin.getInstance().getDataFolder(),
                     "userdata" + File.separator + user.getUniqueId().toString() + ".yml");
             if (file.exists() & file.delete()) {
-                if (OptionsUtil.DEBUG_DELETE.isEnabled()) {
+                if (OptionsUtil.DEBUG_DELETE.getBooleanValue()) {
                     MinecraftUtils.debug(voteRewardPlugin, "File " + file.getName() + " deleted!");
                 }
                 UserVoteData.getAllUsersMap().remove(user.getUniqueId());

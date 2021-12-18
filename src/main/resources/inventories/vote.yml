@@ -1,8 +1,6 @@
 name: "&a&lVote Inventory"
 animation:
   enabled: false
-  random colors: false
-  type: "wave"
 navigation:
   cancel:
     item: ANVIL
@@ -13,6 +11,7 @@ navigation:
     glow: false
     slot: 4
     animated: true
+    animation: "wave"
     colors:
       - "#48D1CC"
       - "#778899"
@@ -27,6 +26,7 @@ navigation:
     glow: false
     slot: 2
     animated: true
+    animation: "wave"
     colors:
       - "#48D1CC"
       - "#778899"
@@ -41,6 +41,7 @@ navigation:
     glow: false
     slot: 6
     animated: true
+    animation: "wave"
     colors:
       - "#48D1CC"
       - "#778899"
@@ -58,6 +59,7 @@ custom item:
       show attributes: false
       amount: 1
       animated: true
+      animation: "wave"
       colors:
         - "#F3F8FA"
         - "#A2CCE3"
@@ -77,6 +79,7 @@ custom item:
       show attributes: false
       amount: 1
       animated: true
+      animation: "wave"
       colors:
         - "#F3F8FA"
         - "#A2CCE3"

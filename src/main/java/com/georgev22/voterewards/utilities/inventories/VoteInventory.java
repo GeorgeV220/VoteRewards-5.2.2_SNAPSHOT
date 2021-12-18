@@ -39,7 +39,7 @@ public class VoteInventory {
 
         if (fileManager.getVoteInventory().getFileConfiguration().getConfigurationSection("custom item.navigation") != null)
             for (String s : fileManager.getVoteInventory().getFileConfiguration().getConfigurationSection("custom item.navigation").getKeys(false)) {
-                ItemStack itemStack = ItemBuilder.buildItemFromConfig(fileManager.getVoteInventory().getFileConfiguration(), "custom item.navigation." + s, fileManager.getVoteInventory().getFileConfiguration().getBoolean("animation.random colors")).build();
+                ItemStack itemStack = ItemBuilder.buildItemFromConfig(fileManager.getVoteInventory().getFileConfiguration(), "custom item.navigation." + s).build();
                 CustomNavigationItem navigationItem = new CustomNavigationItem(itemStack, Integer.parseInt(s)) {
                     @Override
                     public void handleClick(PagedInventoryCustomNavigationHandler handler) {
@@ -73,17 +73,16 @@ public class VoteInventory {
                                 .append("%lastVoteHour%", String.valueOf(zonedDateTime.getHour()))
                                 .append("%lastVoteMinute%", String.valueOf(zonedDateTime.getMinute()))
                                 .append("%lastVoteSecond%", String.valueOf(zonedDateTime.getSecond())),
-                        ObjectMap.newHashObjectMap(),
-                        fileManager.getVoteInventory().getFileConfiguration().getBoolean("animation.random colors")).build();
+                        ObjectMap.newHashObjectMap()).build();
                 objectMap.append(Integer.parseInt(s), itemStack);
             }
 
         IPagedInventory pagedInventory = voteRewardPlugin.getInventoryAPI()
                 .createPagedInventory(
                         new NavigationRow(
-                                new NextNavigationItem(ItemBuilder.buildItemFromConfig(fileManager.getVoteInventory().getFileConfiguration(), "navigation.next", fileManager.getVoteInventory().getFileConfiguration().getBoolean("animation.random colors")).build(), fileManager.getVoteInventory().getFileConfiguration().getInt("navigation.next.slot", 6)),
-                                new PreviousNavigationItem(ItemBuilder.buildItemFromConfig(fileManager.getVoteInventory().getFileConfiguration(), "navigation.back", fileManager.getVoteInventory().getFileConfiguration().getBoolean("animation.random colors")).build(), fileManager.getVoteInventory().getFileConfiguration().getInt("navigation.back.slot", 2)),
-                                new CloseNavigationItem(ItemBuilder.buildItemFromConfig(fileManager.getVoteInventory().getFileConfiguration(), "navigation.cancel", fileManager.getVoteInventory().getFileConfiguration().getBoolean("animation.random colors")).build(), fileManager.getVoteInventory().getFileConfiguration().getInt("navigation.cancel.slot", 4)),
+                                new NextNavigationItem(ItemBuilder.buildItemFromConfig(fileManager.getVoteInventory().getFileConfiguration(), "navigation.next").build(), fileManager.getVoteInventory().getFileConfiguration().getInt("navigation.next.slot", 6)),
+                                new PreviousNavigationItem(ItemBuilder.buildItemFromConfig(fileManager.getVoteInventory().getFileConfiguration(), "navigation.back").build(), fileManager.getVoteInventory().getFileConfiguration().getInt("navigation.back.slot", 2)),
+                                new CloseNavigationItem(ItemBuilder.buildItemFromConfig(fileManager.getVoteInventory().getFileConfiguration(), "navigation.cancel").build(), fileManager.getVoteInventory().getFileConfiguration().getInt("navigation.cancel.slot", 4)),
                                 navigationItemList.toArray(new NavigationItem[0])));
 
         CustomItemInventory customItemInventory = new CustomItemInventory(MinecraftUtils.colorize(fileManager.getVoteInventory().getFileConfiguration().getString("name")), objectMap, 54);
@@ -92,7 +91,7 @@ public class VoteInventory {
 
         pagedInventory.addPage(inventory);
 
-        pagedInventory.open(player, 0, fileManager.getVoteInventory().getFileConfiguration().getBoolean("animation.enabled"), fileManager.getVoteInventory().getFileConfiguration().getString("animation.type").equalsIgnoreCase("wave"));
+        pagedInventory.open(player, 0, fileManager.getVoteInventory().getFileConfiguration().getBoolean("animation.enabled"));
     }
 
 }

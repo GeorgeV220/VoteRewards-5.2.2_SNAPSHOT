@@ -22,7 +22,7 @@
 
     <distributionManagement>
         <repository>
-            <id>central</id>
+            <id>georgev22</id>
             <name>Releases</name>
             <url>https://maven.georgev22.com/repository/georgev22/</url>
         </repository>
@@ -170,7 +170,7 @@
         <dependency>
             <groupId>com.georgev22</groupId>
             <artifactId>api</artifactId>
-            <version>1.9</version>
+            <version>2.1</version>
         </dependency>
 
         <dependency>
@@ -243,7 +243,7 @@
         <dependency>
             <groupId>org.bstats</groupId>
             <artifactId>bstats-bukkit</artifactId>
-            <version>1.8</version>
+            <version>2.2.1</version>
             <scope>compile</scope>
         </dependency>
 

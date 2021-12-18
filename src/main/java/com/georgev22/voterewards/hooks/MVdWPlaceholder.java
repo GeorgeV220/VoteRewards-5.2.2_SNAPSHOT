@@ -41,7 +41,7 @@ public class MVdWPlaceholder {
                         - fm.getData().getFileConfiguration().getInt("VoteParty-Votes", 0)));
 
 
-        PlaceholderAPI.registerPlaceholder(plugin, "voterewards_voteparty_votes_full", event -> OptionsUtil.VOTEPARTY_PLAYERS.isEnabled() & VotePartyUtils.isWaitingForPlayers() ? MinecraftUtils.colorize(
+        PlaceholderAPI.registerPlaceholder(plugin, "voterewards_voteparty_votes_full", event -> OptionsUtil.VOTEPARTY_PLAYERS.getBooleanValue() & VotePartyUtils.isWaitingForPlayers() ? MinecraftUtils.colorize(
                 Utils.placeHolder(
                         MessagesUtil.VOTEPARTY_WAITING_FOR_MORE_PLAYERS_PLACEHOLDER.getMessages()[0],
                         ObjectMap.newHashObjectMap()

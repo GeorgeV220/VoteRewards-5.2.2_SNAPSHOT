@@ -49,7 +49,7 @@ public class PlayerListeners implements Listener {
                 @Override
                 public void onSuccess() {
                     //OFFLINE VOTING
-                    if (OptionsUtil.OFFLINE.isEnabled() && !Bukkit.getPluginManager().isPluginEnabled("AuthMeReloaded")) {
+                    if (OptionsUtil.OFFLINE.getBooleanValue() && !Bukkit.getPluginManager().isPluginEnabled("AuthMeReloaded")) {
                         for (String serviceName : userVoteData.getOfflineServices()) {
                             try {
                                 new VoteUtils(userVoteData.user()).processVote(serviceName, false);
@@ -82,18 +82,18 @@ public class PlayerListeners implements Listener {
             e.printStackTrace();
         }
         final long elapsedMillis = sw.elapsed(TimeUnit.MILLISECONDS);
-        if (OptionsUtil.DEBUG_LOAD.isEnabled()) {
+        if (OptionsUtil.DEBUG_LOAD.getBooleanValue()) {
             MinecraftUtils.debug(VoteRewardPlugin.getInstance(), "Elapsed time to load user data: " + elapsedMillis);
         }
 
         //UPDATER
-        if (OptionsUtil.UPDATER.isEnabled()) {
+        if (OptionsUtil.UPDATER.getBooleanValue()) {
             if (event.getPlayer().hasPermission("voterewards.updater") || event.getPlayer().isOp()) {
                 new Updater(event.getPlayer());
             }
         }
 
-        if (OptionsUtil.REMINDER.isEnabled())
+        if (OptionsUtil.REMINDER.getBooleanValue())
             VoteUtils.reminderMap.append(event.getPlayer(), System.currentTimeMillis());
     }
 
@@ -104,9 +104,9 @@ public class PlayerListeners implements Listener {
             @Override
             public void onSuccess() {
                 UserVoteData.getAllUsersMap().append(userVoteData.user().getUniqueId(), userVoteData.user());
-                if (OptionsUtil.REMINDER.isEnabled())
+                if (OptionsUtil.REMINDER.getBooleanValue())
                     VoteUtils.reminderMap.remove(event.getPlayer());
-                if (OptionsUtil.DEBUG_SAVE.isEnabled()) {
+                if (OptionsUtil.DEBUG_SAVE.getBooleanValue()) {
                     MinecraftUtils.debug(voteRewardPlugin, "User " + event.getPlayer().getName() + " saved!",
                             userVoteData.user().toString());
                 }
@@ -162,14 +162,14 @@ public class PlayerListeners implements Listener {
             item.setAmount(amount - 1);
         }
 
-        new VotePartyUtils(player).chooseRandom(OptionsUtil.VOTEPARTY_RANDOM.isEnabled());
+        new VotePartyUtils(player).chooseRandom(OptionsUtil.VOTEPARTY_RANDOM.getBooleanValue());
 
-        if (OptionsUtil.VOTEPARTY_SOUND_CRATE.isEnabled()) {
+        if (OptionsUtil.VOTEPARTY_SOUND_CRATE.getBooleanValue()) {
             if (MinecraftUtils.MinecraftVersion.getCurrentVersion().isBelow(MinecraftUtils.MinecraftVersion.V1_12_R1)) {
                 player.getPlayer().playSound(player.getPlayer().getLocation(), XSound
                                 .matchXSound(OptionsUtil.SOUND_CRATE_OPEN.getStringValue()).get().parseSound(),
                         1000, 1);
-                if (OptionsUtil.DEBUG_USELESS.isEnabled()) {
+                if (OptionsUtil.DEBUG_USELESS.getBooleanValue()) {
                     MinecraftUtils.debug(voteRewardPlugin, "========================================================");
                     MinecraftUtils.debug(voteRewardPlugin, "SoundCategory doesn't exists in versions below 1.12");
                     MinecraftUtils.debug(voteRewardPlugin, "SoundCategory doesn't exists in versions below 1.12");

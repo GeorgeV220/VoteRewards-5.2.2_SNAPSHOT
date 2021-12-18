@@ -1,14 +1,6 @@
-name: "tests"
+name: "&a&lVoteTop Inventory"
 animation:
   enabled: false
-  type: wave
-  random colors: false
-  colors:
-    - "#F3F8FA"
-    - "#A2CCE3"
-    - "#68A4C4"
-    - "#32627B"
-    - "#1E4356"
 gui:
   player:
     item: PLAYER_HEAD
@@ -19,6 +11,7 @@ gui:
     amount: 1
     glow: false
     animated: true
+    animation: "wave"
     colors:
       - "#48D1CC"
       - "#778899"
@@ -33,6 +26,7 @@ gui:
     amount: 1
     glow: false
     animated: true
+    animation: "wave"
     colors:
       - "#48D1CC"
       - "#778899"
@@ -48,6 +42,7 @@ navigation:
     glow: false
     slot: 4
     animated: true
+    animation: "wave"
     colors:
       - "#48D1CC"
       - "#778899"
@@ -62,6 +57,7 @@ navigation:
     glow: false
     slot: 2
     animated: true
+    animation: "wave"
     colors:
       - "#48D1CC"
       - "#778899"
@@ -76,6 +72,7 @@ navigation:
     glow: false
     slot: 6
     animated: true
+    animation: "wave"
     colors:
       - "#48D1CC"
       - "#778899"
@@ -92,6 +89,7 @@ custom item:
       glow: false
       commands: [ ]
       animated: true
+      animation: "wave"
       colors:
         - "#48D1CC"
         - "#778899"
@@ -107,6 +105,7 @@ custom item:
       glow: true
       commands: [ ]
       animated: true
+      animation: "wave"
       colors:
         - "#48D1CC"
         - "#778899"

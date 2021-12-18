@@ -34,7 +34,7 @@ public class Vote extends BukkitCommand {
 
         Player player = (Player) sender;
 
-        if (OptionsUtil.EXPERIMENTAL_FEATURES.isEnabled()) {
+        if (OptionsUtil.EXPERIMENTAL_FEATURES.getBooleanValue()) {
             new VoteInventory().openInventory(((Player) sender));
         }
 
@@ -43,7 +43,7 @@ public class Vote extends BukkitCommand {
         placeholders.append("%votes%", String.valueOf(userVoteData.getVotes()));
         MessagesUtil.VOTE_COMMAND.msg(player, placeholders, true);
 
-        if (OptionsUtil.CUMULATIVE.isEnabled() && OptionsUtil.CUMULATIVE_MESSAGE.isEnabled()) {
+        if (OptionsUtil.CUMULATIVE.getBooleanValue() && OptionsUtil.CUMULATIVE_MESSAGE.getBooleanValue()) {
             placeholders.append("%votes%", String.valueOf(userVoteData.votesUntilNextCumulativeVote()));
             MessagesUtil.VOTE_COMMAND_CUMULATIVE.msg(player, placeholders, true);
         }

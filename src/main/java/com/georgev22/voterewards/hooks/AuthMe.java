@@ -17,7 +17,7 @@ public class AuthMe implements Listener {
 
     @EventHandler
     public void onAuthLogin(LoginEvent event) throws IOException {
-        if (OptionsUtil.OFFLINE.isEnabled()) {
+        if (OptionsUtil.OFFLINE.getBooleanValue()) {
             UserVoteData userVoteData = UserVoteData.getUser(event.getPlayer().getUniqueId());
             for (String serviceName : userVoteData.getOfflineServices()) {
                 new VoteUtils(userVoteData.user()).processVote(serviceName, false);

@@ -30,7 +30,7 @@ public class VoteTop extends BukkitCommand {
         if (!(sender instanceof Player)) {
             sendMsg(sender);
         } else {
-            if (OptionsUtil.EXPERIMENTAL_FEATURES.isEnabled() && OptionsUtil.VOTETOP_GUI.isEnabled()) {
+            if (OptionsUtil.EXPERIMENTAL_FEATURES.getBooleanValue() && OptionsUtil.VOTETOP_GUI.getBooleanValue()) {
                 new VoteTopInventory().openTopPlayersInventory(((Player) sender).getPlayer(), !OptionsUtil.VOTETOP_GUI_TYPE.getStringValue().equalsIgnoreCase("monthly"));
             } else {
                 sendMsg(sender);
@@ -42,7 +42,7 @@ public class VoteTop extends BukkitCommand {
     public void sendMsg(CommandSender sender) {
         ObjectMap<String, String> placeholders = ObjectMap.newHashObjectMap();
 
-        if (OptionsUtil.VOTETOP_HEADER.isEnabled())
+        if (OptionsUtil.VOTETOP_HEADER.getBooleanValue())
             MessagesUtil.VOTE_TOP_HEADER.msg(sender);
 
         VoteUtils.getTopPlayers(OptionsUtil.VOTETOP_VOTERS.getIntValue()).forEach((key, value) -> {
@@ -51,16 +51,16 @@ public class VoteTop extends BukkitCommand {
             MessagesUtil.VOTE_TOP_BODY.msg(sender, placeholders, true);
         });
 
-        if (OptionsUtil.VOTETOP_LINE.isEnabled())
+        if (OptionsUtil.VOTETOP_LINE.getBooleanValue())
             MessagesUtil.VOTE_TOP_LINE.msg(sender);
 
-        if (OptionsUtil.VOTETOP_ALL_TIME_ENABLED.isEnabled())
+        if (OptionsUtil.VOTETOP_ALL_TIME_ENABLED.getBooleanValue())
             VoteUtils.getAllTimeTopPlayers(OptionsUtil.VOTETOP_ALL_TIME_VOTERS.getIntValue()).forEach((key, value) -> {
                 placeholders.append("%name%", key).append("%votes%", String.valueOf(value));
 
                 MessagesUtil.VOTE_TOP_BODY.msg(sender, placeholders, true);
             });
-        if (OptionsUtil.VOTETOP_FOOTER.isEnabled())
+        if (OptionsUtil.VOTETOP_FOOTER.getBooleanValue())
             MessagesUtil.VOTE_TOP_FOOTER.msg(sender);
         placeholders.clear();
     }

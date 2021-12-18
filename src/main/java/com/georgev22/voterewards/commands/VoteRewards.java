@@ -145,7 +145,7 @@ public class VoteRewards extends BukkitCommand {
             userVoteData.save(true, new Callback() {
                 @Override
                 public void onSuccess() {
-                    if (OptionsUtil.DEBUG_SAVE.isEnabled()) {
+                    if (OptionsUtil.DEBUG_SAVE.getBooleanValue()) {
                         MinecraftUtils.debug(VoteRewardPlugin.getInstance(),
                                 "User " + userVoteData.user().getName() + " successfully saved!",
                                 "Votes: " + userVoteData.user().getVotes(),

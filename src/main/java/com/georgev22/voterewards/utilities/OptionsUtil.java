@@ -6,256 +6,280 @@ import com.georgev22.api.inventory.ItemBuilder;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.google.common.collect.Lists;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+
+import static com.georgev22.api.utilities.Utils.Assertions.notNull;
 
 public enum OptionsUtil {
 
-    DEBUG_VOTE_PRE("debug.vote.preVote", false),
+    DEBUG_VOTE_PRE("debug.vote.preVote", false, Optional.empty()),
 
-    DEBUG_VOTE_AFTER("debug.vote.afterVote", false),
+    DEBUG_VOTE_AFTER("debug.vote.afterVote", false, Optional.empty()),
 
-    DEBUG_LOAD("debug.load", false),
+    DEBUG_LOAD("debug.load", false, Optional.empty()),
 
-    DEBUG_SAVE("debug.save", false),
+    DEBUG_SAVE("debug.save", false, Optional.empty()),
 
-    DEBUG_CREATE("debug.create", false),
+    DEBUG_CREATE("debug.create", false, Optional.empty()),
 
-    DEBUG_USELESS("debug.useless info", false),
+    DEBUG_USELESS("debug.useless info", false, Optional.empty()),
 
-    DEBUG_DELETE("debug.delete", false),
+    DEBUG_DELETE("debug.delete", false, Optional.empty()),
 
-    DEBUG_VOTES_CUMULATIVE("debug.votes.cumulative", false),
+    DEBUG_VOTES_CUMULATIVE("debug.votes.cumulative", false, Optional.empty()),
 
-    DEBUG_VOTES_DAILY("debug.votes.daily", false),
+    DEBUG_VOTES_DAILY("debug.votes.daily", false, Optional.empty()),
 
-    DEBUG_VOTES_LUCKY("debug.votes.lucky", false),
+    DEBUG_VOTES_LUCKY("debug.votes.lucky", false, Optional.empty()),
 
-    DEBUG_VOTES_REGULAR("debug.votes.regular", false),
+    DEBUG_VOTES_REGULAR("debug.votes.regular", false, Optional.empty()),
 
-    DEBUG_VOTES_WORLD("debug.votes.world", false),
+    DEBUG_VOTES_WORLD("debug.votes.world", false, Optional.empty()),
 
-    DEBUG_VOTES_PERMISSIONS("debug.votes.permissions", false),
+    DEBUG_VOTES_PERMISSIONS("debug.votes.permissions", false, Optional.empty()),
 
-    DEBUG_VOTES_OFFLINE("debug.votes.offline", false),
+    DEBUG_VOTES_OFFLINE("debug.votes.offline", false, Optional.empty()),
 
-    VOTE_TITLE("title.vote", false),
+    VOTE_TITLE("title.vote", false, Optional.empty()),
 
-    VOTEPARTY_TITLE("title.voteparty", false),
+    VOTEPARTY_TITLE("title.voteparty", false, Optional.empty()),
 
-    UPDATER("updater", true),
+    UPDATER("updater", true, Optional.empty()),
 
-    MONTHLY_ENABLED("monthly.enabled", false),
+    MONTHLY_ENABLED("monthly.enabled", false, Optional.empty()),
 
-    MONTHLY_MINUTES("monthly.minutes", 30L),
+    MONTHLY_MINUTES("monthly.minutes", 30L, Optional.empty()),
 
-    PURGE_ENABLED("purge.enabled", false),
+    PURGE_ENABLED("purge.enabled", false, Optional.empty()),
 
-    PURGE_DAYS("purge.days", 60L),
+    PURGE_DAYS("purge.days", 60L, Optional.empty()),
 
-    PURGE_MINUTES("purge.minutes", 30L),
+    PURGE_MINUTES("purge.minutes", 30L, Optional.empty()),
 
-    DAILY("votes.daily.enabled", false),
+    DAILY("votes.daily.enabled", false, Optional.empty()),
 
-    DAILY_HOURS("votes.daily.hours", 12),
+    DAILY_HOURS("votes.daily.hours", 12, Optional.empty()),
 
-    OFFLINE("votes.offline", false),
+    OFFLINE("votes.offline", false, Optional.empty()),
 
-    PERMISSIONS("votes.permissions", false),
+    PERMISSIONS("votes.permissions", false, Optional.empty()),
 
-    WORLD("votes.world.enabled", false),
+    WORLD("votes.world.enabled", false, Optional.empty()),
 
-    WORLD_SERVICES("votes.world.services", false),
+    WORLD_SERVICES("votes.world.services", false, Optional.empty()),
 
-    SERVICES("votes.services", false),
+    SERVICES("votes.services", false, Optional.empty()),
 
-    LUCKY("votes.lucky.enabled", false),
+    LUCKY("votes.lucky.enabled", false, Optional.empty()),
 
-    LUCKY_NUMBERS("votes.lucky.numbers", 50),
+    LUCKY_NUMBERS("votes.lucky.numbers", 50, Optional.empty()),
 
-    CUMULATIVE("votes.cumulative", false),
+    CUMULATIVE("votes.cumulative", false, Optional.empty()),
 
-    CUMULATIVE_MESSAGE("votes.cumulative message", true),
+    CUMULATIVE_MESSAGE("votes.cumulative message", true, Optional.empty()),
 
-    REMINDER("reminder.enabled", false),
+    REMINDER("reminder.enabled", false, Optional.empty()),
 
-    REMINDER_SEC("reminder.time", 120),
+    REMINDER_SEC("reminder.time", 120, Optional.empty()),
 
-    SOUND("sound.vote", false),
+    SOUND("sound.vote", false, Optional.empty()),
 
-    MESSAGE_VOTE("message.vote", false),
+    MESSAGE_VOTE("message.vote", false, Optional.empty()),
 
-    MESSAGE_VOTEPARTY("message.voteparty", false),
+    MESSAGE_VOTEPARTY("message.voteparty", false, Optional.empty()),
 
-    VOTETOP_HEADER("votetop.header", true),
+    VOTETOP_HEADER("votetop.header", true, Optional.empty()),
 
-    VOTETOP_LINE("votetop.line", false),
+    VOTETOP_LINE("votetop.line", false, Optional.empty()),
 
-    VOTETOP_FOOTER("votetop.footer", true),
+    VOTETOP_FOOTER("votetop.footer", true, Optional.empty()),
 
-    VOTETOP_VOTERS("votetop.voters", 5),
+    VOTETOP_VOTERS("votetop.voters", 5, Optional.empty()),
 
-    VOTETOP_GUI("votetop.gui.enabled", false),
+    VOTETOP_GUI("votetop.gui.enabled", false, Optional.empty()),
 
-    VOTETOP_GUI_TYPE("votetop.gui.type", "monthly"),
+    VOTETOP_GUI_TYPE("votetop.gui.type", "monthly", Optional.empty()),
 
-    VOTETOP_ALL_TIME_ENABLED("votetop.all time.enabled", false),
+    VOTETOP_ALL_TIME_ENABLED("votetop.all time.enabled", false, Optional.empty()),
 
-    VOTETOP_ALL_TIME_VOTERS("votetop.all time.voters", 3),
+    VOTETOP_ALL_TIME_VOTERS("votetop.all time.voters", 3, Optional.empty()),
 
-    COMMAND_REWARDS("commands.rewards", true),
+    COMMAND_REWARDS("commands.rewards", true, Optional.empty()),
 
-    COMMAND_FAKEVOTE("commands.fakevote", true),
+    COMMAND_FAKEVOTE("commands.fakevote", true, Optional.empty()),
 
-    COMMAND_VOTEPARTY("commands.voteparty", true),
+    COMMAND_VOTEPARTY("commands.voteparty", true, Optional.empty()),
 
-    COMMAND_VOTES("commands.votes", true),
+    COMMAND_VOTES("commands.votes", true, Optional.empty()),
 
-    COMMAND_VOTE("commands.vote", true),
+    COMMAND_VOTE("commands.vote", true, Optional.empty()),
 
-    COMMAND_VOTETOP("commands.votetop", true),
+    COMMAND_VOTETOP("commands.votetop", true, Optional.empty()),
 
-    COMMAND_VOTEREWARDS("commands.voterewards", true),
+    COMMAND_VOTEREWARDS("commands.voterewards", true, Optional.empty()),
 
-    COMMAND_HOLOGRAM("commands.hologram", true),
+    COMMAND_HOLOGRAM("commands.hologram", true, Optional.empty()),
 
-    DATABASE_HOST("database.SQL.host", "localhost"),
+    DATABASE_HOST("database.SQL.host", "localhost", Optional.empty()),
 
-    DATABASE_PORT("database.SQL.port", 3306),
+    DATABASE_PORT("database.SQL.port", 3306, Optional.empty()),
 
-    DATABASE_USER("database.SQL.user", "youruser"),
+    DATABASE_USER("database.SQL.user", "youruser", Optional.empty()),
 
-    DATABASE_PASSWORD("database.SQL.password", "yourpassword"),
+    DATABASE_PASSWORD("database.SQL.password", "yourpassword", Optional.empty()),
 
-    DATABASE_DATABASE("database.SQL.database", "VoteRewards"),
+    DATABASE_DATABASE("database.SQL.database", "VoteRewards", Optional.empty()),
 
-    DATABASE_TABLE_NAME("database.SQL.table name", "voterewards_users"),
+    DATABASE_TABLE_NAME("database.SQL.table name", "voterewards_users", Optional.empty()),
 
-    DATABASE_SQLITE("database.SQLite.file name", "voterewards"),
+    DATABASE_SQLITE("database.SQLite.file name", "voterewards", Optional.empty()),
 
-    DATABASE_MONGO_HOST("database.MongoDB.host", "localhost"),
+    DATABASE_MONGO_HOST("database.MongoDB.host", "localhost", Optional.empty()),
 
-    DATABASE_MONGO_PORT("database.MongoDB.port", 27017),
+    DATABASE_MONGO_PORT("database.MongoDB.port", 27017, Optional.empty()),
 
-    DATABASE_MONGO_USER("database.MongoDB.user", "youruser"),
+    DATABASE_MONGO_USER("database.MongoDB.user", "youruser", Optional.empty()),
 
-    DATABASE_MONGO_PASSWORD("database.MongoDB.password", "yourpassword"),
+    DATABASE_MONGO_PASSWORD("database.MongoDB.password", "yourpassword", Optional.empty()),
 
-    DATABASE_MONGO_DATABASE("database.MongoDB.database", "VoteRewards"),
+    DATABASE_MONGO_DATABASE("database.MongoDB.database", "VoteRewards", Optional.empty()),
 
-    DATABASE_MONGO_COLLECTION("database.MongoDB.collection", "voterewards_users"),
+    DATABASE_MONGO_COLLECTION("database.MongoDB.collection", "voterewards_users", Optional.empty()),
 
-    DATABASE_TYPE("database.type", "File"),
+    DATABASE_TYPE("database.type", "File", Optional.empty()),
 
-    VOTEPARTY("voteparty.enabled", false),
+    VOTEPARTY("voteparty.enabled", false, Optional.empty()),
 
-    VOTEPARTY_PARTICIPATE("voteparty.participate", true),
+    VOTEPARTY_PARTICIPATE("voteparty.participate", true, Optional.empty()),
 
-    VOTEPARTY_CRATE("voteparty.crate.enabled", true),
+    VOTEPARTY_CRATE("voteparty.crate.enabled", true, Optional.empty()),
 
-    VOTEPARTY_RANDOM("voteparty.random rewards", true),
+    VOTEPARTY_RANDOM("voteparty.random rewards", true, Optional.empty()),
 
-    VOTEPARTY_COOLDOWN("voteparty.cooldown.enabled", true),
+    VOTEPARTY_COOLDOWN("voteparty.cooldown.enabled", true, Optional.empty()),
 
-    VOTEPARTY_COOLDOWN_SECONDS("voteparty.cooldown.seconds", 5),
+    VOTEPARTY_COOLDOWN_SECONDS("voteparty.cooldown.seconds", 5, Optional.empty()),
 
-    VOTEPARTY_PLAYERS("voteparty.players.enabled", false),
+    VOTEPARTY_PLAYERS("voteparty.players.enabled", false, Optional.empty()),
 
-    VOTEPARTY_PLAYERS_NEED("voteparty.players.need", 5),
+    VOTEPARTY_PLAYERS_NEED("voteparty.players.need", 5, Optional.empty()),
 
-    VOTEPARTY_SOUND_START("sound.voteparty", false),
+    VOTEPARTY_SOUND_START("sound.voteparty", false, Optional.empty()),
 
-    VOTEPARTY_SOUND_CRATE("sound.crate", false),
+    VOTEPARTY_SOUND_CRATE("sound.crate", false, Optional.empty()),
 
-    VOTEPARTY_REGIONS("voteparty.regions", false),
+    VOTEPARTY_REGIONS("voteparty.regions", false, Optional.empty()),
 
-    VOTEPARTY_VOTES("voteparty.votes", 2),
+    VOTEPARTY_VOTES("voteparty.votes", 2, Optional.empty()),
 
-    VOTEPARTY_BARS("voteparty.progress.bars", 10),
+    VOTEPARTY_BARS("voteparty.progress.bars", 10, Optional.empty()),
 
-    VOTEPARTY_COMPLETE_COLOR("voteparty.progress.complete color", "&a"),
+    VOTEPARTY_COMPLETE_COLOR("voteparty.progress.complete color", "&a", Optional.empty()),
 
-    VOTEPARTY_NOT_COMPLETE_COLOR("voteparty.progress.not complete color", "&c"),
+    VOTEPARTY_NOT_COMPLETE_COLOR("voteparty.progress.not complete color", "&c", Optional.empty()),
 
-    VOTEPARTY_BAR_SYMBOL("voteparty.progress.bar symbol", "|"),
+    VOTEPARTY_BAR_SYMBOL("voteparty.progress.bar symbol", "|", Optional.empty()),
 
-    VOTEPARTY_CRATE_ITEM("voteparty.crate.item", "PISTON"),
+    VOTEPARTY_CRATE_ITEM("voteparty.crate.item", "PISTON", Optional.empty()),
 
-    VOTEPARTY_CRATE_NAME("voteparty.crate.name", "&cVoteParty Crate"),
+    VOTEPARTY_CRATE_NAME("voteparty.crate.name", "&cVoteParty Crate", Optional.empty()),
 
-    VOTEPARTY_CRATE_LORES("voteparty.crate.lores", Collections.singletonList("&cPlace me")),
+    VOTEPARTY_CRATE_LORES("voteparty.crate.lores", Collections.singletonList("&cPlace me"), Optional.empty()),
 
     VOTEPARTY_REWARDS("voteparty.rewards",
-            Arrays.asList("eco give %player% 6547", "give %player% minecraft:nether_star 31")),
+            Arrays.asList("eco give %player% 6547", "give %player% minecraft:nether_star 31"), Optional.empty()),
 
-    SOUND_VOTE("sound.sounds.vote received.sound", "NOTE_PIANO"),
+    SOUND_VOTE("sound.sounds.vote received.sound", "NOTE_PIANO", Optional.empty()),
 
-    SOUND_VOTE_CHANNEL("sound.sounds.vote received.channel", "AMBIENT"),
+    SOUND_VOTE_CHANNEL("sound.sounds.vote received.channel", "AMBIENT", Optional.empty()),
 
-    SOUND_CRATE_OPEN("sound.sounds.crate open.sound", "CHEST_OPEN"),
+    SOUND_CRATE_OPEN("sound.sounds.crate open.sound", "CHEST_OPEN", Optional.empty()),
 
-    SOUND_CRATE_OPEN_CHANNEL("sound.sounds.crate open.channel", "AMBIENT"),
+    SOUND_CRATE_OPEN_CHANNEL("sound.sounds.crate open.channel", "AMBIENT", Optional.empty()),
 
-    SOUND_VOTEPARTY_START("sound.sounds.voteparty start.sound", "ENDERDRAGON_DEATH"),
+    SOUND_VOTEPARTY_START("sound.sounds.voteparty start.sound", "ENDERDRAGON_DEATH", Optional.empty()),
 
-    SOUND_VOTEPARTY_START_CHANNEL("sound.sounds.voteparty start.channel", "HOSTILE"),
+    SOUND_VOTEPARTY_START_CHANNEL("sound.sounds.voteparty start.channel", "HOSTILE", Optional.empty()),
 
-    EXPERIMENTAL_FEATURES("experimental features", false),
+    EXPERIMENTAL_FEATURES("experimental features", false, Optional.empty()),
 
-    DISCORD("discord", false),
+    DISCORD("discord", false, Optional.empty()),
+
     ;
     private final String pathName;
     private final Object value;
-    private static final VoteRewardPlugin voteRewardPlugin = VoteRewardPlugin.getInstance();
+    private final Optional<String>[] oldPaths;
+    private static final VoteRewardPlugin mainPlugin = VoteRewardPlugin.getInstance();
 
-    OptionsUtil(final String pathName, final Object value) {
+    @SafeVarargs
+    @Contract(pure = true)
+    OptionsUtil(final String pathName, final Object value, Optional<String>... oldPaths) {
         this.pathName = pathName;
         this.value = value;
+        this.oldPaths = oldPaths;
     }
 
-    public boolean isEnabled() {
-        return voteRewardPlugin.getConfig().getBoolean(getPath(), true);
+    public boolean getBooleanValue() {
+        return mainPlugin.getConfig().getBoolean(getPath(), true);
     }
 
     public Object getObjectValue() {
-        return voteRewardPlugin.getConfig().get(getPath(), getDefaultValue());
+        return mainPlugin.getConfig().get(getPath(), getDefaultValue());
     }
 
     public String getStringValue() {
-        return voteRewardPlugin.getConfig().getString(getPath(), String.valueOf(getDefaultValue()));
+        return mainPlugin.getConfig().getString(getPath(), (String) getDefaultValue());
     }
 
-    public Long getLongValue() {
-        return voteRewardPlugin.getConfig().getLong(getPath(), (Long) getDefaultValue());
+    public @NotNull Long getLongValue() {
+        return mainPlugin.getConfig().getLong(getPath(), (Long) getDefaultValue());
     }
 
-    public Integer getIntValue() {
-        return voteRewardPlugin.getConfig().getInt(getPath(), (Integer) getDefaultValue());
+    public @NotNull Integer getIntValue() {
+        return mainPlugin.getConfig().getInt(getPath(), (Integer) getDefaultValue());
     }
 
-    public List<String> getStringList() {
-        return voteRewardPlugin.getConfig().getStringList(getPath());
+    public @NotNull List<String> getStringList() {
+        return mainPlugin.getConfig().getStringList(getPath());
     }
 
     public ItemStack getItemStack(boolean isSavedAsItemStack) {
         if (isSavedAsItemStack) {
-            return voteRewardPlugin.getConfig().getItemStack(getPath(), (ItemStack) getDefaultValue());
+            return mainPlugin.getConfig().getItemStack(getPath(), (ItemStack) getDefaultValue());
         } else {
-            if (voteRewardPlugin.getConfig().get(getPath()) == null) {
+            if (mainPlugin.getConfig().get(getPath()) == null) {
                 return (ItemStack) getDefaultValue();
             }
             ItemBuilder itemBuilder = new ItemBuilder(
-                    XMaterial.valueOf(voteRewardPlugin.getConfig().getString(getPath() + ".item")).parseMaterial())
-                    .amount(voteRewardPlugin.getConfig().getInt(getPath() + ".amount"))
-                    .title(voteRewardPlugin.getConfig().getString(getPath() + ".title"))
-                    .lores(voteRewardPlugin.getConfig().getStringList(getPath() + ".lores"))
+                    notNull("Material", XMaterial.valueOf(mainPlugin.getConfig().getString(getPath() + ".item")).parseMaterial()))
+                    .amount(mainPlugin.getConfig().getInt(getPath() + ".amount"))
+                    .title(mainPlugin.getConfig().getString(getPath() + ".title"))
+                    .lores(mainPlugin.getConfig().getStringList(getPath() + ".lores"))
                     .showAllAttributes(
-                            voteRewardPlugin.getConfig().getBoolean(getPath() + ".show all attributes"))
-                    .glow(voteRewardPlugin.getConfig().getBoolean(getPath() + ".glow"));
+                            mainPlugin.getConfig().getBoolean(getPath() + ".show all attributes"))
+                    .glow(mainPlugin.getConfig().getBoolean(getPath() + ".glow"));
             return itemBuilder.build();
         }
+    }
+
+    /**
+     * Converts and return a String List of color codes to a List of Color classes that represent the colors.
+     *
+     * @return a List of Color classes that represent the colors.
+     */
+    public @NotNull List<Color> getColors() {
+        List<Color> colors = Lists.newArrayList();
+        for (String stringColor : getStringList()) {
+            colors.add(Color.from(stringColor));
+        }
+
+        return colors;
     }
 
     /**
@@ -263,8 +287,38 @@ public enum OptionsUtil {
      *
      * @return the path.
      */
-    public String getPath() {
-        return "Options." + this.pathName;
+    public @NotNull String getPath() {
+        for (Optional<String> paths : getOldPaths()) {
+            if (mainPlugin.getConfig().get("Options." + getDefaultPath()) == null) {
+                if (paths.isPresent()) {
+                    if (mainPlugin.getConfig().get("Options." + paths.get()) != null) {
+                        return "Options." + paths.get();
+                    }
+                }
+            } else {
+                return "Options." + getDefaultPath();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns the default path.
+     *
+     * @return the default path.
+     */
+    @Contract(pure = true)
+    public @NotNull String getDefaultPath() {
+        return this.pathName;
+    }
+
+    /**
+     * Returns the old path if it exists.
+     *
+     * @return the old path if it exists.
+     */
+    public Optional<String>[] getOldPaths() {
+        return oldPaths;
     }
 
     /**
@@ -274,14 +328,5 @@ public enum OptionsUtil {
      */
     public Object getDefaultValue() {
         return value;
-    }
-
-    public List<Color> getColors() {
-        List<Color> colors = Lists.newArrayList();
-        for (String stringColor : getStringList()) {
-            colors.add(Color.from(stringColor));
-        }
-
-        return colors;
     }
 }

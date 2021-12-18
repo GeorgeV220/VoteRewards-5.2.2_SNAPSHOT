@@ -31,7 +31,7 @@ public class VoteTopInventory {
 
         if (fileManager.getVoteTopInventory().getFileConfiguration().getConfigurationSection("custom item.navigation") != null)
             for (String s : fileManager.getVoteTopInventory().getFileConfiguration().getConfigurationSection("custom item.navigation").getKeys(false)) {
-                ItemStack itemStack = ItemBuilder.buildItemFromConfig(fileManager.getVoteTopInventory().getFileConfiguration(), "custom item.navigation." + s, fileManager.getVoteTopInventory().getFileConfiguration().getBoolean("animation.random colors")).build();
+                ItemStack itemStack = ItemBuilder.buildItemFromConfig(fileManager.getVoteTopInventory().getFileConfiguration(), "custom item.navigation." + s).build();
                 CustomNavigationItem navigationItem = new CustomNavigationItem(itemStack, Integer.parseInt(s)) {
                     @Override
                     public void handleClick(PagedInventoryCustomNavigationHandler handler) {
@@ -46,9 +46,9 @@ public class VoteTopInventory {
         IPagedInventory pagedInventory = voteRewardPlugin.getInventoryAPI()
                 .createPagedInventory(
                         new NavigationRow(
-                                new NextNavigationItem(ItemBuilder.buildItemFromConfig(fileManager.getVoteTopInventory().getFileConfiguration(), "navigation.next", fileManager.getVoteTopInventory().getFileConfiguration().getBoolean("animation.random colors")).build(), fileManager.getVoteTopInventory().getFileConfiguration().getInt("navigation.next.slot", 6)),
-                                new PreviousNavigationItem(ItemBuilder.buildItemFromConfig(fileManager.getVoteTopInventory().getFileConfiguration(), "navigation.back", fileManager.getVoteTopInventory().getFileConfiguration().getBoolean("animation.random colors")).build(), fileManager.getVoteTopInventory().getFileConfiguration().getInt("navigation.back.slot", 2)),
-                                new CloseNavigationItem(ItemBuilder.buildItemFromConfig(fileManager.getVoteTopInventory().getFileConfiguration(), "navigation.cancel", fileManager.getVoteTopInventory().getFileConfiguration().getBoolean("animation.random colors")).build(), fileManager.getVoteTopInventory().getFileConfiguration().getInt("navigation.cancel.slot", 4)),
+                                new NextNavigationItem(ItemBuilder.buildItemFromConfig(fileManager.getVoteTopInventory().getFileConfiguration(), "navigation.next").build(), fileManager.getVoteTopInventory().getFileConfiguration().getInt("navigation.next.slot", 6)),
+                                new PreviousNavigationItem(ItemBuilder.buildItemFromConfig(fileManager.getVoteTopInventory().getFileConfiguration(), "navigation.back").build(), fileManager.getVoteTopInventory().getFileConfiguration().getInt("navigation.back.slot", 2)),
+                                new CloseNavigationItem(ItemBuilder.buildItemFromConfig(fileManager.getVoteTopInventory().getFileConfiguration(), "navigation.cancel").build(), fileManager.getVoteTopInventory().getFileConfiguration().getInt("navigation.cancel.slot", 4)),
                                 navigationItemList.toArray(new NavigationItem[0])));
 
         List<Inventory> inventoryList = Lists.newArrayList();
@@ -58,8 +58,7 @@ public class VoteTopInventory {
         if (fileManager.getVoteTopInventory().getFileConfiguration().getConfigurationSection("custom item.gui") != null)
             for (String s : fileManager.getVoteTopInventory().getFileConfiguration().getConfigurationSection("custom item.gui").getKeys(false)) {
                 String itemServiceName = fileManager.getVoteTopInventory().getFileConfiguration().getString("custom item.gui." + s + ".service name");
-                ItemStack itemStack = ItemBuilder.buildItemFromConfig(fileManager.getVoteTopInventory().getFileConfiguration(), "custom item.gui." + s,
-                        fileManager.getVoteTopInventory().getFileConfiguration().getBoolean("animation.random colors")).build();
+                ItemStack itemStack = ItemBuilder.buildItemFromConfig(fileManager.getVoteTopInventory().getFileConfiguration(), "custom item.gui." + s).build();
                 objectMap.append(Integer.parseInt(s), itemStack);
             }
 
@@ -96,13 +95,12 @@ public class VoteTopInventory {
                     ObjectMap.newHashObjectMap()
                             .append("%votes%", String.valueOf(entry.getValue())),
                     ObjectMap.newHashObjectMap()
-                            .append("%displayName%", entry.getKey()),
-                    fileManager.getVoteTopInventory().getFileConfiguration().getBoolean("animation.random colors")).skull(entry.getKey()).build());
+                            .append("%displayName%", entry.getKey())).skull(entry.getKey()).build());
 
             i++;
         }
         inventoryList.forEach(pagedInventory::addPage);
-        pagedInventory.open(player, 0, fileManager.getVoteTopInventory().getFileConfiguration().getBoolean("animation.enabled"), fileManager.getVoteTopInventory().getFileConfiguration().getString("animation.type").equalsIgnoreCase("wave"));
+        pagedInventory.open(player, 0, fileManager.getVoteTopInventory().getFileConfiguration().getBoolean("animation.enabled"));
 
     }
 

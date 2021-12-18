@@ -88,7 +88,7 @@ public class DeveloperInformListener implements Listener {
 
             "&7Main path: &c%main%",
 
-            "&7Experimental Features: &c" + OptionsUtil.EXPERIMENTAL_FEATURES.isEnabled(),
+            "&7Experimental Features: &c" + OptionsUtil.EXPERIMENTAL_FEATURES.getBooleanValue(),
 
             ""
 

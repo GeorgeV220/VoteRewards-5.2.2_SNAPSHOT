@@ -27,7 +27,7 @@ public class Backup {
     private File getBackupFolder() {
         File backupFolder = new File(voteRewardPlugin.getDataFolder(), "backups");
         if (backupFolder.mkdirs()) {
-            if (OptionsUtil.DEBUG_CREATE.isEnabled()) {
+            if (OptionsUtil.DEBUG_CREATE.getBooleanValue()) {
                 MinecraftUtils.debug(voteRewardPlugin, "Backup folder has been created!");
             }
         }
@@ -93,7 +93,7 @@ public class Backup {
                         userVoteData.save(true, new Callback() {
                             @Override
                             public void onSuccess() {
-                                if (OptionsUtil.DEBUG_SAVE.isEnabled()) {
+                                if (OptionsUtil.DEBUG_SAVE.getBooleanValue()) {
                                     MinecraftUtils.debug(VoteRewardPlugin.getInstance(),
                                             "User " + userVoteData.user().getName() + " successfully saved!",
                                             "Votes: " + userVoteData.user().getVotes(),

@@ -79,9 +79,8 @@ public class PAPI extends PlaceholderExpansion {
             return OptionsUtil.VOTEPARTY_VOTES.getStringValue();
         }
 
-
         if (identifier.equalsIgnoreCase("voteparty_votes_full")) {
-            return OptionsUtil.VOTEPARTY_PLAYERS.isEnabled() & VotePartyUtils.isWaitingForPlayers() ? MinecraftUtils.colorize(Utils.placeHolder(
+            return OptionsUtil.VOTEPARTY_PLAYERS.getBooleanValue() & VotePartyUtils.isWaitingForPlayers() ? MinecraftUtils.colorize(Utils.placeHolder(
                     MessagesUtil.VOTEPARTY_WAITING_FOR_MORE_PLAYERS_PLACEHOLDER.getMessages()[0],
                     ObjectMap.newHashObjectMap()
                             .append("%online%", Bukkit.getOnlinePlayers().size())

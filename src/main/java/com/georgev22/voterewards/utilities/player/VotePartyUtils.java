@@ -59,7 +59,7 @@ public class VotePartyUtils {
      */
     public void run(boolean start) {
         Bukkit.getScheduler().runTaskAsynchronously(voteRewardPlugin, () -> {
-            if ((!start & OptionsUtil.VOTEPARTY_PLAYERS.isEnabled()) & Bukkit.getOnlinePlayers().size() > OptionsUtil.VOTEPARTY_PLAYERS_NEED.getIntValue()) {
+            if ((!start & OptionsUtil.VOTEPARTY_PLAYERS.getBooleanValue()) & Bukkit.getOnlinePlayers().size() > OptionsUtil.VOTEPARTY_PLAYERS_NEED.getIntValue()) {
                 MessagesUtil.VOTEPARTY_NOT_ENOUGH_PLAYERS.msgAll();
                 isWaitingForPlayers = true;
                 return;
@@ -76,7 +76,7 @@ public class VotePartyUtils {
             int currentVotes = dataFile.getInt("VoteParty-Votes", 0);
 
             if (!start) {
-                if (OptionsUtil.MESSAGE_VOTEPARTY.isEnabled()) {
+                if (OptionsUtil.MESSAGE_VOTEPARTY.getBooleanValue()) {
                     if (votesThatNeed - currentVotes > 0) {
                         placeholders.append("%votes%", Utils.formatNumber(votesThatNeed - currentVotes));
                         MessagesUtil.VOTEPARTY_VOTES_NEED.msgAll(placeholders, true);
@@ -84,7 +84,7 @@ public class VotePartyUtils {
                     }
                 }
 
-                if (offlinePlayer != null & OptionsUtil.VOTEPARTY_PARTICIPATE.isEnabled()) {
+                if (offlinePlayer != null & OptionsUtil.VOTEPARTY_PARTICIPATE.getBooleanValue()) {
                     if (!players.contains(offlinePlayer))
                         players.add(offlinePlayer);
                 }
@@ -101,7 +101,7 @@ public class VotePartyUtils {
             }
 
             //PARTICIPATE MESSAGE
-            if (OptionsUtil.VOTEPARTY_PARTICIPATE.isEnabled() & !start) {
+            if (OptionsUtil.VOTEPARTY_PARTICIPATE.getBooleanValue() & !start) {
                 Bukkit.getOnlinePlayers().forEach(player -> {
                     if (!players.contains(player)) {
                         MessagesUtil.VOTEPARTY_NOT_PARTICIPATED.msg(player);
@@ -112,7 +112,7 @@ public class VotePartyUtils {
             }
 
             //COOLDOWN
-            if (OptionsUtil.VOTEPARTY_COOLDOWN.isEnabled()) {
+            if (OptionsUtil.VOTEPARTY_COOLDOWN.getBooleanValue()) {
                 placeholders.append("%secs%",
                         String.valueOf(OptionsUtil.VOTEPARTY_COOLDOWN_SECONDS.getIntValue()));
                 MessagesUtil.VOTEPARTY_START.msgAll(placeholders, true);
@@ -127,11 +127,11 @@ public class VotePartyUtils {
             //REWARD
             players.forEach(player -> {
                 UserVoteData userVoteData = UserVoteData.getUser(player);
-                if (OptionsUtil.VOTEPARTY_CRATE.isEnabled()) {
+                if (OptionsUtil.VOTEPARTY_CRATE.getBooleanValue()) {
                     if (player.isOnline()) {
-                        if (OptionsUtil.VOTEPARTY_SOUND_START.isEnabled()) {
+                        if (OptionsUtil.VOTEPARTY_SOUND_START.getBooleanValue()) {
                             if (MinecraftUtils.MinecraftVersion.getCurrentVersion().isBelow(MinecraftUtils.MinecraftVersion.V1_12_R1)) {
-                                if (OptionsUtil.DEBUG_USELESS.isEnabled()) {
+                                if (OptionsUtil.DEBUG_USELESS.getBooleanValue()) {
                                     MinecraftUtils.debug(voteRewardPlugin, "========================================================");
                                     MinecraftUtils.debug(voteRewardPlugin, "SoundCategory doesn't exists in versions below 1.12");
                                     MinecraftUtils.debug(voteRewardPlugin, "SoundCategory doesn't exists in versions below 1.12");
@@ -157,7 +157,7 @@ public class VotePartyUtils {
                         userVoteData.setVoteParties(userVoteData.getVoteParty() + 1);
                     }
                 } else {
-                    chooseRandom(OptionsUtil.VOTEPARTY_RANDOM.isEnabled());
+                    chooseRandom(OptionsUtil.VOTEPARTY_RANDOM.getBooleanValue());
                 }
             });
 
@@ -193,7 +193,7 @@ public class VotePartyUtils {
     public boolean isInLocation(Location location) {
         CFG cfg = FileManager.getInstance().getData();
         FileConfiguration data = cfg.getFileConfiguration();
-        if (!OptionsUtil.VOTEPARTY_REGIONS.isEnabled()) {
+        if (!OptionsUtil.VOTEPARTY_REGIONS.getBooleanValue()) {
             return false;
         }
         if (data.getConfigurationSection("Regions") == null || data.getConfigurationSection("Regions").getKeys(false).isEmpty()) {

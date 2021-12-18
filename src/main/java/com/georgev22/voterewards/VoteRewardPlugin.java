@@ -27,9 +27,11 @@ import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.Instant;
@@ -71,13 +73,24 @@ public class VoteRewardPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        Bukkit.getLogger().info("\n" +
+                " __     __             __                _______                                                     __           \n" +
+                "|  \\   |  \\           |  \\              |       \\                                                   |  \\          \n" +
+                "| $$   | $$  ______  _| $$_     ______  | $$$$$$$\\  ______   __   __   __   ______    ______    ____| $$  _______ \n" +
+                "| $$   | $$ /      \\|   $$ \\   /      \\ | $$__| $$ /      \\ |  \\ |  \\ |  \\ |      \\  /      \\  /      $$ /       \\\n" +
+                " \\$$\\ /  $$|  $$$$$$\\\\$$$$$$  |  $$$$$$\\| $$    $$|  $$$$$$\\| $$ | $$ | $$  \\$$$$$$\\|  $$$$$$\\|  $$$$$$$|  $$$$$$$\n" +
+                "  \\$$\\  $$ | $$  | $$ | $$ __ | $$    $$| $$$$$$$\\| $$    $$| $$ | $$ | $$ /      $$| $$   \\$$| $$  | $$ \\$$    \\ \n" +
+                "   \\$$ $$  | $$__/ $$ | $$|  \\| $$$$$$$$| $$  | $$| $$$$$$$$| $$_/ $$_/ $$|  $$$$$$$| $$      | $$__| $$ _\\$$$$$$\\\n" +
+                "    \\$$$    \\$$    $$  \\$$  $$ \\$$     \\| $$  | $$ \\$$     \\ \\$$   $$   $$ \\$$    $$| $$       \\$$    $$|       $$\n" +
+                "     \\$      \\$$$$$$    \\$$$$   \\$$$$$$$ \\$$   \\$$  \\$$$$$$$  \\$$$$$\\$$$$   \\$$$$$$$ \\$$        \\$$$$$$$ \\$$$$$$$ \n" +
+                "                                                                                                                  \n");
         final FileManager fm = FileManager.getInstance();
         fm.loadFiles(this);
         MessagesUtil.repairPaths(fm.getMessages());
         CFG dataCFG = fm.getData();
         FileConfiguration data = dataCFG.getFileConfiguration();
         api = new PagedInventoryAPI(this);
-        if (OptionsUtil.DEBUG_USELESS.isEnabled())
+        if (OptionsUtil.DEBUG_USELESS.getBooleanValue())
             MinecraftUtils.debug(this, "onEnable Thread ID: " + Thread.currentThread().getId());
         MinecraftUtils.registerListeners(this, new VotifierListener(), new PlayerListeners(), new DeveloperInformListener());
 
@@ -86,21 +99,21 @@ public class VoteRewardPlugin extends JavaPlugin {
             dataCFG.saveFile();
         }
 
-        if (OptionsUtil.COMMAND_VOTEREWARDS.isEnabled())
+        if (OptionsUtil.COMMAND_VOTEREWARDS.getBooleanValue())
             MinecraftUtils.registerCommand("voterewards", new VoteRewards());
-        if (OptionsUtil.COMMAND_FAKEVOTE.isEnabled())
+        if (OptionsUtil.COMMAND_FAKEVOTE.getBooleanValue())
             MinecraftUtils.registerCommand("fakevote", new FakeVote());
-        if (OptionsUtil.COMMAND_VOTE.isEnabled())
+        if (OptionsUtil.COMMAND_VOTE.getBooleanValue())
             MinecraftUtils.registerCommand("vote", new Vote());
-        if (OptionsUtil.COMMAND_VOTES.isEnabled())
+        if (OptionsUtil.COMMAND_VOTES.getBooleanValue())
             MinecraftUtils.registerCommand("votes", new Votes());
-        if (OptionsUtil.COMMAND_VOTEPARTY.isEnabled())
+        if (OptionsUtil.COMMAND_VOTEPARTY.getBooleanValue())
             MinecraftUtils.registerCommand("voteparty", new VoteParty());
-        if (OptionsUtil.COMMAND_REWARDS.isEnabled())
+        if (OptionsUtil.COMMAND_REWARDS.getBooleanValue())
             MinecraftUtils.registerCommand("rewards", new Rewards());
-        if (OptionsUtil.COMMAND_VOTETOP.isEnabled())
+        if (OptionsUtil.COMMAND_VOTETOP.getBooleanValue())
             MinecraftUtils.registerCommand("votetop", new VoteTop());
-        if (OptionsUtil.COMMAND_HOLOGRAM.isEnabled())
+        if (OptionsUtil.COMMAND_HOLOGRAM.getBooleanValue())
             MinecraftUtils.registerCommand("hologram", new Holograms());
 
         Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
@@ -137,12 +150,12 @@ public class VoteRewardPlugin extends JavaPlugin {
             Bukkit.getLogger().info("[VoteRewards] Hooked into AuthMeReloaded!");
         }
 
-        if (OptionsUtil.UPDATER.isEnabled()) {
+        if (OptionsUtil.UPDATER.getBooleanValue()) {
             new Updater();
         }
 
         Metrics metrics = new Metrics(this, 3179);
-        if (metrics.isEnabled()) {
+        if (YamlConfiguration.loadConfiguration(new File(new File(this.getDataFolder().getParentFile(), "bStats"), "config.yml")).getBoolean("enabled", true)) {
             Bukkit.getLogger().info("[VoteRewards] Metrics are enabled!");
         }
 
@@ -165,7 +178,7 @@ public class VoteRewardPlugin extends JavaPlugin {
             userVoteData.save(false, new Callback() {
                 @Override
                 public void onSuccess() {
-                    if (OptionsUtil.DEBUG_SAVE.isEnabled()) {
+                    if (OptionsUtil.DEBUG_SAVE.getBooleanValue()) {
                         MinecraftUtils.debug(VoteRewardPlugin.getInstance(),
                                 "User " + userVoteData.user().getName() + " successfully saved!",
                                 "Votes: " + userVoteData.user().getVotes(),
@@ -185,21 +198,21 @@ public class VoteRewardPlugin extends JavaPlugin {
         Bukkit.getScheduler().cancelTasks(this);
         if (HolographicDisplays.isHooked())
             HolographicDisplays.getHologramMap().forEach((name, hologram) -> HolographicDisplays.remove(name, false));
-        if (OptionsUtil.COMMAND_VOTEREWARDS.isEnabled())
+        if (OptionsUtil.COMMAND_VOTEREWARDS.getBooleanValue())
             MinecraftUtils.unRegisterCommand("voterewards");
-        if (OptionsUtil.COMMAND_FAKEVOTE.isEnabled())
+        if (OptionsUtil.COMMAND_FAKEVOTE.getBooleanValue())
             MinecraftUtils.unRegisterCommand("fakevote");
-        if (OptionsUtil.COMMAND_VOTE.isEnabled())
+        if (OptionsUtil.COMMAND_VOTE.getBooleanValue())
             MinecraftUtils.unRegisterCommand("vote");
-        if (OptionsUtil.COMMAND_VOTES.isEnabled())
+        if (OptionsUtil.COMMAND_VOTES.getBooleanValue())
             MinecraftUtils.unRegisterCommand("votes");
-        if (OptionsUtil.COMMAND_VOTEPARTY.isEnabled())
+        if (OptionsUtil.COMMAND_VOTEPARTY.getBooleanValue())
             MinecraftUtils.unRegisterCommand("voteparty");
-        if (OptionsUtil.COMMAND_REWARDS.isEnabled())
+        if (OptionsUtil.COMMAND_REWARDS.getBooleanValue())
             MinecraftUtils.unRegisterCommand("rewards");
-        if (OptionsUtil.COMMAND_VOTETOP.isEnabled())
+        if (OptionsUtil.COMMAND_VOTETOP.getBooleanValue())
             MinecraftUtils.unRegisterCommand("votetop");
-        if (OptionsUtil.COMMAND_HOLOGRAM.isEnabled())
+        if (OptionsUtil.COMMAND_HOLOGRAM.getBooleanValue())
             MinecraftUtils.unRegisterCommand("hologram");
         if (connection != null) {
             try {
@@ -220,17 +233,17 @@ public class VoteRewardPlugin extends JavaPlugin {
      * @throws ClassNotFoundException When class is not found
      */
     private void setupDatabase() throws Exception {
-        if (OptionsUtil.DEBUG_USELESS.isEnabled())
+        if (OptionsUtil.DEBUG_USELESS.getBooleanValue())
             MinecraftUtils.debug(this, "Setup database Thread ID: " + Thread.currentThread().getId());
         ObjectMap<String, ObjectMap.Pair<String, String>> map = ObjectMap.newHashObjectMap()
                 .append("uuid", ObjectMap.Pair.create("VARCHAR(38)", "NULL"))
                 .append("name", ObjectMap.Pair.create("VARCHAR(18)", "NULL"))
                 .append("votes", ObjectMap.Pair.create("INT(10)", "0"))
-                .append("time", ObjectMap.Pair.create("VARCHAR(20)", "0"))
+                .append("time", ObjectMap.Pair.create("BIGINT(30)", "0"))
                 .append("voteparty", ObjectMap.Pair.create("INT(10)", "0"))
-                .append("daily", ObjectMap.Pair.create("BIGINT(10)", "0"))
-                .append("services", ObjectMap.Pair.create("VARCHAR(10000)", "NULL"))
-                .append("servicesLastVote", ObjectMap.Pair.create("VARCHAR(10000)", "NULL"))
+                .append("daily", ObjectMap.Pair.create("INT(10)", "0"))
+                .append("services", ObjectMap.Pair.create("TEXT", "NULL"))
+                .append("servicesLastVote", ObjectMap.Pair.create("TEXT", "NULL"))
                 .append("totalvotes", ObjectMap.Pair.create("INT(10)", "0"));
         switch (OptionsUtil.DATABASE_TYPE.getStringValue()) {
             case "MySQL": {
@@ -311,7 +324,7 @@ public class VoteRewardPlugin extends JavaPlugin {
                     @Override
                     public void onSuccess() {
                         UserVoteData.getAllUsersMap().append(userVoteData.user().getUniqueId(), userVoteData.user());
-                        if (OptionsUtil.DEBUG_LOAD.isEnabled())
+                        if (OptionsUtil.DEBUG_LOAD.getBooleanValue())
                             MinecraftUtils.debug(VoteRewardPlugin.getInstance(), "Successfully loaded user " + userVoteData.user().getOfflinePlayer().getName());
                     }
 
@@ -327,17 +340,17 @@ public class VoteRewardPlugin extends JavaPlugin {
 
         HolographicDisplays.updateAll();
 
-        if (OptionsUtil.PURGE_ENABLED.isEnabled())
+        if (OptionsUtil.PURGE_ENABLED.getBooleanValue())
             VoteUtils.purgeData();
 
-        if (OptionsUtil.MONTHLY_ENABLED.isEnabled())
+        if (OptionsUtil.MONTHLY_ENABLED.getBooleanValue())
             VoteUtils.monthlyReset();
 
-        if (OptionsUtil.REMINDER.isEnabled()) {
+        if (OptionsUtil.REMINDER.getBooleanValue()) {
             VoteUtils.reminder();
         }
 
-        if (OptionsUtil.DAILY.isEnabled()) {
+        if (OptionsUtil.DAILY.getBooleanValue()) {
             VoteUtils.dailyReset();
         }
     }
