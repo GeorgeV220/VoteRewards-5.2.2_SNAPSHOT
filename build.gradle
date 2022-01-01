@@ -1,16 +1,18 @@
 plugins {
     id 'java'
     id "com.github.johnrengelman.shadow" version "7.1.2"
+    id 'maven-publish'
+    id 'net.linguica.maven-settings' version '0.5'
 }
 
 group = 'com.georgev22'
-version = '5.2.2'
+version = '5.2.2-SNAPSHOT'
 
 repositories {
     mavenCentral()
     maven {
         name = 'GeorgeV22 Repository'
-        url = 'https://maven.georgev22.com/repository/georgev22'
+        url = 'https://maven.georgev22.com/repository/georgev22/'
     }
 
     maven {
@@ -69,6 +71,8 @@ java {
     if (JavaVersion.current() < javaVersion) {
         toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
     }
+    withSourcesJar()
+    withJavadocJar()
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -94,4 +98,26 @@ shadowJar {
     relocate 'de.tr7zw.changeme.nbtapi', 'com.georgev22.voterewards.api.nbtapi'
     relocate 'de.tr7zw.annotations', 'com.georgev22.voterewards.api.annotations'
     relocate 'com.github.juliarn.npc', 'com.georgev22.voterewards.api.npc'
+}
+
+mavenSettings {
+    userSettingsFileName = "${System.properties['user.home']}/.m2/settings.xml"
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId group
+            artifactId 'voterewards'
+            version version
+
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            name = 'georgev22'
+            url = 'https://maven.georgev22.com/repository/georgev22/'
+        }
+    }
 }

@@ -3,10 +3,8 @@ package com.georgev22.voterewards.utilities.player;
 import com.georgev22.api.maps.HashObjectMap;
 import com.georgev22.api.maps.ObjectMap;
 import com.georgev22.api.utilities.MinecraftUtils;
-import com.georgev22.api.utilities.Utils;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.utilities.OptionsUtil;
-import com.georgev22.voterewards.utilities.interfaces.Callback;
 import com.georgev22.voterewards.utilities.interfaces.IDatabaseType;
 import com.google.common.collect.Lists;
 import com.mongodb.BasicDBObject;
@@ -31,6 +29,8 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import java.util.*;
 
+import static com.georgev22.api.utilities.Utils.*;
+
 /**
  * Used to handle all user's data and anything related to them.
  */
@@ -41,7 +41,7 @@ public class UserVoteData {
 
     private final User user;
 
-    public UserVoteData(User user) {
+    private UserVoteData(User user) {
         this.user = user;
         if (OptionsUtil.DEBUG_USELESS.getBooleanValue())
             MinecraftUtils.debug(voteRewardPlugin, user.toString());
@@ -379,8 +379,8 @@ public class UserVoteData {
                             "`time` = '" + user.getLastVoted() + "', " +
                             "`voteparty` = '" + user.getVoteParties() + "', " +
                             "`daily` = '" + user.getDailyVotes() + "', " +
-                            "`services` = '" + Utils.stringListToString(user.getServices()) + "', " +
-                            "`servicesLastVote` = '" + Utils.stringListToString(Utils.mapToStringList(user.getServicesLastVote())) + "', " +
+                            "`services` = '" + stringListToString(user.getServices()) + "', " +
+                            "`servicesLastVote` = '" + stringListToString(mapToStringList(user.getServicesLastVote())) + "', " +
                             "`totalvotes` = '" + user.getAllTimeVotes() + "' " +
                             "WHERE `uuid` = '" + user.getUniqueId() + "'");
             if (OptionsUtil.DEBUG_SAVE.getBooleanValue()) {
@@ -423,8 +423,8 @@ public class UserVoteData {
                             user.append("votes", resultSet.getInt("votes"))
                                     .append("name", resultSet.getString("name"))
                                     .append("last", resultSet.getLong("time"))
-                                    .append("servicesLastVote", Utils.stringListToObjectMap(Utils.stringToStringList(resultSet.getString("servicesLastVote")), Long.class))
-                                    .append("services", Utils.stringToStringList(resultSet.getString("services")))
+                                    .append("servicesLastVote", stringListToObjectMap(stringToStringList(resultSet.getString("servicesLastVote")), Long.class))
+                                    .append("services", stringToStringList(resultSet.getString("services")))
                                     .append("voteparty", resultSet.getInt("voteparty"))
                                     .append("daily", resultSet.getInt("daily"))
                                     .append("totalvotes", resultSet.getInt("totalvotes"));
@@ -473,7 +473,7 @@ public class UserVoteData {
                     voteRewardPlugin.getDatabase().updateSQL(
                             "INSERT INTO `" + OptionsUtil.DATABASE_TABLE_NAME.getStringValue() + "` (`uuid`, `name`, `votes`, `time`, `daily`, `voteparty`, `services`, `servicesLastVote`, `totalvotes`)" +
                                     " VALUES " +
-                                    "('" + user.getUniqueId().toString() + "', '" + user.getOfflinePlayer().getName() + "','0', '0', '0', '0', '" + Utils.stringListToString(Lists.newArrayList()) + "', '" + Utils.stringListToString(Lists.newArrayList()) + "', '0'" + ");");
+                                    "('" + user.getUniqueId().toString() + "', '" + user.getOfflinePlayer().getName() + "','0', '0', '0', '0', '" + stringListToString(Lists.newArrayList()) + "', '" + stringListToString(Lists.newArrayList()) + "', '0'" + ");");
                 }
                 callback.onSuccess();
             } catch (SQLException | ClassNotFoundException throwables) {
@@ -707,7 +707,7 @@ public class UserVoteData {
             yamlConfiguration.set("name", user.getName());
             yamlConfiguration.set("time", user.getLastVoted());
             yamlConfiguration.set("services", user.getServices());
-            yamlConfiguration.set("servicesLastVote", Utils.mapToStringList(user.getServicesLastVote()));
+            yamlConfiguration.set("servicesLastVote", mapToStringList(user.getServicesLastVote()));
             yamlConfiguration.set("voteparty", user.getVoteParties());
             yamlConfiguration.set("daily", user.getDailyVotes());
             yamlConfiguration.set("totalvotes", user.getAllTimeVotes());
@@ -745,7 +745,7 @@ public class UserVoteData {
                             .append("name", yamlConfiguration.getString("name"))
                             .append("last", yamlConfiguration.getLong("time"))
                             .append("services", yamlConfiguration.getStringList("services"))
-                            .append("servicesLastVote", Utils.stringListToObjectMap(yamlConfiguration.getStringList("servicesLastVote"), Long.class))
+                            .append("servicesLastVote", stringListToObjectMap(yamlConfiguration.getStringList("servicesLastVote"), Long.class))
                             .append("voteparty", yamlConfiguration.getInt("voteparty"))
                             .append("daily", yamlConfiguration.getInt("daily"))
                             .append("totalvotes", yamlConfiguration.getInt("totalvotes"));

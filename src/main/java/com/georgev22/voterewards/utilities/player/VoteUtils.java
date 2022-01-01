@@ -12,7 +12,6 @@ import com.georgev22.voterewards.hooks.HolographicDisplays;
 import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.OptionsUtil;
 import com.georgev22.voterewards.utilities.configmanager.FileManager;
-import com.georgev22.voterewards.utilities.interfaces.Callback;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -24,6 +23,8 @@ import java.time.ZoneOffset;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
+
+import static com.georgev22.api.utilities.Utils.*;
 
 public class VoteUtils {
 
@@ -318,7 +319,7 @@ public class VoteUtils {
 
     /**
      * @param limit number of top monthly voters in a Map.
-     * @return a {@link LinkedObjectMap} with {@param limit} top players.
+     * @return a {@link LinkedObjectMap} with limit top players.
      */
     public static LinkedObjectMap<String, Integer> getTopPlayers(int limit) {
         ObjectMap<String, Integer> objectMap = ObjectMap.newLinkedObjectMap();
@@ -350,7 +351,7 @@ public class VoteUtils {
 
     /**
      * @param limit number of top all time voters in a Map.
-     * @return a {@link LinkedObjectMap} with {@param limit} top players.
+     * @return a {@link LinkedObjectMap} with limit top players.
      */
     public static LinkedObjectMap<String, Integer> getAllTimeTopPlayers(int limit) {
         ObjectMap<String, Integer> objectMap = ObjectMap.newLinkedObjectMap();

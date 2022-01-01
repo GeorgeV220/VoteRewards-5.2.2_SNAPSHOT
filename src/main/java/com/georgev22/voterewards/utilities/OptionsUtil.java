@@ -126,6 +126,8 @@ public enum OptionsUtil {
 
     COMMAND_HOLOGRAM("commands.hologram", true, Optional.empty()),
 
+    COMMAND_NPC("commands.npc", true, Optional.empty()),
+
     DATABASE_HOST("database.SQL.host", "localhost", Optional.empty()),
 
     DATABASE_PORT("database.SQL.port", 3306, Optional.empty()),

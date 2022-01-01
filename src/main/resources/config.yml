@@ -26,6 +26,7 @@ Options:
     fakevote: true
     voteparty: true
     hologram: true
+    npc: true
   title:
     vote: false #Shows a title message when the player votes
     voteparty: false #Shows a voteparty title message

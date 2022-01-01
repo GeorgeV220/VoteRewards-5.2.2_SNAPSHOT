@@ -8,7 +8,6 @@ import com.georgev22.voterewards.utilities.player.Backup;
 import com.georgev22.voterewards.hooks.WorldEditHook;
 import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.OptionsUtil;
-import com.georgev22.voterewards.utilities.interfaces.Callback;
 import com.georgev22.voterewards.utilities.player.UserVoteData;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -24,6 +23,8 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+
+import static com.georgev22.api.utilities.Utils.*;
 
 public class VoteRewards extends BukkitCommand {
 

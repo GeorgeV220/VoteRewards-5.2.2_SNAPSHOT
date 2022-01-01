@@ -3,7 +3,6 @@ package com.georgev22.voterewards.utilities.player;
 import com.georgev22.api.utilities.MinecraftUtils;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.utilities.OptionsUtil;
-import com.georgev22.voterewards.utilities.interfaces.Callback;
 import com.google.common.annotations.Beta;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -13,6 +12,8 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import java.util.Map;
 import java.util.UUID;
+
+import static com.georgev22.api.utilities.Utils.*;
 
 public class Backup {
 

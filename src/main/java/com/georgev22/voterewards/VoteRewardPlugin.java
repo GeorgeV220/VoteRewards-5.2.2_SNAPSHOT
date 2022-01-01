@@ -19,7 +19,6 @@ import com.georgev22.voterewards.listeners.PlayerListeners;
 import com.georgev22.voterewards.listeners.VotifierListener;
 import com.georgev22.voterewards.utilities.*;
 import com.georgev22.voterewards.utilities.configmanager.FileManager;
-import com.georgev22.voterewards.utilities.interfaces.Callback;
 import com.georgev22.voterewards.utilities.interfaces.IDatabaseType;
 import com.georgev22.voterewards.utilities.player.UserVoteData;
 import com.georgev22.voterewards.utilities.player.VoteUtils;
@@ -38,6 +37,8 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.Calendar;
+
+import static com.georgev22.api.utilities.Utils.*;
 
 @MavenLibrary(groupId = "org.mongodb", artifactId = "mongo-java-driver", version = "3.12.7")
 @MavenLibrary(groupId = "mysql", artifactId = "mysql-connector-java", version = "8.0.22")
@@ -116,6 +117,8 @@ public class VoteRewardPlugin extends JavaPlugin {
             MinecraftUtils.registerCommand("votetop", new VoteTop());
         if (OptionsUtil.COMMAND_HOLOGRAM.getBooleanValue())
             MinecraftUtils.registerCommand("hologram", new Holograms());
+        if (OptionsUtil.COMMAND_NPC.getBooleanValue())
+            MinecraftUtils.registerCommand("vnpc", new NPCCommand());
 
         Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
             try {
@@ -150,7 +153,7 @@ public class VoteRewardPlugin extends JavaPlugin {
             new Updater();
         }
 
-        Metrics metrics = new Metrics(this, 3179);
+        new Metrics(this, 3179);
         if (YamlConfiguration.loadConfiguration(new File(new File(this.getDataFolder().getParentFile(), "bStats"), "config.yml")).getBoolean("enabled", true)) {
             Bukkit.getLogger().info("[VoteRewards] Metrics are enabled!");
         }
@@ -210,6 +213,8 @@ public class VoteRewardPlugin extends JavaPlugin {
             MinecraftUtils.unRegisterCommand("votetop");
         if (OptionsUtil.COMMAND_HOLOGRAM.getBooleanValue())
             MinecraftUtils.unRegisterCommand("hologram");
+        if (OptionsUtil.COMMAND_NPC.getBooleanValue())
+            MinecraftUtils.unRegisterCommand("vnpc");
         if (connection != null) {
             try {
                 connection.close();

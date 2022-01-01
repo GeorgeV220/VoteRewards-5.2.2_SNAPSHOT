@@ -8,6 +8,8 @@ import com.google.common.collect.Lists;
 
 import java.util.UUID;
 
+import static com.georgev22.api.utilities.Utils.*;
+
 public interface IDatabaseType {
 
     void save(User user) throws Exception;

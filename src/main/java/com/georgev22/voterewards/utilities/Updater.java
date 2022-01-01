@@ -4,6 +4,7 @@ import com.georgev22.api.utilities.MinecraftUtils;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
@@ -18,7 +19,7 @@ public class Updater {
     private String onlineVersion;
 
     public Updater() {
-        Bukkit.getScheduler().runTaskAsynchronously(voteRewardPlugin, () -> {
+        Bukkit.getScheduler().runTaskTimerAsynchronously(voteRewardPlugin, () -> {
             voteRewardPlugin.getLogger().info("Checking for Updates ... ");
             try {
                 System.setProperty("http.agent", "Chrome");
@@ -53,7 +54,7 @@ public class Updater {
                         "If you have problems contact me on discord or github. Thank you for testing this version");
             }
 
-        });
+        }, 20L, 20 * 7200);
     }
 
     public Updater(Player player) {
@@ -96,8 +97,8 @@ public class Updater {
     }
 
 
-    private int compareVersions(String version1, String version2) {
-        if (version1.contains("b") | version2.contains("b")) {
+    private int compareVersions(@NotNull String version1, @NotNull String version2) {
+        if (version1.contains("SNAPSHOT") | version1.contains("SNAPSHOT")) {
             return -1;
         }
 
