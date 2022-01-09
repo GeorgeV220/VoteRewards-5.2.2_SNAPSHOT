@@ -16,6 +16,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -214,7 +215,7 @@ public class VotePartyUtils {
      * @param amount item amount
      * @return a custom item crate
      */
-    public static ItemStack crate(int amount) {
+    public static @NotNull ItemStack crate(int amount) {
         ItemStack itemStack = new ItemStack(
                 Objects.requireNonNull(
                         XMaterial.matchXMaterial(

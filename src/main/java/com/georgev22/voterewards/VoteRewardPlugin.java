@@ -44,7 +44,8 @@ import java.util.Calendar;
 @MavenLibrary(groupId = "org.xerial", artifactId = "sqlite-jdbc", version = "3.34.0")
 @MavenLibrary(groupId = "com.google.guava", artifactId = "guava", version = "30.1.1-jre")
 @MavenLibrary(groupId = "org.postgresql", artifactId = "postgresql", version = "42.2.18")
-@MavenLibrary(groupId = "commons-codec", artifactId = "commons-codec", version = "1.11")
+@MavenLibrary(groupId = "commons-io", artifactId = "commons-io", version = "2.11.0")
+@MavenLibrary(groupId = "commons-codec", artifactId = "commons-codec", version = "1.15")
 public class VoteRewardPlugin extends JavaPlugin {
 
     private static VoteRewardPlugin instance = null;
@@ -128,11 +129,6 @@ public class VoteRewardPlugin extends JavaPlugin {
             placeholdersAPI = new PAPI();
             if (placeholdersAPI.register())
                 Bukkit.getLogger().info("[VoteRewards] Hooked into PlaceholderAPI!");
-        }
-
-        if (Bukkit.getPluginManager().isPluginEnabled("MVdWPlaceholderAPI")) {
-            new MVdWPlaceholder().register();
-            Bukkit.getLogger().info("[VoteRewards] Hooked into MVdWPlaceholderAPI!");
         }
 
         if (Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays")) {

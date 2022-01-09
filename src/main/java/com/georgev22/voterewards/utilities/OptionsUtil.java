@@ -226,7 +226,7 @@ public enum OptionsUtil {
     }
 
     public boolean getBooleanValue() {
-        return mainPlugin.getConfig().getBoolean(getPath(), true);
+        return mainPlugin.getConfig().getBoolean(getPath(), Boolean.parseBoolean(String.valueOf(getDefaultValue())));
     }
 
     public Object getObjectValue() {
@@ -234,15 +234,19 @@ public enum OptionsUtil {
     }
 
     public String getStringValue() {
-        return mainPlugin.getConfig().getString(getPath(), (String) getDefaultValue());
+        return mainPlugin.getConfig().getString(getPath(), String.valueOf(getDefaultValue()));
     }
 
     public @NotNull Long getLongValue() {
-        return mainPlugin.getConfig().getLong(getPath(), (Long) getDefaultValue());
+        return mainPlugin.getConfig().getLong(getPath(), Long.parseLong(String.valueOf(getDefaultValue())));
     }
 
     public @NotNull Integer getIntValue() {
-        return mainPlugin.getConfig().getInt(getPath(), (Integer) getDefaultValue());
+        return mainPlugin.getConfig().getInt(getPath(), Integer.parseInt(String.valueOf(getDefaultValue())));
+    }
+
+    public @NotNull Double getDoubleValue() {
+        return mainPlugin.getConfig().getDouble(getPath(), Double.parseDouble(String.valueOf(getDefaultValue())));
     }
 
     public @NotNull List<String> getStringList() {
@@ -288,18 +292,18 @@ public enum OptionsUtil {
      * @return the path.
      */
     public @NotNull String getPath() {
-        for (Optional<String> paths : getOldPaths()) {
-            if (mainPlugin.getConfig().get("Options." + getDefaultPath()) == null) {
-                if (paths.isPresent()) {
-                    if (mainPlugin.getConfig().get("Options." + paths.get()) != null) {
-                        return "Options." + paths.get();
+        if (mainPlugin.getConfig().get("Options." + getDefaultPath()) == null) {
+            if (getOldPaths().length > 0) {
+                for (Optional<String> path : getOldPaths()) {
+                    if (path.isPresent()) {
+                        if (mainPlugin.getConfig().get("Options." + path.get()) != null) {
+                            return "Options." + path.get();
+                        }
                     }
                 }
-            } else {
-                return "Options." + getDefaultPath();
             }
         }
-        return null;
+        return "Options." + getDefaultPath();
     }
 
     /**

@@ -20,6 +20,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,7 +56,7 @@ public class UserVoteData {
         return allUsersMap;
     }
 
-    public static ObjectMap<String, User> getAllUsersMapWithName() {
+    public static @NotNull ObjectMap<String, User> getAllUsersMapWithName() {
         ObjectMap<String, User> objectMap = new HashObjectMap<>();
         for (Map.Entry<UUID, User> entry : allUsersMap.entrySet()) {
             objectMap.append(entry.getValue().getName(), entry.getValue());
@@ -80,7 +82,8 @@ public class UserVoteData {
      * @return a copy of this UserVoteData class for a specific user.
      * @since v4.7.0
      */
-    public static UserVoteData getUser(OfflinePlayer offlinePlayer) {
+    @Contract("_ -> new")
+    public static @NotNull UserVoteData getUser(@NotNull OfflinePlayer offlinePlayer) {
         return getUser(offlinePlayer.getUniqueId());
     }
 
@@ -90,7 +93,8 @@ public class UserVoteData {
      * @param uuid Player's Unique identifier
      * @return a copy of this UserVoteData class for a specific user.
      */
-    public static UserVoteData getUser(UUID uuid) {
+    @Contract("_ -> new")
+    public static @NotNull UserVoteData getUser(@NotNull UUID uuid) {
         if (!allUsersMap.containsKey(uuid)) {
             if (OptionsUtil.DEBUG_VOTE_PRE.getBooleanValue()) {
                 MinecraftUtils.debug(voteRewardPlugin, "Player " + Bukkit.getOfflinePlayer(uuid).getName() + " is not loaded!");
@@ -272,7 +276,7 @@ public class UserVoteData {
      *
      * @param s the list with all the commands
      */
-    public void runCommands(List<String> s) {
+    public void runCommands(@NotNull List<String> s) {
         MinecraftUtils.debug(voteRewardPlugin, "RUNNING COMMANDS FOR PLAYER: " + user.getName());
         for (String b : s) {
             MinecraftUtils.runCommand(voteRewardPlugin, b.replace("%player%", user.getName()));
@@ -367,7 +371,7 @@ public class UserVoteData {
          * @throws SQLException           When something goes wrong
          * @throws ClassNotFoundException When class not found
          */
-        public void save(User user) throws SQLException, ClassNotFoundException {
+        public void save(@NotNull User user) throws SQLException, ClassNotFoundException {
             voteRewardPlugin.getDatabase().updateSQL(
                     "UPDATE `" + OptionsUtil.DATABASE_TABLE_NAME.getStringValue() + "` " +
                             "SET `votes` = '" + user.getVotes() + "', " +
@@ -398,7 +402,7 @@ public class UserVoteData {
          * @throws SQLException           When something goes wrong
          * @throws ClassNotFoundException When class is not found
          */
-        public void delete(User user) throws SQLException, ClassNotFoundException {
+        public void delete(@NotNull User user) throws SQLException, ClassNotFoundException {
             voteRewardPlugin.getDatabase().updateSQL("DELETE FROM `" + OptionsUtil.DATABASE_TABLE_NAME.getStringValue() + "` WHERE `uuid` = '" + user.getUniqueId().toString() + "';");
             MinecraftUtils.debug(voteRewardPlugin, "User " + user.getName() + " deleted from the database!");
             allUsersMap.remove(user.getUniqueId());
@@ -454,7 +458,7 @@ public class UserVoteData {
          *
          * @return true if user exists or false when is not
          */
-        public boolean playerExists(User user) throws SQLException, ClassNotFoundException {
+        public boolean playerExists(@NotNull User user) throws SQLException, ClassNotFoundException {
             return voteRewardPlugin.getDatabase().querySQL("SELECT * FROM " + OptionsUtil.DATABASE_TABLE_NAME.getStringValue() + " WHERE `uuid` = '" + user.getUniqueId().toString() + "'").next();
         }
 
@@ -515,7 +519,7 @@ public class UserVoteData {
         /**
          * Save all user's data
          */
-        public void save(User user) {
+        public void save(@NotNull User user) {
             BasicDBObject query = new BasicDBObject();
             query.append("uuid", user.getUniqueId().toString());
 
@@ -615,7 +619,7 @@ public class UserVoteData {
          *
          * @return true if user exists or false when is not
          */
-        public boolean playerExists(User user) {
+        public boolean playerExists(@NotNull User user) {
             long count = voteRewardPlugin.getMongoDB().getCollection().count(new BsonDocument("uuid", new BsonString(user.getUniqueId().toString())));
             return count > 0;
         }
@@ -623,7 +627,7 @@ public class UserVoteData {
         /**
          * Remove user's data from database.
          */
-        public void delete(User user) {
+        public void delete(@NotNull User user) {
             BasicDBObject theQuery = new BasicDBObject();
             theQuery.put("uuid", user.getUniqueId().toString());
             DeleteResult result = voteRewardPlugin.getMongoDB().getCollection().deleteMany(theQuery);
@@ -682,7 +686,7 @@ public class UserVoteData {
          * @param user User object
          */
         @Override
-        public void save(User user) {
+        public void save(@NotNull User user) {
             File file = new File(VoteRewardPlugin.getInstance().getDataFolder(),
                     "userdata" + File.separator + user.getUniqueId().toString() + ".yml");
             if (!file.exists()) {
@@ -808,7 +812,7 @@ public class UserVoteData {
         /**
          * Remove user's data from file.
          */
-        public void delete(User user) {
+        public void delete(@NotNull User user) {
             File file = new File(VoteRewardPlugin.getInstance().getDataFolder(),
                     "userdata" + File.separator + user.getUniqueId().toString() + ".yml");
             if (file.exists() & file.delete()) {
@@ -824,7 +828,7 @@ public class UserVoteData {
          *
          * @return true if user exists or false when is not
          */
-        public boolean playerExists(User user) {
+        public boolean playerExists(@NotNull User user) {
             return new File(VoteRewardPlugin.getInstance().getDataFolder(),
                     "userdata" + File.separator + user.getUniqueId().toString() + ".yml").exists();
         }

@@ -1,0 +1,97 @@
+plugins {
+    id 'java'
+    id "com.github.johnrengelman.shadow" version "7.1.2"
+}
+
+group = 'com.georgev22'
+version = '5.2.2'
+
+repositories {
+    mavenCentral()
+    maven {
+        name = 'GeorgeV22 Repository'
+        url = 'https://maven.georgev22.com/repository/georgev22'
+    }
+
+    maven {
+        name = 'PaperMC Repository'
+        url = 'https://papermc.io/repo/repository/maven-public/'
+    }
+
+    maven {
+        name = 'sonatype Repository'
+        url = 'https://oss.sonatype.org/content/groups/public/'
+    }
+
+    maven {
+        name = 'ExtendedClip Repository'
+        url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/'
+    }
+
+    maven {
+        name = 'Jitpack Repository'
+        url = 'https://jitpack.io'
+    }
+
+    maven {
+        name = 'CodeMC Repository'
+        url = 'https://repo.codemc.io/repository/maven-public/'
+    }
+
+    maven {
+        name = 'Apache Maven Repository'
+        url = 'https://repo.maven.apache.org/maven2/'
+    }
+}
+
+dependencies {
+    compileOnly 'com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT'
+    implementation 'com.georgev22:api:2.2'
+    implementation 'com.georgev22:worldeditinterface:1.0'
+    implementation 'com.georgev22:legacyworldedit:1.0'
+    implementation 'com.georgev22:newworldedit:1.0'
+    implementation 'org.bstats:bstats-bukkit:2.2.1'
+    implementation 'com.github.juliarn:npc-lib:2.6-RELEASE'
+    compileOnly 'me.clip:placeholderapi:2.10.10'
+    compileOnly 'fr.xephi:authme:5.6.0-SNAPSHOT'
+    compileOnly 'com.github.NuVotifier:NuVotifier:2.7.2'
+    compileOnly 'com.gmail.filoghost.holographicdisplays:holographicdisplays-api:2.4.4'
+    compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
+    compileOnly 'com.google.guava:guava:31.0.1-jre'
+    compileOnly 'org.mongodb:mongo-java-driver:3.12.10'
+}
+
+def targetJavaVersion = 8
+java {
+    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+    if (JavaVersion.current() < javaVersion) {
+        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
+        options.release = targetJavaVersion
+    }
+}
+
+processResources {
+    def props = [version: version]
+    inputs.properties props
+    filteringCharset 'UTF-8'
+    filesMatching('plugin.yml') {
+        expand props
+    }
+}
+
+shadowJar {
+    exclude 'com/cryptomorin/**'
+    relocate 'org.bstats', 'com.georgev22.voterewards.bstats'
+    relocate 'com.georgev22.api', 'com.georgev22.voterewards.api'
+    relocate 'com.georgev22.worldedit', 'com.georgev22.voterewards.worldedit'
+    relocate 'de.tr7zw.changeme.nbtapi', 'com.georgev22.voterewards.api.nbtapi'
+    relocate 'de.tr7zw.annotations', 'com.georgev22.voterewards.api.annotations'
+    relocate 'com.github.juliarn.npc', 'com.georgev22.voterewards.api.npc'
+}
