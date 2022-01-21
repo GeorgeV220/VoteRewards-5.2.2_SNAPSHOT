@@ -14,7 +14,7 @@ install:
   - cd VoteRewards
   
 build_script:
-  - gradlew.bat clean build javadoc jar shadowJar
+  - gradle clean build javadoc jar shadowJar
   
 artifacts:
   - path: VoteRewards\build\libs\

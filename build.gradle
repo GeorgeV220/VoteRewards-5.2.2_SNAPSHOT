@@ -98,6 +98,7 @@ shadowJar {
     relocate 'de.tr7zw.changeme.nbtapi', 'com.georgev22.voterewards.api.nbtapi'
     relocate 'de.tr7zw.annotations', 'com.georgev22.voterewards.api.annotations'
     relocate 'com.github.juliarn.npc', 'com.georgev22.voterewards.api.npc'
+    relocate 'com.github.juliarn.relocation', 'com.georgev22.voterewards.api.npc'
 }
 
 mavenSettings {
