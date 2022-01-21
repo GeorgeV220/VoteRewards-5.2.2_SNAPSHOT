@@ -10,6 +10,11 @@ environment:
       JAVA_HOME: C:\Program Files\Java\jdk1.8.0
 
 install:
+  - set GRADLE_VERSION=7.3
+  - set PATH=%PATH%;C:\bin\gradle-%GRADLE_VERSION%\bin
+  - if not exist "C:\bin\gradle-%MVN_VERSION%\bin\*.*" (echo Gradle %GRADLE_VERSION% not installed, so install it & cinst gradle -Version %GRADLE_VERSION%) else (echo  Maven %GRADLE_VERSION% already installed)
+
+
   - git clone https://github.com/GeorgeV220/VoteRewards.git  
   - cd VoteRewards
   
