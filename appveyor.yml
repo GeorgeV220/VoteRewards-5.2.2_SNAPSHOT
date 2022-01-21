@@ -22,7 +22,7 @@ build_script:
   - gradle clean build javadoc jar shadowJar
   
 artifacts:
-  - path: VoteRewards\build\libs\
+  - path: VoteRewards\build\libs\*.jar
   
 cache:
   - C:\Users\appveyor\.m2
