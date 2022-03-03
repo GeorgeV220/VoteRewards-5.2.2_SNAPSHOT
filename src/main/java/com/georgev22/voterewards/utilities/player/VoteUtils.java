@@ -1,12 +1,12 @@
 package com.georgev22.voterewards.utilities.player;
 
-import com.georgev22.api.configmanager.CFG;
+import com.georgev22.api.minecraft.configmanager.CFG;
 import com.georgev22.api.externals.xseries.XSound;
 import com.georgev22.api.externals.xseries.messages.Titles;
 import com.georgev22.api.maps.ConcurrentObjectMap;
 import com.georgev22.api.maps.LinkedObjectMap;
 import com.georgev22.api.maps.ObjectMap;
-import com.georgev22.api.utilities.MinecraftUtils;
+import com.georgev22.api.minecraft.MinecraftUtils;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.hooks.HolographicDisplays;
 import com.georgev22.voterewards.utilities.MessagesUtil;

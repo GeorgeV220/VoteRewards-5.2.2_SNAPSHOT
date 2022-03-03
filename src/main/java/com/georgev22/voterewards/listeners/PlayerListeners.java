@@ -2,7 +2,7 @@ package com.georgev22.voterewards.listeners;
 
 import com.georgev22.api.externals.xseries.XMaterial;
 import com.georgev22.api.externals.xseries.XSound;
-import com.georgev22.api.utilities.MinecraftUtils;
+import com.georgev22.api.minecraft.MinecraftUtils;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.hooks.HolographicDisplays;
 import com.georgev22.voterewards.utilities.OptionsUtil;

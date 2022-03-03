@@ -1,10 +1,11 @@
 package com.georgev22.voterewards.utilities.player;
 
-import com.georgev22.api.utilities.MinecraftUtils;
+import com.georgev22.api.minecraft.MinecraftUtils;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.utilities.OptionsUtil;
 import com.google.common.annotations.Beta;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,7 +26,7 @@ public class Backup {
 
     private static final VoteRewardPlugin voteRewardPlugin = VoteRewardPlugin.getInstance();
 
-    private File getBackupFolder() {
+    private @NotNull File getBackupFolder() {
         File backupFolder = new File(voteRewardPlugin.getDataFolder(), "backups");
         if (backupFolder.mkdirs()) {
             if (OptionsUtil.DEBUG_CREATE.getBooleanValue()) {

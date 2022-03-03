@@ -1,6 +1,5 @@
 package com.georgev22.voterewards;
 
-import com.georgev22.api.configmanager.CFG;
 import com.georgev22.api.database.Database;
 import com.georgev22.api.database.mongo.MongoDB;
 import com.georgev22.api.database.sql.mysql.MySQL;
@@ -9,9 +8,9 @@ import com.georgev22.api.database.sql.sqlite.SQLite;
 import com.georgev22.api.maps.ObjectMap;
 import com.georgev22.api.maven.LibraryLoader;
 import com.georgev22.api.maven.MavenLibrary;
-import com.georgev22.api.utilities.MinecraftUtils;
-import com.georgev22.api.utilities.MinecraftUtils.MinecraftVersion;
-import com.georgev22.api.inventory.PagedInventoryAPI;
+import com.georgev22.api.minecraft.MinecraftUtils;
+import com.georgev22.api.minecraft.configmanager.CFG;
+import com.georgev22.api.minecraft.inventory.PagedInventoryAPI;
 import com.georgev22.voterewards.commands.*;
 import com.georgev22.voterewards.hooks.*;
 import com.georgev22.voterewards.listeners.DeveloperInformListener;
@@ -69,7 +68,7 @@ public class VoteRewardPlugin extends JavaPlugin {
 
     @Override
     public void onLoad() {
-        if (MinecraftVersion.getCurrentVersion().isBelow(MinecraftVersion.V1_16_R1))
+        if (MinecraftUtils.MinecraftVersion.getCurrentVersion().isBelow(MinecraftUtils.MinecraftVersion.V1_16_R1))
             new LibraryLoader(this.getClass(), this.getDataFolder()).loadAll();
     }
 
@@ -158,8 +157,8 @@ public class VoteRewardPlugin extends JavaPlugin {
             Bukkit.getLogger().info("[VoteRewards] Metrics are enabled!");
         }
 
-        if (MinecraftVersion.getCurrentVersion().isBelow(MinecraftVersion.V1_12_R1)) {
-            MinecraftUtils.debug(this, "This version of Minecraft is extremely outdated and support for it has reached its end of life. You will still be able to run VoteRewards on this Minecraft version(" + MinecraftVersion.getCurrentVersion().name().toLowerCase() + "). Please consider updating to give your players a better experience and to avoid issues that have long been fixed.");
+        if (MinecraftUtils.MinecraftVersion.getCurrentVersion().isBelow(MinecraftUtils.MinecraftVersion.V1_12_R1)) {
+            MinecraftUtils.debug(this, "This version of Minecraft is extremely outdated and support for it has reached its end of life. You will still be able to run VoteRewards on this Minecraft version(" + MinecraftUtils.MinecraftVersion.getCurrentVersion().name().toLowerCase() + "). Please consider updating to give your players a better experience and to avoid issues that have long been fixed.");
         }
     }
 

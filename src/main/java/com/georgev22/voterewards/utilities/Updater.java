@@ -1,6 +1,6 @@
 package com.georgev22.voterewards.utilities;
 
-import com.georgev22.api.utilities.MinecraftUtils;
+import com.georgev22.api.minecraft.MinecraftUtils;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

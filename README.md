@@ -20,16 +20,16 @@ You can have your project depend on VoteRewards as a dependency through the foll
 <project>
     <repositories>
         <repository>
-            <id>georgev22</id>
-            <url>https://maven.georgev22.com/repository/georgev22/</url>
+            <id>JitPack</id>
+            <url>https://jitpack.io</url>
         </repository>
     </repositories>
 
     <dependencies>
         <dependency>
-            <groupId>com.georgev22</groupId>
+            <groupId>com.github.GeorgeV220</groupId>
             <artifactId>voterewards</artifactId>
-            <version>5.2.2-SNAPSHOT</version>
+            <version>latest tag</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
@@ -43,12 +43,12 @@ You can include VoteRewards into your gradle project using the following lines:
 ```groovy
 repositories {
     maven {
-        url 'https://maven.georgev22.com/repository/georgev22/'
+        url 'https://jitpack.io'
     }
 }
 
 dependencies {
-    compileOnly "com.georgev22:voterewards:5.2.2-SNAPSHOT"
+    compileOnly "com.github.GeorgeV220:voterewards:latest tag"
 }
 ```
 

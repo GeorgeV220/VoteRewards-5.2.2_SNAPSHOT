@@ -1,16 +1,14 @@
 package com.georgev22.voterewards.commands;
 
-import com.georgev22.api.configmanager.CFG;
-import com.georgev22.api.utilities.MinecraftUtils;
+import com.georgev22.api.minecraft.configmanager.CFG;
+import com.georgev22.api.minecraft.MinecraftUtils;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.utilities.configmanager.FileManager;
 import com.georgev22.voterewards.utilities.player.Backup;
-import com.georgev22.voterewards.hooks.WorldEditHook;
 import com.georgev22.voterewards.utilities.MessagesUtil;
 import com.georgev22.voterewards.utilities.OptionsUtil;
 import com.georgev22.voterewards.utilities.player.UserVoteData;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
@@ -206,14 +204,13 @@ public class VoteRewards extends BukkitCommand {
                     return true;
                 }
 
-                String regionName = args[2];
+                /*String regionName = args[2];
 
                 Player player = (Player) sender;
 
-                WorldEditHook worldEditHook = new WorldEditHook(player);
 
-                Location a = worldEditHook.getMinimumPoint();
-                Location b = worldEditHook.getMaximumPoint();
+                Location a = null;
+                Location b = null;
 
                 if (a == null || b == null) {
                     MinecraftUtils.msg(sender, "&c&l(!)&c Please make a selection first!");
@@ -228,7 +225,7 @@ public class VoteRewards extends BukkitCommand {
                 cfg.saveFile();
 
                 MinecraftUtils.msg(sender, "&a&l(!) &aAdded Location \na: " + a.getX() + "," + a.getY() + "," + a.getZ()
-                        + "\nb: " + b.getX() + "," + b.getY() + "," + b.getZ());
+                        + "\nb: " + b.getX() + "," + b.getY() + "," + b.getZ());*/
             } else if (args[1].equalsIgnoreCase("remove")) {
                 if (args.length == 2) {
                     MinecraftUtils.msg(sender, "&c&l(!)&c /vr region remove <name>");

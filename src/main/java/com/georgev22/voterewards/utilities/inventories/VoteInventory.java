@@ -1,13 +1,13 @@
 package com.georgev22.voterewards.utilities.inventories;
 
-import com.georgev22.api.inventory.CustomItemInventory;
-import com.georgev22.api.inventory.IPagedInventory;
-import com.georgev22.api.inventory.ItemBuilder;
-import com.georgev22.api.inventory.NavigationRow;
-import com.georgev22.api.inventory.handlers.PagedInventoryCustomNavigationHandler;
-import com.georgev22.api.inventory.navigationitems.*;
 import com.georgev22.api.maps.ObjectMap;
-import com.georgev22.api.utilities.MinecraftUtils;
+import com.georgev22.api.minecraft.MinecraftUtils;
+import com.georgev22.api.minecraft.inventory.CustomItemInventory;
+import com.georgev22.api.minecraft.inventory.IPagedInventory;
+import com.georgev22.api.minecraft.inventory.ItemBuilder;
+import com.georgev22.api.minecraft.inventory.NavigationRow;
+import com.georgev22.api.minecraft.inventory.handlers.PagedInventoryCustomNavigationHandler;
+import com.georgev22.api.minecraft.inventory.navigationitems.*;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.utilities.OptionsUtil;
 import com.georgev22.voterewards.utilities.configmanager.FileManager;

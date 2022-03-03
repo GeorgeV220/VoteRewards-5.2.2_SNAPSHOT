@@ -1,10 +1,11 @@
 package com.georgev22.voterewards.utilities.interfaces;
 
 import com.georgev22.api.maps.ObjectMap;
-import com.georgev22.api.utilities.MinecraftUtils;
+import com.georgev22.api.minecraft.MinecraftUtils;
 import com.georgev22.voterewards.VoteRewardPlugin;
 import com.georgev22.voterewards.utilities.player.User;
 import com.google.common.collect.Lists;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
@@ -18,7 +19,7 @@ public interface IDatabaseType {
 
     void setupUser(User user, Callback callback) throws Exception;
 
-    default void reset(User user, boolean allTime) throws Exception {
+    default void reset(@NotNull User user, boolean allTime) throws Exception {
         user.append("votes", 0)
                 .append("services", Lists.newArrayList())
                 .append("voteparty", 0)
